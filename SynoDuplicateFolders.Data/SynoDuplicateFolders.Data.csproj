@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{09866EDA-9815-4250-AE9F-6FBB1EB7015B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SynoDuplicateFolders.Data</RootNamespace>
+    <AssemblyName>SynoDuplicateFolders.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Renci.SshNet, Version=2016.0.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
+      <HintPath>..\packages\SSH.NET.2016.0.0\lib\net40\Renci.SshNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ComponentModel\SortableBindingList.cs" />
+    <Compile Include="SecureShell\BConsoleCommand.cs" />
+    <Compile Include="SecureShell\BDSMVersion.cs" />
+    <Compile Include="BSynoCSVReport.cs" />
+    <Compile Include="BSynoReportCache.cs" />
+    <Compile Include="BSynoReportTimeLine.cs" />
+    <Compile Include="CachedReportFile.cs" />
+    <Compile Include="SecureShell\ConsoleCommandDSM4.cs" />
+    <Compile Include="SecureShell\ConsoleCommandDSM6.cs" />
+    <Compile Include="SecureShell\ConsoleFileInfo.cs" />
+    <Compile Include="SecureShell\DSMVersion4.cs" />
+    <Compile Include="SecureShell\DSMVersion6.cs" />
+    <Compile Include="DuplicateFileInfo.cs" />
+    <Compile Include="DuplicatesAggregates.cs" />
+    <Compile Include="DuplicatesFolders.cs" />
+    <Compile Include="DuplicatesFolder.cs" />
+    <Compile Include="ICachedReportFile.cs" />
+    <Compile Include="SecureShell\IConsoleCommand.cs" />
+    <Compile Include="SecureShell\IDSMVersion.cs" />
+    <Compile Include="ISynoCSVReport.cs" />
+    <Compile Include="ISynoReportCache.cs" />
+    <Compile Include="ISynoReportFileDetails.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleCSVReader.cs" />
+    <Compile Include="ComponentModel\SortableListBindingSource.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SynoCSVReader.cs" />
+    <Compile Include="SynoCSVReportPair.cs" />
+    <Compile Include="SynoReportCacheDownloadEventArgs.cs" />
+    <Compile Include="SynoReportVolumePieData.cs" />
+    <Compile Include="SynoReportContents.cs" />
+    <Compile Include="SynoReportDuplicateCandidates.cs" />
+    <Compile Include="SynoReportFileDetail.cs" />
+    <Compile Include="SynoReportShares.cs" />
+    <Compile Include="SynoReportViaPlatform.cs" />
+    <Compile Include="SecureShell\SynoReportViaSSH.cs" />
+    <Compile Include="SynoReportVolumeUsage.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SynoDuplicateFolders.Extensions\SynoDuplicateFolders.Extensions.csproj">
+      <Project>{0e94e781-271c-49cb-95a8-70fb25f8fcf6}</Project>
+      <Name>SynoDuplicateFolders.Extensions</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
