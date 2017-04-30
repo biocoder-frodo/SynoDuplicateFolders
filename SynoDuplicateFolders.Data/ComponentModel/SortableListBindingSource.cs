@@ -1,7 +1,6 @@
 ﻿using System.Windows.Forms;
 using System.Data.Linq;
 using System.Collections.Generic;
-using System;
 
 namespace SynoDuplicateFolders.Data.ComponentModel
 {   
@@ -31,4 +30,8 @@ namespace SynoDuplicateFolders.Data.ComponentModel
         }
     }
 
+    public interface ISynoReportBindingSource<T> where T : class, ISynoReportDetail
+    {
+        SortableListBindingSource<T> BindingSource { get; }
+    }
 }
