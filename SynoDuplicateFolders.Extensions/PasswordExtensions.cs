@@ -30,8 +30,7 @@ namespace SynoDuplicateFolders.Extensions
                 }
             }
             _instance = instance;
-            _property = _instance.GetType().GetProperty(propname);
-
+            _property = _instance.GetType().GetProperty(propname, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
         }
         public T Value { get { return _instance; } }
         public string Password
@@ -42,7 +41,7 @@ namespace SynoDuplicateFolders.Extensions
             }
             set
             {
-                _property.SetValue(_instance, EncryptString(ToSecureString(value),scope,vector));
+                _property.SetValue(_instance, EncryptString(ToSecureString(value), scope, vector));
             }
         }
         public static void SetEntropy(string data, DataProtectionScope scope = DataProtectionScope.CurrentUser)
@@ -57,7 +56,7 @@ namespace SynoDuplicateFolders.Extensions
 
     public static class DpApiString
     {
-            
+
         public static string EncryptString(SecureString input, DataProtectionScope scope, byte[] entropy)
         {
             return Convert.ToBase64String(ProtectedData.Protect(Encoding.Unicode.GetBytes(ToInsecureString(input)), entropy, scope));
