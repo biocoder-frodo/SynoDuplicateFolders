@@ -47,9 +47,25 @@
             this.colorDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taggedColorBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabpageSecurity = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.optInteractiveSudo = new System.Windows.Forms.RadioButton();
+            this.optSudo = new System.Windows.Forms.RadioButton();
+            this.optLoginAsRoot = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
             this.txtDPAPI = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.tabPageProxy = new System.Windows.Forms.TabPage();
+            this.lblProxyPassword = new System.Windows.Forms.Label();
+            this.txtProxyPassword = new System.Windows.Forms.TextBox();
+            this.lblProxyUser = new System.Windows.Forms.Label();
+            this.txtProxyUser = new System.Windows.Forms.TextBox();
+            this.lblProxyPort = new System.Windows.Forms.Label();
+            this.txtProxyPort = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.lblProxyHost = new System.Windows.Forms.Label();
+            this.txtProxyHost = new System.Windows.Forms.TextBox();
+            this.optProxy = new System.Windows.Forms.RadioButton();
+            this.optNoProxy = new System.Windows.Forms.RadioButton();
+            this.cmbProxy = new System.Windows.Forms.ComboBox();
             this.btnApply = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tableLayoutPanel1.SuspendLayout();
@@ -59,6 +75,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).BeginInit();
             this.tabpageSecurity.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.tabPageProxy.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -81,6 +99,7 @@
             this.tabConfig.Controls.Add(this.tabpageServers);
             this.tabConfig.Controls.Add(this.tabCharting);
             this.tabConfig.Controls.Add(this.tabpageSecurity);
+            this.tabConfig.Controls.Add(this.tabPageProxy);
             this.tabConfig.Location = new System.Drawing.Point(3, 3);
             this.tabConfig.Name = "tabConfig";
             this.tabConfig.SelectedIndex = 0;
@@ -155,7 +174,6 @@
             this.txtFolder.Name = "txtFolder";
             this.txtFolder.Size = new System.Drawing.Size(349, 20);
             this.txtFolder.TabIndex = 6;
-            this.txtFolder.TextChanged += new System.EventHandler(this.txtFolder_TextChanged);
             // 
             // chkCacheFolder
             // 
@@ -235,9 +253,9 @@
             // 
             // tabpageSecurity
             // 
+            this.tabpageSecurity.Controls.Add(this.groupBox1);
             this.tabpageSecurity.Controls.Add(this.label2);
             this.tabpageSecurity.Controls.Add(this.txtDPAPI);
-            this.tabpageSecurity.Controls.Add(this.label1);
             this.tabpageSecurity.Location = new System.Drawing.Point(4, 22);
             this.tabpageSecurity.Name = "tabpageSecurity";
             this.tabpageSecurity.Padding = new System.Windows.Forms.Padding(3);
@@ -245,6 +263,51 @@
             this.tabpageSecurity.TabIndex = 1;
             this.tabpageSecurity.Text = "Security";
             this.tabpageSecurity.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.optInteractiveSudo);
+            this.groupBox1.Controls.Add(this.optSudo);
+            this.groupBox1.Controls.Add(this.optLoginAsRoot);
+            this.groupBox1.Location = new System.Drawing.Point(6, 40);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(578, 190);
+            this.groupBox1.TabIndex = 4;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Analyzer.db remove method";
+            // 
+            // optInteractiveSudo
+            // 
+            this.optInteractiveSudo.AutoSize = true;
+            this.optInteractiveSudo.Checked = true;
+            this.optInteractiveSudo.Location = new System.Drawing.Point(19, 80);
+            this.optInteractiveSudo.Name = "optInteractiveSudo";
+            this.optInteractiveSudo.Size = new System.Drawing.Size(219, 17);
+            this.optInteractiveSudo.TabIndex = 6;
+            this.optInteractiveSudo.TabStop = true;
+            this.optInteractiveSudo.Text = "Remove the file using interactive sudo rm";
+            this.optInteractiveSudo.UseVisualStyleBackColor = true;
+            // 
+            // optSudo
+            // 
+            this.optSudo.AutoSize = true;
+            this.optSudo.Location = new System.Drawing.Point(19, 57);
+            this.optSudo.Name = "optSudo";
+            this.optSudo.Size = new System.Drawing.Size(167, 17);
+            this.optSudo.TabIndex = 5;
+            this.optSudo.Text = "Remove the file using sudo rm";
+            this.optSudo.UseVisualStyleBackColor = true;
+            // 
+            // optLoginAsRoot
+            // 
+            this.optLoginAsRoot.AutoSize = true;
+            this.optLoginAsRoot.Enabled = false;
+            this.optLoginAsRoot.Location = new System.Drawing.Point(19, 34);
+            this.optLoginAsRoot.Name = "optLoginAsRoot";
+            this.optLoginAsRoot.Size = new System.Drawing.Size(422, 17);
+            this.optLoginAsRoot.TabIndex = 4;
+            this.optLoginAsRoot.Text = "Login as root using the same password as the admin account (DSM4.x and DSM5.x)";
+            this.optLoginAsRoot.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
@@ -262,14 +325,138 @@
             this.txtDPAPI.Size = new System.Drawing.Size(462, 20);
             this.txtDPAPI.TabIndex = 1;
             // 
-            // label1
+            // tabPageProxy
             // 
-            this.label1.Location = new System.Drawing.Point(19, 19);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(352, 94);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "The SSH login by the tool currently only supports logging in using a password and" +
-    " (on DSM6 and above) doing an interactive sudo to remove analyzer.db files.";
+            this.tabPageProxy.Controls.Add(this.lblProxyPassword);
+            this.tabPageProxy.Controls.Add(this.txtProxyPassword);
+            this.tabPageProxy.Controls.Add(this.lblProxyUser);
+            this.tabPageProxy.Controls.Add(this.txtProxyUser);
+            this.tabPageProxy.Controls.Add(this.lblProxyPort);
+            this.tabPageProxy.Controls.Add(this.txtProxyPort);
+            this.tabPageProxy.Controls.Add(this.label3);
+            this.tabPageProxy.Controls.Add(this.lblProxyHost);
+            this.tabPageProxy.Controls.Add(this.txtProxyHost);
+            this.tabPageProxy.Controls.Add(this.optProxy);
+            this.tabPageProxy.Controls.Add(this.optNoProxy);
+            this.tabPageProxy.Controls.Add(this.cmbProxy);
+            this.tabPageProxy.Location = new System.Drawing.Point(4, 22);
+            this.tabPageProxy.Name = "tabPageProxy";
+            this.tabPageProxy.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageProxy.Size = new System.Drawing.Size(599, 330);
+            this.tabPageProxy.TabIndex = 3;
+            this.tabPageProxy.Text = "Proxy";
+            this.tabPageProxy.UseVisualStyleBackColor = true;
+            // 
+            // lblProxyPassword
+            // 
+            this.lblProxyPassword.AutoSize = true;
+            this.lblProxyPassword.Location = new System.Drawing.Point(41, 158);
+            this.lblProxyPassword.Name = "lblProxyPassword";
+            this.lblProxyPassword.Size = new System.Drawing.Size(53, 13);
+            this.lblProxyPassword.TabIndex = 11;
+            this.lblProxyPassword.Text = "Password";
+            // 
+            // txtProxyPassword
+            // 
+            this.txtProxyPassword.Location = new System.Drawing.Point(100, 158);
+            this.txtProxyPassword.Name = "txtProxyPassword";
+            this.txtProxyPassword.PasswordChar = '*';
+            this.txtProxyPassword.Size = new System.Drawing.Size(200, 20);
+            this.txtProxyPassword.TabIndex = 10;
+            this.txtProxyPassword.UseSystemPasswordChar = true;
+            // 
+            // lblProxyUser
+            // 
+            this.lblProxyUser.AutoSize = true;
+            this.lblProxyUser.Location = new System.Drawing.Point(41, 132);
+            this.lblProxyUser.Name = "lblProxyUser";
+            this.lblProxyUser.Size = new System.Drawing.Size(29, 13);
+            this.lblProxyUser.TabIndex = 9;
+            this.lblProxyUser.Text = "User";
+            // 
+            // txtProxyUser
+            // 
+            this.txtProxyUser.Location = new System.Drawing.Point(100, 132);
+            this.txtProxyUser.Name = "txtProxyUser";
+            this.txtProxyUser.Size = new System.Drawing.Size(200, 20);
+            this.txtProxyUser.TabIndex = 8;
+            // 
+            // lblProxyPort
+            // 
+            this.lblProxyPort.AutoSize = true;
+            this.lblProxyPort.Location = new System.Drawing.Point(277, 97);
+            this.lblProxyPort.Name = "lblProxyPort";
+            this.lblProxyPort.Size = new System.Drawing.Size(26, 13);
+            this.lblProxyPort.TabIndex = 7;
+            this.lblProxyPort.Text = "Port";
+            // 
+            // txtProxyPort
+            // 
+            this.txtProxyPort.Location = new System.Drawing.Point(309, 94);
+            this.txtProxyPort.Name = "txtProxyPort";
+            this.txtProxyPort.Size = new System.Drawing.Size(63, 20);
+            this.txtProxyPort.TabIndex = 6;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(228, 63);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(32, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "proxy";
+            // 
+            // lblProxyHost
+            // 
+            this.lblProxyHost.AutoSize = true;
+            this.lblProxyHost.Location = new System.Drawing.Point(41, 94);
+            this.lblProxyHost.Name = "lblProxyHost";
+            this.lblProxyHost.Size = new System.Drawing.Size(29, 13);
+            this.lblProxyHost.TabIndex = 4;
+            this.lblProxyHost.Text = "Host";
+            // 
+            // txtProxyHost
+            // 
+            this.txtProxyHost.Location = new System.Drawing.Point(71, 94);
+            this.txtProxyHost.Name = "txtProxyHost";
+            this.txtProxyHost.Size = new System.Drawing.Size(200, 20);
+            this.txtProxyHost.TabIndex = 3;
+            // 
+            // optProxy
+            // 
+            this.optProxy.AutoSize = true;
+            this.optProxy.Location = new System.Drawing.Point(20, 61);
+            this.optProxy.Name = "optProxy";
+            this.optProxy.Size = new System.Drawing.Size(106, 17);
+            this.optProxy.TabIndex = 2;
+            this.optProxy.Text = "Use the following";
+            this.optProxy.UseVisualStyleBackColor = true;
+            this.optProxy.CheckedChanged += new System.EventHandler(this.optProxy_CheckedChanged);
+            // 
+            // optNoProxy
+            // 
+            this.optNoProxy.AutoSize = true;
+            this.optNoProxy.Checked = true;
+            this.optNoProxy.Location = new System.Drawing.Point(20, 29);
+            this.optNoProxy.Name = "optNoProxy";
+            this.optNoProxy.Size = new System.Drawing.Size(114, 17);
+            this.optNoProxy.TabIndex = 1;
+            this.optNoProxy.TabStop = true;
+            this.optNoProxy.Text = "Do not use a proxy";
+            this.optNoProxy.UseVisualStyleBackColor = true;
+            // 
+            // cmbProxy
+            // 
+            this.cmbProxy.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbProxy.FormattingEnabled = true;
+            this.cmbProxy.Items.AddRange(new object[] {
+            "Http",
+            "Socks4",
+            "Socks5"});
+            this.cmbProxy.Location = new System.Drawing.Point(132, 60);
+            this.cmbProxy.Name = "cmbProxy";
+            this.cmbProxy.Size = new System.Drawing.Size(90, 21);
+            this.cmbProxy.TabIndex = 0;
             // 
             // btnApply
             // 
@@ -301,6 +488,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).EndInit();
             this.tabpageSecurity.ResumeLayout(false);
             this.tabpageSecurity.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.tabPageProxy.ResumeLayout(false);
+            this.tabPageProxy.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -327,7 +518,23 @@
         private System.Windows.Forms.CheckBox chkCacheFolder;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtDPAPI;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.TabPage tabPageProxy;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton optInteractiveSudo;
+        private System.Windows.Forms.RadioButton optSudo;
+        private System.Windows.Forms.RadioButton optLoginAsRoot;
+        private System.Windows.Forms.ComboBox cmbProxy;
+        private System.Windows.Forms.Label lblProxyPassword;
+        private System.Windows.Forms.TextBox txtProxyPassword;
+        private System.Windows.Forms.Label lblProxyUser;
+        private System.Windows.Forms.TextBox txtProxyUser;
+        private System.Windows.Forms.Label lblProxyPort;
+        private System.Windows.Forms.TextBox txtProxyPort;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblProxyHost;
+        private System.Windows.Forms.TextBox txtProxyHost;
+        private System.Windows.Forms.RadioButton optProxy;
+        private System.Windows.Forms.RadioButton optNoProxy;
     }
 }

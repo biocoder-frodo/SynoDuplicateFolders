@@ -17,5 +17,26 @@
     <Setting Name="DPAPIVector" Type="System.String" Scope="User">
       <Value Profile="(Default)">Is a gift a gift without wrapping?</Value>
     </Setting>
+    <Setting Name="RmExecutionMode" Type="SynoDuplicateFolders.Data.SecureShell.ConsoleCommandMode" Scope="User">
+      <Value Profile="(Default)">InteractiveSudo</Value>
+    </Setting>
+    <Setting Name="UseProxy" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ProxyHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ProxyPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">8080</Value>
+    </Setting>
+    <Setting Name="ProxyUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ProxyPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ProxyMethod" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Http</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -54,7 +54,6 @@
   <ItemGroup>
     <Compile Include="ChartLegend.cs" />
     <Compile Include="CustomSettings.cs" />
-    <Compile Include="DSMHost.cs" />
     <Compile Include="HostConfiguration.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -67,6 +66,7 @@
     <Compile Include="Preferences.Designer.cs">
       <DependentUpon>Preferences.cs</DependentUpon>
     </Compile>
+    <Compile Include="ProxySettings.cs" />
     <Compile Include="SynoReportClient.cs">
       <SubType>Form</SubType>
     </Compile>
