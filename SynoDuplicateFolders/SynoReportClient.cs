@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using SynoDuplicateFolders.Data;
+using SynoDuplicateFolders.Data.ComponentModel;
 using SynoDuplicateFolders.Data.SecureShell;
 using SynoDuplicateFolders.Properties;
 using SynoDuplicateFolders.Extensions;
@@ -37,31 +38,32 @@ namespace SynoDuplicateFolders
         {
             try
             {
-                FileInfo entropy = null;
+                FileInfo source = null;
+                string entropy = "Is a gift a gift without wrapping?";
                 if (!string.IsNullOrEmpty(Settings.Default.DPAPIVector) && !string.IsNullOrWhiteSpace(Settings.Default.DPAPIVector))
                 {
                     try
                     {
-                        entropy = new FileInfo(Settings.Default.DPAPIVector);
+                        source = new FileInfo(Settings.Default.DPAPIVector);
                     }
                     catch (ArgumentException)
                     {
                         //don't care if it's not a filename
                     }
 
-                    if (entropy != null && entropy.Exists)
+                    if (source != null && source.Exists)
                     {
-                        WrappedPassword<DSMHost>.SetEntropy(new StreamReader(entropy.FullName).ReadToEnd());
+                        entropy = new StreamReader(source.FullName).ReadToEnd();
                     }
                     else
                     {
-                        WrappedPassword<DSMHost>.SetEntropy(Settings.Default.DPAPIVector);
+                        entropy = Settings.Default.DPAPIVector;
                     }
                 }
-                else
-                {
-                    WrappedPassword<DSMHost>.SetEntropy("Is a gift a gift without wrapping?");
-                }
+                                
+                WrappedPassword<DSMAuthentication>.SetEntropy(entropy);
+                WrappedPassword<DSMAuthenticationKeyFile>.SetEntropy(entropy);
+                WrappedPassword<DefaultProxy>.SetEntropy(entropy);
 
                 config = GetSection<CustomSettings>();
 
@@ -94,16 +96,35 @@ namespace SynoDuplicateFolders
         {
             ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Processing));
         }
+
         private void SynoReportClient_CacheUpdate(string host)
         {
             try
             {
                 Invoke(new Action(ProgressUpdateProcessing));
 
-                DSMHost h = config.DSMHosts.Items[host];                
-                WrappedPassword<DSMHost> proxy = new WrappedPassword<DSMHost>("Password", h);
-                SynoReportViaSSH connection = new SynoReportViaSSH(h.Host, h.Port, h.UserName, proxy.Password);
-                
+                DSMHost h = config.DSMHosts.Items[host];
+
+                SynoReportViaSSH connection = null;
+               
+                if (Settings.Default.UseProxy && h.Proxy == null )
+                {
+                    connection = new SynoReportViaSSH(h, new DefaultProxy());                    
+                }
+                else
+                {
+                    if (h.Proxy != null)
+                    {
+                        connection = new SynoReportViaSSH(h, h.Proxy);
+                    }
+                    else
+                    {
+                        connection = new SynoReportViaSSH(h);
+                    }
+                }
+
+                connection.RmExecutionMode = Settings.Default.RmExecutionMode;
+
                 cache = connection;
 
                 if (!string.IsNullOrEmpty(Settings.Default.CacheFolder))
@@ -123,7 +144,7 @@ namespace SynoDuplicateFolders
                 {
                     cache.KeepAnalyzerDbCount = Settings.Default.KeepAnalyzerDbCount;
                 }
-
+                
                 cache.DownloadUpdate += Cache_StatusUpdate;
                 connection.DownloadCSVFiles();
 

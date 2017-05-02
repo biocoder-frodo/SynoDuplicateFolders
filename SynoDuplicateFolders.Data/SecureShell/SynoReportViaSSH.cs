@@ -9,31 +9,84 @@ namespace SynoDuplicateFolders.Data.SecureShell
 {
     public sealed class SynoReportViaSSH : BSynoReportCache
     {
-        private readonly string _host;
-        private readonly string _username;
-        private readonly string _pw;
-        private readonly int _port;
+        private readonly DSMHost _host;
+        private readonly ConnectionInfo _ci;
 
-        private IDSMVersion _version = null;        
+        private IDSMVersion _version = null;
 
-        public SynoReportViaSSH(string host, int port, string username, string password)
+        public SynoReportViaSSH(DSMHost host, IProxySettings proxy = null)
         {
+            RmExecutionMode = ConsoleCommandMode.InteractiveSudo;
+
             _host = host;
-            _port = port;
-            _username = username;
-            _pw = password;            
+
+            int i = 0;
+            AuthenticationMethod[] methods = new AuthenticationMethod[host.AuthenticationSection.Count];
+            foreach (var m in host.AuthenticationMethods)
+            {
+                methods[i++] = m.getAuthenticationMethod();
+            }
+
+            if (proxy != null)
+            {
+                ProxyTypes proxypath;
+                if (!Enum.TryParse(proxy.ProxyType, true, out proxypath))
+                {
+                    proxypath = ProxyTypes.None;
+                }
+                _ci = new ConnectionInfo(host.Host, host.Port, host.UserName, proxypath, proxy.Host, proxy.Port, proxy.UserName, proxy.Password, methods);
+            }
+            else
+            {
+                _ci = new ConnectionInfo(host.Host, host.Port, host.UserName, methods);
+            }            
         }
-        public string Host { get { return _host; } }
-        internal string UserName { get { return _username; } }
-        internal string Password { get { return _pw; } }
+
+        public ConsoleCommandMode RmExecutionMode { get; set; }
+
+        internal string Password
+        {
+            get
+            {
+                foreach (DSMAuthentication a in _host.AuthenticationMethods)
+                {
+                    if (a.Method == DSMAuthenticationMethod.Password && _ci.Username.Equals(a.UserName))
+                    {
+                        return a.Password;
+                    }
+                }
+                return string.Empty;
+            }
+        }
+        public string SynoReportHome
+        {
+            get
+            {
+                string result = string.Format("/volume1/homes/{0}/synoreport/", _host.UserName);
+                if (!string.IsNullOrWhiteSpace(_host.SynoReportHome))
+                {
+                    if (_host.SynoReportHome.StartsWith("/") && _host.SynoReportHome.EndsWith("/synoreport/"))
+                    {
+                        result = _host.SynoReportHome;
+                    }
+                }
+                return result;
+            }
+        }
+        public string Host
+        {
+            get { return _ci.Host; }
+        }
+
+        internal ConnectionInfo ConnectionInfo { get { return _ci; } }
 
         private void RaiseDownloadEvent(CacheStatus status)
         {
             OnDownloadUpdate(this, new SynoReportCacheDownloadEventArgs(status));
         }
         private void RaiseDownloadEvent(CacheStatus status, string message)
-        {            
-            OnDownloadUpdate(this, new SynoReportCacheDownloadEventArgs(status,message));
+        {
+            OnDownloadUpdate(this, new SynoReportCacheDownloadEventArgs(status, message));
         }
         private void RaiseDownloadEvent(CacheStatus status, int totalFiles, int file)
         {
@@ -46,8 +99,8 @@ namespace SynoDuplicateFolders.Data.SecureShell
             {
                 if (_version == null)
                 {
-                    using (SshClient sc = new SshClient(_host, _port, _username, _pw))
-                    {                       
+                    using (SshClient sc = new SshClient(_ci))
+                    {
                         GetConsole(sc);
                     }
                 }
@@ -101,13 +154,29 @@ namespace SynoDuplicateFolders.Data.SecureShell
         {
             try
             {
-                SortedDictionary<DateTime, ConsoleFileInfo> dsm_databases = new SortedDictionary<DateTime, ConsoleFileInfo>();
+                SortedDictionary<DateTime, List<ConsoleFileInfo>> dsm_databases = new SortedDictionary<DateTime, List<ConsoleFileInfo>>();
                 IConsoleCommand console = null;
 
                 _files.Clear();
 
-                using (SshClient sc = new SshClient(_host, _port, _username, _pw))
-                {
+                using (SshClient sc = new SshClient(_ci))
+                {   
+                    //_ci.AuthenticationBanner += delegate (object sender, AuthenticationBannerEventArgs e)
+                    //  {
+                    //      Console.WriteLine(e.BannerMessage);
+                    //      Console.WriteLine(e.Username);
+                    //  };
+                    //var kb = _ci.AuthenticationMethods[0] as KeyboardInteractiveAuthenticationMethod;
+                    //if (kb!=null)kb.AuthenticationPrompt += delegate(object sender, AuthenticationPromptEventArgs e)
+                    //{
+                    //    Console.WriteLine(e.Instruction);
+                    //    foreach (var p in e.Prompts)
+                    //    {
+                    //        Console.WriteLine(p.Request);
+                    //        p.Response ="1";
+
+                    //    }
+                    //};                 
                     RaiseDownloadEvent(CacheStatus.FetchingDirectoryInfo);
 
                     sc.Connect();
@@ -138,15 +207,23 @@ namespace SynoDuplicateFolders.Data.SecureShell
                             }
                             else
                             {
-                                if (fi.FileName.EndsWith("analyzer.db"))
+                                if (fi.FileName.EndsWith(".db") || fi.FileName.Equals("INFO"))
                                 {
-                                    dsm_databases.Add(fi.Modified, fi);
+                                    DateTime folder;
+                                    if (ParseReportFolderTimeStamp(fi, out folder))
+                                    {
+                                        if (dsm_databases.ContainsKey(folder) == false)
+                                        {
+                                            dsm_databases.Add(folder, new List<ConsoleFileInfo>());
+                                        }
+                                        dsm_databases[folder].Add(fi);
+                                    }
                                 }
                             }
                         }
                     }
 
-                    using (ScpClient cp = new ScpClient(_host, _port, _username, _pw))
+                    using (ScpClient cp = new ScpClient(_ci))
                     {
                         cp.Connect();
 
@@ -171,7 +248,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                                     cp.Connect();
                                 }
                             }
-                            
+
                             RaiseDownloadEvent(CacheStatus.Downloading, _files.Count, ++n);
                         }
 
@@ -183,8 +260,11 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
                 if (KeepAnalyzerDbCount >= 0)
                 {
-                    List<ConsoleFileInfo> remove = dsm_databases.Values.Take(dsm_databases.Count - KeepAnalyzerDbCount).ToList();
-                    console.RemoveFiles(this, remove);
+                    List<DateTime> remove = dsm_databases.Keys.Take(dsm_databases.Count - KeepAnalyzerDbCount).ToList();
+                    foreach (DateTime r in remove)
+                    {
+                        console.RemoveFiles(this, dsm_databases[r]);
+                    }
                 }
 
             }

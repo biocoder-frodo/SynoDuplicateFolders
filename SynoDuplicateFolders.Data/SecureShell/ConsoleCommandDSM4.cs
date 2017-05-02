@@ -62,11 +62,10 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
                 foreach (var db in dsm_databases)
                 {
-                    string deleteme = "/volume1/homes/admin/" + db.Path.Substring(1);
-                    Console.WriteLine("removing " + deleteme);
-                    Console.WriteLine(scr.RunCommand("rm " + deleteme));
-
+                    RemoveFile(session, db, ConsoleCommandMode.Directly, scr);
                 }
+
+                scr.Disconnect();
             }
         }
     }

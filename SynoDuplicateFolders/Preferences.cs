@@ -5,18 +5,32 @@ using System.Windows.Forms;
 using SynoDuplicateFolders.Properties;
 using SynoDuplicateFolders.Controls;
 using SynoDuplicateFolders.Extensions;
+using SynoDuplicateFolders.Data.SecureShell;
 using static System.Environment;
 using static SynoDuplicateFolders.Properties.Settings;
 namespace SynoDuplicateFolders
 {
     public partial class Preferences : Form
     {
-        private CustomSettings _config;
+        private readonly CustomSettings _config;
+        private readonly DefaultProxy _proxy = new DefaultProxy();
 
         private bool dirty_custom = false;
-        string server = string.Empty;
-        string folder = string.Empty;
+        private string server = string.Empty;
+        private string folder = string.Empty;
+        private bool use_proxy = false;
+
+        private string proxy_host = string.Empty;
+        private int proxy_port = 8080;
+        private string proxy_user = string.Empty;
+        private string proxy_password = string.Empty;
+        private string proxy_type = string.Empty;
+        private string dpapi = string.Empty;
+
+        ConsoleCommandMode mode = ConsoleCommandMode.InteractiveSudo;
+
         bool keep = true;
+
         int keepCount = 1;
 
         internal Preferences(CustomSettings config)
@@ -34,15 +48,32 @@ namespace SynoDuplicateFolders
             ControlsToData();
 
             if (!Default.AutoRefreshServer.Equals(server)
+                || !Default.DPAPIVector.Equals(dpapi)
                 || !Default.CacheFolder.Equals(folder)
                 || !Default.KeepAnalyzerDb.Equals(keep)
-                || !Default.KeepAnalyzerDbCount.Equals(keepCount))
+                || !Default.KeepAnalyzerDbCount.Equals(keepCount)
+                || !Default.RmExecutionMode.Equals(mode)
+                || !Default.UseProxy.Equals(use_proxy)
+                || !_proxy.ProxyType.Equals(proxy_type)
+                || !_proxy.Host.Equals(proxy_host)
+                || !_proxy.UserName.Equals(proxy_user)
+                || !_proxy.Password.Equals(proxy_password)
+                || !_proxy.Port.Equals(proxy_port)
+                )
 
             {
                 Default.CacheFolder = folder;
+                Default.DPAPIVector = dpapi;
                 Default.AutoRefreshServer = server;
                 Default.KeepAnalyzerDb = keep;
                 Default.KeepAnalyzerDbCount = keepCount;
+                Default.RmExecutionMode = mode;
+                Default.UseProxy = use_proxy;
+                _proxy.ProxyType = proxy_type;
+                _proxy.Host = proxy_host;
+                _proxy.UserName = proxy_user;
+                _proxy.Password = proxy_password;
+                _proxy.Port = proxy_port;
                 Default.Save();
             }
             if (dirty_custom)
@@ -96,6 +127,17 @@ namespace SynoDuplicateFolders
 
             txtDPAPI.Text = Default.DPAPIVector;
 
+            optLoginAsRoot.Checked = true;
+            optSudo.Checked = Default.RmExecutionMode == ConsoleCommandMode.Sudo;
+            optInteractiveSudo.Checked = Default.RmExecutionMode == ConsoleCommandMode.InteractiveSudo;
+
+            txtProxyHost.Text = _proxy.Host;
+            txtProxyPort.Text = _proxy.Port.ToString();
+            txtProxyUser.Text = _proxy.UserName;
+            cmbProxy.Text = _proxy.ProxyType;
+
+            ProxyControls(Default.UseProxy);
+
         }
 
         private void ControlsToData()
@@ -124,6 +166,19 @@ namespace SynoDuplicateFolders
             keep = optAnalyzerDbKeep.Checked;
             keepCount = int.Parse(txtKeep.Text);
 
+            mode = ConsoleCommandMode.Directly;
+            if (optSudo.Checked) mode = ConsoleCommandMode.Sudo;
+            if (optInteractiveSudo.Checked) mode = ConsoleCommandMode.InteractiveSudo;
+
+            proxy_host = txtProxyHost.Text;
+            proxy_port = int.Parse(txtProxyPort.Text);
+            proxy_user = txtProxyUser.Text;
+            proxy_password = txtProxyPassword.Text;
+            proxy_type = cmbProxy.Text;
+            use_proxy = optProxy.Checked;
+
+            dpapi = txtDPAPI.Text;
+
         }
         #endregion
 
@@ -149,11 +204,6 @@ namespace SynoDuplicateFolders
         private void optAnalyzerDbRemove_CheckedChanged(object sender, EventArgs e)
         {
             txtKeep.Enabled = ((RadioButton)sender).Checked;
-        }
-
-        private void txtFolder_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -182,6 +232,27 @@ namespace SynoDuplicateFolders
             c.Style.SelectionBackColor = k;
             c.Style.SelectionForeColor = k;
         }
+
+        private void optProxy_CheckedChanged(object sender, EventArgs e)
+        {
+            ProxyControls(((RadioButton)sender).Checked);
+        }
+
+        private void ProxyControls(bool enabled)
+        {
+            optProxy.Checked = enabled;
+            txtProxyHost.Enabled = enabled;
+            txtProxyPort.Enabled = enabled;
+            txtProxyUser.Enabled = enabled;
+            txtProxyPassword.Enabled = enabled;
+            txtProxyPassword.Enabled = enabled;
+            lblProxyHost.Enabled = enabled;
+            lblProxyPassword.Enabled = enabled;
+            lblProxyPort.Enabled = enabled;
+            lblProxyUser.Enabled = enabled;
+            cmbProxy.Enabled = enabled;
+        }
+
         #endregion
     }
 }

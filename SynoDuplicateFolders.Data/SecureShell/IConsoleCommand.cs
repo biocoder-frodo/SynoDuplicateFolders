@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
+    public enum ConsoleCommandMode
+    {
+        Directly,       
+        InteractiveSudo,
+        Sudo
+    }
     internal interface IConsoleCommand
     {
         IDSMVersion GetVersionInfo(SshClient client);

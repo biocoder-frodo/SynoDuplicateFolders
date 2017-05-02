@@ -1,5 +1,5 @@
 ﻿using System;
-using SynoDuplicateFolders.Properties;
+using SynoDuplicateFolders.Data.SecureShell;
 using SynoDuplicateFolders.Extensions;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
@@ -12,16 +12,15 @@ namespace SynoDuplicateFolders
         private static readonly Regex portspec = new Regex("(.*/{0}):([0-9]+)$");
 
         public readonly DSMHost Host;
-        private readonly WrappedPassword<DSMHost> proxy;
+
         public bool Canceled = false;
         public HostConfiguration()
         {
             InitializeComponent();
 
             Host = new DSMHost();
-            proxy = new WrappedPassword<DSMHost>("Password", Host);
 
-            txtSynoReportHome.Text = "/homes/admin/synoreport";
+            txtSynoReportHome.Text = "/volume1/homes/admin/synoreport/";
             txtUser.Text = "admin";
             chkSynoReportHome.CheckState = CheckState.Unchecked;
             chkUser.CheckState = CheckState.Unchecked;
@@ -33,15 +32,16 @@ namespace SynoDuplicateFolders
             InitializeComponent();
 
             Host = host;
-            proxy = new WrappedPassword<DSMHost>("Password", Host);
+
             txtPassword.Text = "";
             txtUser.Text = Host.UserName.ToLower();
             txtHost.Text = Host.Host;
-            txtSynoReportHome.Text = string.IsNullOrWhiteSpace(host.SynoReportHome) ? "/homes/" + host.UserName + "/synoreport" : host.SynoReportHome;
+            txtSynoReportHome.Text = string.IsNullOrWhiteSpace(host.SynoReportHome) ? "/volume1/homes/" + host.UserName + "/synoreport/" : host.SynoReportHome;
             txtPort.Text = host.Port.ToString();
         }
         private void HostConfiguration_Load(object sender, EventArgs e)
         {
+            listView1.View = View.List;
 
         }
 
@@ -56,12 +56,35 @@ namespace SynoDuplicateFolders
             Host.Host = txtHost.Text;
             Host.Port = int.Parse(txtPort.Text);
             Host.UserName = txtUser.Text;
-            proxy.Password = txtPassword.Text;
-            Host.SynoReportHome = chkSynoReportHome.Checked ?  txtSynoReportHome.Text : string.Empty ;
+            DSMAuthentication method = null;
+
+            Host.SynoReportHome = chkSynoReportHome.Checked ? txtSynoReportHome.Text : string.Empty;
             if (Validate())
-            {; }
+            {
+                method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.None, chkAuthNone.Checked);
+
+                method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.KeyboardInteractive, chkKeyBoardInteractive.Checked);
+                if (method != null)
+                {
+                    method.UserName = Host.UserName;
+                }
+
+                method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.Password, chkPassword.Checked);
+                if (method != null)
+                {
+                    method.UserName = Host.UserName;
+                    method.Password = txtPassword.Text;
+                }
+
+                method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.PrivateKeyFile, chkKeyFiles.Checked);
+                if (method != null)
+                {
+                    method.UserName = Host.UserName;
+                }
+            }
             else
             {; }
+
             Hide();
 
         }
@@ -88,7 +111,7 @@ namespace SynoDuplicateFolders
 
             if (!custom)
             {
-                txtSynoReportHome.Text = "/homes/" + txtUser.Text + "/synoreport";                
+                txtSynoReportHome.Text = "/volume1/homes/" + txtUser.Text + "/synoreport/";
             }
 
         }
@@ -98,39 +121,65 @@ namespace SynoDuplicateFolders
             chkSynoReportHome_CheckedChanged(sender, e);
         }
 
-        private void txtSynoReportHome_Leave(object sender, EventArgs e)
-        {
-
-        }
-
-
         private void txtHost_TextChanged(object sender, EventArgs e)
         {
-            if (txtHost.Text.EndsWith(":", StringComparison.InvariantCulture)==false &&  portspec.IsMatch(txtHost.Text))
+            if (txtHost.Text.EndsWith(":", StringComparison.InvariantCulture) == false && portspec.IsMatch(txtHost.Text))
             {
                 Match m = portspec.Match(txtHost.Text);
                 txtPort.Text = m.Groups[2].Value;
-                txtHost.Text = m.Groups[1].Value;                
+                txtHost.Text = m.Groups[1].Value;
                 txtPort.SelectionStart = txtPort.Text.Length;
                 txtPort.Focus();
             }
-
         }
 
-        private void txtPort_TextChanged(object sender, EventArgs e)
+        private void chkPassword_CheckedChanged(object sender, EventArgs e)
         {
-
+            txtPassword.Enabled = ((CheckBox)sender).Checked;
         }
 
-        private void txtPort_KeyPress(object sender, KeyPressEventArgs e)
+        private void chkKeyFiles_CheckedChanged(object sender, EventArgs e)
         {
-            
+            bool check = ((CheckBox)sender).Checked;
+            listView1.Enabled = check;
+            btnKeyFileAdd.Enabled = check;
+            btnKeyFileRemove.Enabled = check;
         }
 
-        private void txtPort_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        private void btnKeyFileAdd_Click(object sender, EventArgs e)
         {
-          //  e.Cancel = true;
+            string filename;
+            if (OpenDialog("Open a key file", out filename))
+            {
+                listView1.Items.Add(filename);
+            }
+        }
 
+        private void btnKeyFileRemove_Click(object sender, EventArgs e)
+        {
+            foreach(int i in listView1.SelectedIndices)
+            {
+                listView1.Items.Remove(listView1.Items[i]);
+            }
+        }
+        private bool OpenDialog(string title, out string filename)
+        {
+            DialogResult r;
+            filename = string.Empty;
+
+            openFileDialog1.AddExtension = true;
+            openFileDialog1.FileName = "";
+            openFileDialog1.DefaultExt = "key";
+            openFileDialog1.Filter = "All files (*.*)|*.*|Private Key Files (*.key)|*.key";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.SupportMultiDottedExtensions = true;
+            openFileDialog1.Title = title;
+            r = openFileDialog1.ShowDialog();
+            if (r == DialogResult.OK)
+            {
+                filename = openFileDialog1.FileName;
+            }
+            return r == DialogResult.OK;
         }
     }
 }

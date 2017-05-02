@@ -84,12 +84,12 @@ namespace SynoDuplicateFolders.Properties
             set { ColorName = value.ToArgb().ToString(); }
         }
 
-        public object GetElementKey()
+        object IElementProvider.GetElementKey()
         {
             return Key.ToString();
         }
 
-        public string GetElementName()
+        string IElementProvider.GetElementName()
         {
             return "ChartLegend";
         }

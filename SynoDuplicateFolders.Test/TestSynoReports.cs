@@ -83,9 +83,10 @@ namespace SynoDuplicateFolders.Test
             {
                 Assert.NotNull(report, "The report should not be a null reference.");
                 var rows = report.BindingSource.DataSource as SortableBindingList<ISynoReportGroupDetail>;
-                Assert.NotNull(rows, "The binding source should have a datasource instance.");
+                Assert.NotNull(rows, "The binding source should have a datasource instance.");                
+                if (rows.Count == 0) throw new InconclusiveException("The number of rows should be larger than zero.");
                 Assert.AreEqual(0, rows.Count, "The number of rows does not match.");
-                Assert.Greater(rows.Count,0, "The number of rows should be larger than zero.");
+
             }
         }
 

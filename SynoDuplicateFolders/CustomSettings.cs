@@ -3,6 +3,7 @@ using System.Configuration;
 using SynoDuplicateFolders.Configuration;
 using System.Collections.Generic;
 using SynoDuplicateFolders.Controls;
+using SynoDuplicateFolders.Data.SecureShell;
 
 namespace SynoDuplicateFolders.Properties
 {

@@ -45,7 +45,7 @@ namespace SynoDuplicateFolders.Data
             {
                 if (_allreports[ts].ContainsKey(type))
                 {
-                    result=  GetReport(_allreports[ts][type]);
+                    result = GetReport(_allreports[ts][type]);
                 }
             }
             DownloadUpdate?.Invoke(this, new SynoReportCacheDownloadEventArgs(CacheStatus.Idle));
@@ -162,6 +162,19 @@ namespace SynoDuplicateFolders.Data
             return report;
         }
 
+        internal bool ParseReportFolderTimeStamp(ConsoleFileInfo file, out DateTime ts)
+        {
+            ts = default(DateTime);
+            if (_report_ts.IsMatch(file.Path))
+            {
+                Match m = _report_ts.Match(file.Path);
+                ts = new DateTime(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value),
+                    int.Parse(m.Groups[4].Value), int.Parse(m.Groups[5].Value), int.Parse(m.Groups[6].Value), DateTimeKind.Local);
+                return true;
+            }
+            return false;
+        }
+    
         internal void CSVToCategory(SynoReportType t, string match, string filename)
         {
             if (filename.Contains(match))

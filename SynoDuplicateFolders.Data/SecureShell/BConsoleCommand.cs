@@ -1,12 +1,15 @@
 ﻿using Renci.SshNet;
+using Renci.SshNet.Common;
 using SynoDuplicateFolders.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
     public abstract class BConsoleCommand : IConsoleCommand
     {
+        internal static readonly string sudo = "sudo {0}";
         internal Dictionary<string, string> _properties = null;
         internal static IConsoleCommand GetDSMConsole(SshClient client)
         {
@@ -44,5 +47,73 @@ namespace SynoDuplicateFolders.Data.SecureShell
         public abstract IDSMVersion GetVersionInfo(SshClient client);
         public abstract List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, bool Disconnect = true);
         public abstract void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases);
+
+        internal void RemoveFile(SynoReportViaSSH connection, ConsoleFileInfo file, ConsoleCommandMode mode, SshClient session = null)
+        {
+            RunCommand(connection, string.Format("rm {0}", connection.SynoReportHome.Substring(0,connection.SynoReportHome.Length - "synoreport/".Length) + file.Path.Substring(1)), mode, session);
+        }
+
+        internal string RunCommand(SynoReportViaSSH connection, string command, ConsoleCommandMode mode = ConsoleCommandMode.Directly, SshClient session = null)
+        {
+
+            switch (mode)
+            {
+                case ConsoleCommandMode.Sudo:
+                    return session.RunCommand(string.Format(sudo, command)).Result;
+                case ConsoleCommandMode.InteractiveSudo:
+                    ExperimentalSudo(connection, command);
+                    return string.Empty;
+                default:
+                    return session.RunCommand(command).Result;
+            }
+        }
+        private void ExperimentalSudo(SynoReportViaSSH session, string command)
+        {
+            try
+            {
+                SshClient sshClient = new SshClient(session.ConnectionInfo);
+
+                sshClient.Connect();
+                IDictionary<TerminalModes, uint> termkvp = new Dictionary<TerminalModes, uint>();
+                termkvp.Add(TerminalModes.ECHO, 53);
+
+                ShellStream shellStream = sshClient.CreateShellStream("xterm", 80, 24, 800, 600, 1024, termkvp);
+
+
+                //Get logged in
+                string rep = shellStream.Expect(new Regex(@"[$>]")); //expect user prompt
+                                                                     //this.writeOutput(results, rep);
+                                                                     //
+                                                                     //send command
+                shellStream.WriteLine("sudo " + command);
+                rep = shellStream.Expect(new Regex(@"([$#>:])")); //expect password or user prompt
+                //this.writeOutput(results, rep);
+
+                //check to send password
+                if (rep.Contains(":"))
+                {
+                    //send password
+                    shellStream.WriteLine(session.Password);
+                    rep = shellStream.Expect(new Regex(@"[$#>]"), new TimeSpan(0, 0, 10)); //expect user or root prompt
+                                                                                           //this.writeOutput(results, rep);
+                    if (rep == null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("sudo action failed?");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("{0}\r\n{1}", command, rep);
+                    }
+                }
+
+                sshClient.Disconnect();
+            }//try to open connection
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex.ToString());
+                throw ex;
+            }
+
+        }
     }
 }
