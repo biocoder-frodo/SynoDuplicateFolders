@@ -14,3 +14,5 @@ Built on top of SSH.NET, SynoDuplicateFolders is a Windows Forms client applicat
 Since this application is parsing server output, this may not work for you, without making changes to code.
 
 Tested with Storage Analyzer 2.0.0-0158.
+
+![](https://github.com/biocoder-frodo/SynoDuplicateFolders/raw/master/wiki-images/synoreport-client.png)
