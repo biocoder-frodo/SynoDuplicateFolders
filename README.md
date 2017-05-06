@@ -16,3 +16,5 @@ Since this application is parsing server output, this may not work for you, with
 Tested with Storage Analyzer 2.0.0-0158.
 
 ![](https://github.com/biocoder-frodo/SynoDuplicateFolders/raw/master/wiki-images/synoreport-client.png)
+
+[Goto the wiki](https://github.com/biocoder-frodo/SynoDuplicateFolders/wiki)
