@@ -23,15 +23,18 @@ namespace SynoDuplicateFolders
         private CustomSettings config = null;
         private SynoReportDuplicateCandidates dupes = null;
 
+        private int fileSizeColumn = -1;
+
         public SynoReportClient()
-        { 
+        {
             InitializeComponent();
 
             dataGridView1.AutoGenerateColumns = true;
+            dataGridView1.CellFormatting += DataGridView1_CellFormatting;
             cmbFileDetails.SelectedIndex = 0;
 
             CacheUpdateCompleted += SynoReportClient_CacheUpdateCompleted;
-            DuplicatesAnalysisCompleted += SynoReportClient_DuplicatesAnalysisCompleted;           
+            DuplicatesAnalysisCompleted += SynoReportClient_DuplicatesAnalysisCompleted;
         }
 
         private void SynoReportClient_Load(object sender, EventArgs e)
@@ -60,7 +63,7 @@ namespace SynoDuplicateFolders
                         entropy = Settings.Default.DPAPIVector;
                     }
                 }
-                                
+
                 WrappedPassword<DSMAuthentication>.SetEntropy(entropy);
                 WrappedPassword<DSMAuthenticationKeyFile>.SetEntropy(entropy);
                 WrappedPassword<DefaultProxy>.SetEntropy(entropy);
@@ -68,7 +71,7 @@ namespace SynoDuplicateFolders
                 config = GetSection<CustomSettings>();
 
                 PopulateServerTree();
-               
+
                 volumeHistoricChart1.Configuration = config;
                 chartGrid1.Configuration = config;
 
@@ -83,7 +86,7 @@ namespace SynoDuplicateFolders
             }
             catch (Exception ex)
             {
-               MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -106,10 +109,10 @@ namespace SynoDuplicateFolders
                 DSMHost h = config.DSMHosts.Items[host];
 
                 SynoReportViaSSH connection = null;
-               
-                if (Settings.Default.UseProxy && h.Proxy == null )
+
+                if (Settings.Default.UseProxy && h.Proxy == null)
                 {
-                    connection = new SynoReportViaSSH(h, new DefaultProxy());                    
+                    connection = new SynoReportViaSSH(h, new DefaultProxy());
                 }
                 else
                 {
@@ -144,7 +147,7 @@ namespace SynoDuplicateFolders
                 {
                     cache.KeepAnalyzerDbCount = Settings.Default.KeepAnalyzerDbCount;
                 }
-                
+
                 cache.DownloadUpdate += Cache_StatusUpdate;
                 connection.DownloadCSVFiles();
 
@@ -180,11 +183,11 @@ namespace SynoDuplicateFolders
 
         private void SynoReportClient_CacheUpdateCompleted(string version)
         {
-             Invoke(new Action<string>(PopulateFromCache), version);
+            Invoke(new Action<string>(PopulateFromCache), version);
         }
 
         private void preferences_Click(object sender, EventArgs e)
-        {            
+        {
             new Preferences(config).ShowDialog();
         }
 
@@ -193,9 +196,22 @@ namespace SynoDuplicateFolders
             chartGrid1.DataSource = cache.GetReport(timeStampTrackBar.Value, SynoReportType.VolumeUsage, SynoReportType.ShareList) as IVolumePieChart;
         }
 
+        private void DataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == fileSizeColumn)
+            {
+                e.Value = ((long)e.Value).ToFileSizeString();
+                e.FormattingApplied = true;
+            }
+            else
+            {
+                e.FormattingApplied = false;
+            }
+
+        }
         private void timeStampTrackBar1_Scroll(object sender, EventArgs e)
         {
-            string value= cmbFileDetails.Text.ToLowerInvariant();
+            string value = cmbFileDetails.Text.ToLowerInvariant();
             switch (value)
             {
                 case "owners":
@@ -219,6 +235,7 @@ namespace SynoDuplicateFolders
 
         private void setDataSource<T>(DataGridView grid, DateTime ts, SynoReportType type) where T : class, ISynoReportDetail
         {
+            fileSizeColumn = -1;
             if (cache != null)
             {
                 var rows = cache.GetReport(ts, type);
@@ -226,10 +243,14 @@ namespace SynoDuplicateFolders
                 {
                     grid.Visible = true;
                     grid.DataSource = (rows as ISynoReportBindingSource<T>).BindingSource;
+                    if (grid.Columns.Contains("Size"))
+                    {
+                        fileSizeColumn = grid.Columns["Size"].Index;
+                    }
                 }
                 else
                 {
-                    grid.DataSource = null;
+                    grid.DataSource = null;                    
                 }
             }
         }
@@ -309,7 +330,7 @@ namespace SynoDuplicateFolders
                     toolStripStatusLabel1.Text = "Fetching DSM version.";
                     break;
                 case CacheStatus.FetchingVersionInfoCompleted:
-                    toolStripStatusLabel1.Text = "DSM version "+ e.Message;
+                    toolStripStatusLabel1.Text = "DSM version " + e.Message;
                     break;
                 case CacheStatus.Downloading:
                     toolStripStatusLabel1.Text = string.Format("Downloading files.. [{0} of {1}]", e.FilesFetched, e.TotalFiles);
@@ -355,13 +376,13 @@ namespace SynoDuplicateFolders
         private void PopulateDuplicatesTab()
         {
             ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Processing));
-            if (dupes!=null)
-            {                
-                duplicateCandidatesView1.DataSource = dupes;                
+            if (dupes != null)
+            {
+                duplicateCandidatesView1.DataSource = dupes;
             }
             ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Idle));
         }
-      
+
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             ((TreeView)sender).SelectedNode = e.Node;

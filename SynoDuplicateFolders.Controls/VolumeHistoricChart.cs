@@ -1,4 +1,5 @@
 ﻿using SynoDuplicateFolders.Data;
+using SynoDuplicateFolders.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -19,7 +20,24 @@ namespace SynoDuplicateFolders.Controls
         {
             InitializeComponent();
             chart1.Visible = false;
+            chart1.FormatNumber += Chart1_FormatNumber;
         }
+
+        private void Chart1_FormatNumber(object sender, FormatNumberEventArgs e)
+        {
+            if (sender is Axis)
+            {
+                Axis a = sender as Axis;
+                if (a.AxisName == AxisName.Y)
+                {
+                    if (ShowingType == SynoReportType.ShareList)
+                    {
+                        e.LocalizedValue = Convert.ToInt64(e.Value).ToFileSizeString(FileSizeFormatSize.TB);
+                    }
+                }
+            }
+        }
+
         public IChartConfiguration Configuration
         {
             get { return _legends; }
