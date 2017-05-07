@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using SynoDuplicateFolders.Extensions;
 
 namespace SynoDuplicateFolders.Controls
 {
@@ -16,7 +17,7 @@ namespace SynoDuplicateFolders.Controls
         private bool _percentage_free_only = false;
         public ChartGrid()
         {
-            InitializeComponent();           
+            InitializeComponent();
         }
         public IChartConfiguration Configuration
         {
@@ -52,6 +53,7 @@ namespace SynoDuplicateFolders.Controls
                         foreach (Chart c in _charts)
                         {
                             c.MouseClick -= new MouseEventHandler(chart_MouseClick);
+                            c.GetToolTipText -= C_GetToolTipText;
                         }
                         _charts.Clear();
                         for (int r = 0; r < _src.Series.Count; r++)
@@ -70,14 +72,14 @@ namespace SynoDuplicateFolders.Controls
                         RenderData(r, _charts[r]);
                     }
                 }
-           }
+            }
         }
 
         private void RenderData(int index, Chart target)
         {
             if (target.Series.Count.Equals(0))
             {
-                target.Series.Add("Series Name - " + _src.Series[index]);
+                target.Series.Add(_src.Series[index]);
             }
             if (target.Titles.Count.Equals(0))
             {
@@ -86,20 +88,20 @@ namespace SynoDuplicateFolders.Controls
             if (target.Series[0].ChartType != SeriesChartType.Pie)
                 target.Series[0].ChartType = SeriesChartType.Pie;
 
-
+            target.Series[0].Name = _src.Series[index];
             DataPointCollection dpc = target.Series[0].Points;
             dpc.Clear();
             foreach (PieChartDataPoint dp in _src[index])
             {
-                dpc.AddXY(dp.SliceName, dp.Value);
-
+                dpc[dpc.AddXY(dp.SliceName, dp.Value)].LegendText = dp.SliceName;
+                
                 if (_legends.ContainsKey(dp.SliceName))
                 {
                     dpc[dpc.Count - 1].Color = _legends[dp.SliceName].Color;
                 }
                 else
                 {
-                  // _legends.Add(dp.SliceName, dpc[dpc.Count - 1].Color);
+                    // _legends.Add(dp.SliceName, dpc[dpc.Count - 1].Color);
                 }
             }
 
@@ -107,15 +109,44 @@ namespace SynoDuplicateFolders.Controls
         private Chart NewChart()
         {
             Chart c = new Chart();
-         
+
             c.ChartAreas.Add(new ChartArea());
             c.Legends.Add(new Legend());
             c.Series.Add(new Series());
             c.Height = 300;
             c.Width = 300;
             c.MouseClick += new MouseEventHandler(chart_MouseClick);
+            c.GetToolTipText += C_GetToolTipText;
             return c;
         }
+
+        private void C_GetToolTipText(object sender, ToolTipEventArgs e)
+        {
+            string text = string.Empty;
+            if (e.HitTestResult.ChartElementType == ChartElementType.DataPoint)
+            {
+                var h = e.HitTestResult;
+                Series hovered = h.Series;
+                double size = _src.TotalSize(hovered.Name)/100.0;
+              
+                if (hovered.Points[h.PointIndex].LegendText.Equals("Free")|| hovered.Points[h.PointIndex].LegendText.Equals("Used"))
+                {
+                    text = string.Format("{0}: {2} ({1:0.0}%)",
+                        hovered.Name +" "+ hovered.Points[h.PointIndex].LegendText,
+                        hovered.Points[h.PointIndex].YValues[0],
+                        ((long)(size * hovered.Points[h.PointIndex].YValues[0])).ToFileSizeString());
+                }
+                else
+                {
+                    text = string.Format("{0}: {2} ({1:0.0}%)",
+                        hovered.Name +"/"+ hovered.Points[h.PointIndex].LegendText,
+                        hovered.Points[h.PointIndex].YValues[0],
+                        ((long)(size * hovered.Points[h.PointIndex].YValues[0])).ToFileSizeString());
+                }
+            }
+            if (!e.Text.Equals(text)) e.Text = text;
+        }
+
         private void chart_MouseClick(object sender, MouseEventArgs e)
         {
             _percentage_free_only = !_percentage_free_only;
@@ -131,8 +162,8 @@ namespace SynoDuplicateFolders.Controls
 
                 for (int r = 0; r < _src.Series.Count; r++)
                 {
-                     _charts[r].Width = b/2;
-                    _charts[r].Height = b/2;
+                    _charts[r].Width = b / 2;
+                    _charts[r].Height = b / 2;
                 }
             }
         }

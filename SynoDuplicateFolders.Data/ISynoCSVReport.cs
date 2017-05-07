@@ -25,6 +25,8 @@ namespace SynoDuplicateFolders.Data
     public interface IVolumePieChart : ISynoChartData
     {
         bool PercentageFreeOnly { get; set; }
+        long TotalSize(int index);
+        long TotalSize(string volume);
     }
     public interface IXYDataPoint
     {

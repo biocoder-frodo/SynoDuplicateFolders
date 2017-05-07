@@ -7,25 +7,25 @@ namespace SynoDuplicateFolders.Extensions
         private const int default_precision = 1;
         private static readonly FileSizeFormatProvider _talk_bytes = new FileSizeFormatProvider(default_precision);
 
-        public static string ToFileSizeString(this long l, int precision = default_precision)
+        public static string ToFileSizeString(this long size, int precision = default_precision)
         {
-            return String.Format(_talk_bytes, "{0:fs" + precision.ToString() + "}", l);
+            return String.Format(_talk_bytes, "{0:fs" + precision.ToString() + "}", size);
         }
 
-        public static string ToFileSizeString(this long l, FileSizeFormatSize range, bool suffix = true, int precision = default_precision)
+        public static string ToFileSizeString(this long size, FileSizeFormatSize range, bool suffix = true, int precision = default_precision)
         {
-            return String.Format(_talk_bytes, "{0:fs" + precision.ToString() + "," + range.ToString() + (suffix ? "":"!") + "}", l);
+            return String.Format(_talk_bytes, "{0:fs" + precision.ToString() + "," + range.ToString() + (suffix ? "":"!") + "}", size);
+        }
+        public static FileSizeFormatSize GetFileSizeRange(this long size)
+        {
+            return FileSizeFormatProvider.GetFileSizeRange(Convert.ToDecimal(size));
         }
     }
     public enum FileSizeFormatSize
     {
-        B,
-        kB,
-        MB,
-        GB,
-        TB,
-        PB
+        B, kB, MB, GB, TB, PB
     }
+
     public class FileSizeFormatProvider : IFormatProvider, ICustomFormatter
     {
         private readonly int _default_precision;
@@ -49,7 +49,7 @@ namespace SynoDuplicateFolders.Extensions
         private const Decimal OneTeraByte = OneGigaByte * 1024M;
         private const Decimal OnePetaByte = OneTeraByte * 1024M;
 
-        private Decimal[] sizes = new Decimal[6]
+        private static Decimal[] sizes = new Decimal[6]
         {
             1M, OneKiloByte, OneMegaByte, OneGigaByte, OneTeraByte, OnePetaByte
         };
@@ -138,6 +138,25 @@ namespace SynoDuplicateFolders.Extensions
                 return formattableArg.ToString(format, formatProvider);
             }
             return arg.ToString();
+        }
+
+        public static FileSizeFormatSize GetFileSizeRange(decimal size)
+        {
+            FileSizeFormatSize range = FileSizeFormatSize.PB;
+            string suffix = null;
+            while (suffix == null)
+            {
+                if (size > sizes[(int)range])
+                {
+                    size /= sizes[(int)range];
+                    suffix = range.ToString();
+                }
+                else
+                {
+                    if (--range == 0) suffix = range.ToString();
+                }
+            }
+            return range;
         }
 
     }

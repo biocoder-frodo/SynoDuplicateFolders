@@ -68,6 +68,16 @@ namespace SynoDuplicateFolders.Data
                 return this[_volumes.Volumes.IndexOf(name)];
             }
         }
+
+        public long TotalSize(int index)
+        {
+             return TotalSize(_volumes.Volumes[index]);
+        }
+
+        public long TotalSize(string volume)
+        {
+            return _volumes.Size[volume];
+        }
     }
 
 }

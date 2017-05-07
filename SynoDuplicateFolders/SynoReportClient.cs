@@ -250,7 +250,7 @@ namespace SynoDuplicateFolders
                 }
                 else
                 {
-                    grid.DataSource = null;                    
+                    grid.DataSource = null;
                 }
             }
         }

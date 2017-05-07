@@ -51,8 +51,8 @@
             this.chart1.Size = new System.Drawing.Size(1030, 576);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
+            this.chart1.GetToolTipText += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ToolTipEventArgs>(this.chart1_GetToolTipText);
             this.chart1.PostPaint += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ChartPaintEventArgs>(this.chart1_PostPaint);
-
             this.chart1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.chart1_MouseClick);
             // 
             // VolumeHistoricChart

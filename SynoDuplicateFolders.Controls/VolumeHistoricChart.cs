@@ -16,6 +16,8 @@ namespace SynoDuplicateFolders.Controls
         private bool invalidated = false;
         private readonly List<string> unknown_traces = new List<string>();
 
+        private FileSizeFormatSize shares_range = FileSizeFormatSize.PB;
+
         public VolumeHistoricChart()
         {
             InitializeComponent();
@@ -32,7 +34,7 @@ namespace SynoDuplicateFolders.Controls
                 {
                     if (ShowingType == SynoReportType.ShareList)
                     {
-                        e.LocalizedValue = Convert.ToInt64(e.Value).ToFileSizeString(FileSizeFormatSize.TB);
+                        e.LocalizedValue = Convert.ToInt64(e.Value).ToFileSizeString(shares_range);
                     }
                 }
             }
@@ -46,7 +48,8 @@ namespace SynoDuplicateFolders.Controls
         public SynoReportType ShowingType
         {
             get { return showing; }
-            set {
+            set
+            {
                 if (value == SynoReportType.VolumeUsage || value == SynoReportType.ShareList)
                 {
                     if (showing != value)
@@ -56,20 +59,23 @@ namespace SynoDuplicateFolders.Controls
                     }
                 }
                 else
-                { throw new ArgumentException(); }
+                {
+                    throw new ArgumentException();
+                }
             }
         }
         public ISynoReportCache DataSource
         {
             set
             {
-                src = value;               
+                src = value;
                 if (src != null)
                 {
                     switch (showing)
                     {
                         case SynoReportType.ShareList:
-                        case SynoReportType.VolumeUsage: data = src.GetReport(showing) as ISynoChartData;                        
+                        case SynoReportType.VolumeUsage:
+                            data = src.GetReport(showing) as ISynoChartData;
                             break;
                         default:
                             break;
@@ -78,7 +84,8 @@ namespace SynoDuplicateFolders.Controls
                     {
                         chart1.Series.Clear();
                         unknown_traces.Clear();
-                        //int trace = 1;
+
+                        long peak = 0;
 
                         foreach (string s in data.Series)
                         {
@@ -90,31 +97,45 @@ namespace SynoDuplicateFolders.Controls
                                 IsXValueIndexed = false,
                                 ChartType = SeriesChartType.StepLine
                             };
-                            //string legend = trace.ToString();
-                            //Console.Write("trace " + legend + ": " + s);
+
+                            Console.Write("trace " + s + ": ");
                             if (_legends.ContainsKey(s))
                             {
-                                //Console.WriteLine(" - picking dictionary color");
+                                Console.WriteLine(" picking dictionary color");
                                 series1.Color = _legends[s].Color;
                             }
                             else
                             {
                                 unknown_traces.Add(s);
-                                //Console.WriteLine(" - picking default color");
+                                Console.WriteLine(" picking default color");
                             }
 
-                            //trace++;
-                            this.chart1.Series.Add(series1);
+                            chart1.Series.Add(series1);
 
 
                             series1.Points.Clear();
-                            foreach (IXYDataPoint dp in data[s])
+                            if (showing == SynoReportType.ShareList)
                             {
-                                series1.Points.AddXY(dp.X, dp.Y);
-                            }
 
+                                foreach (IXYDataPoint dp in data[s])
+                                {
+                                    if (peak < (long)dp.Y) peak = (long)dp.Y;
+                                    series1.Points.AddXY(dp.X, dp.Y);
+                                }
+                            }
+                            else
+                            {
+                                foreach (IXYDataPoint dp in data[s])
+                                {
+                                    series1.Points.AddXY(dp.X, dp.Y);
+                                }
+                            }
                         }
+
+                        shares_range = peak.GetFileSizeRange();
+
                         invalidated = true;
+
                         chart1.Invalidate();
                         chart1.Visible = true;
                     }
@@ -128,7 +149,7 @@ namespace SynoDuplicateFolders.Controls
             switch (h.ChartElementType)
             {
                 case ChartElementType.LegendItem:
-                    
+
                     LegendItem li = h.Object as LegendItem;
                     Console.WriteLine(li.SeriesName);
                     break;
@@ -142,7 +163,7 @@ namespace SynoDuplicateFolders.Controls
                         case AxisName.Y2:
                             break;
                         default:
-                            break;                          
+                            break;
                     }
                     break;
                 case ChartElementType.PlottingArea:
@@ -163,7 +184,7 @@ namespace SynoDuplicateFolders.Controls
 
         private void chart1_PostPaint(object sender, ChartPaintEventArgs e)
         {
-            if (invalidated && unknown_traces.Count>0)
+            if (invalidated && unknown_traces.Count > 0)
             {
 
                 int index = 0;
@@ -172,10 +193,34 @@ namespace SynoDuplicateFolders.Controls
                     if (unknown_traces.Contains(data.Series[index]))
                     {
                         _legends.Add(data.Series[index], chart1.Series[index].Color, true);
-                    }
+                    }                    
                 }
             }
             invalidated = false;
+        }
+
+        private void chart1_GetToolTipText(object sender, ToolTipEventArgs e)
+        {
+            string text =string.Empty;
+            if (e.HitTestResult.ChartElementType == ChartElementType.DataPoint)
+            {
+                if (ShowingType == SynoReportType.ShareList)
+                {
+                    text = string.Format("{0}: {2} ({1})",
+                        e.HitTestResult.Series.Name,
+                        DateTime.FromOADate(e.HitTestResult.Series.Points[e.HitTestResult.PointIndex].XValue),
+                        ((long)e.HitTestResult.Series.Points[e.HitTestResult.PointIndex].YValues[0]).ToFileSizeString());
+                }
+                else
+                {
+                    text = string.Format("{0}: {2:0.0}%, ({1})",
+                        e.HitTestResult.Series.Name,
+                        DateTime.FromOADate(e.HitTestResult.Series.Points[e.HitTestResult.PointIndex].XValue),
+                        (float)e.HitTestResult.Series.Points[e.HitTestResult.PointIndex].YValues[0]);
+                }
+                if (!e.Text.Equals(text)) e.Text = text;
+                //Console.WriteLine(e.Text);
+            }
         }
     }
 }
