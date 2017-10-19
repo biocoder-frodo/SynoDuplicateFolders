@@ -174,6 +174,7 @@ namespace SynoDuplicateFolders.Data
                 columns[i] = columns[i].Trim();
                 map.Add(columns[i], i);
             }
+            if (map.ContainsKey("shared folder")) map.Add("share", map["shared folder"]);
             while (src.EndOfStream == false)
             {
                 columns = src.ReadLine().ToLowerInvariant().Split('\t');

@@ -202,24 +202,27 @@ namespace SynoDuplicateFolders.Controls
         private void chart1_GetToolTipText(object sender, ToolTipEventArgs e)
         {
             string text =string.Empty;
-            if (e.HitTestResult.ChartElementType == ChartElementType.DataPoint)
+            HitTestResult h = e.HitTestResult;
+
+            if (h.ChartElementType == ChartElementType.DataPoint)
             {
+                DataPoint dp = h.Series.Points[h.PointIndex];
                 if (ShowingType == SynoReportType.ShareList)
                 {
                     text = string.Format("{0}: {2} ({1})",
-                        e.HitTestResult.Series.Name,
-                        DateTime.FromOADate(e.HitTestResult.Series.Points[e.HitTestResult.PointIndex].XValue),
-                        ((long)e.HitTestResult.Series.Points[e.HitTestResult.PointIndex].YValues[0]).ToFileSizeString());
+                        h.Series.Name,
+                        DateTime.FromOADate(dp.XValue),
+                        ((long)dp.YValues[0]).ToFileSizeString());
                 }
                 else
                 {
                     text = string.Format("{0}: {2:0.0}%, ({1})",
-                        e.HitTestResult.Series.Name,
-                        DateTime.FromOADate(e.HitTestResult.Series.Points[e.HitTestResult.PointIndex].XValue),
-                        (float)e.HitTestResult.Series.Points[e.HitTestResult.PointIndex].YValues[0]);
+                        h.Series.Name,
+                        DateTime.FromOADate(dp.XValue),
+                        (float)dp.YValues[0]);
                 }
                 if (!e.Text.Equals(text)) e.Text = text;
-                //Console.WriteLine(e.Text);
+
             }
         }
     }

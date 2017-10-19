@@ -46,20 +46,24 @@ namespace SynoDuplicateFolders.Controls
             Files.Items.Clear();
             Where.Nodes.Clear();
             List<string> folders = new List<string>();
-
+            long count=0;
             string selected = '/' + Candidates.SelectedNode.FullPath;
 
             if (src.DuplicatesGroupByPath.ContainsKey(selected))
+            {
                 foreach (long group in src.DuplicatesGroupByPath[selected])
                     foreach (DuplicateFileInfo s in src.DuplicatesByGroup[group])
                     {
                         if (s.FullPath.StartsWith(selected))
                         {
+                            count++;
                             if (folders.Contains(s.FileName) == false && s.FileName != null)
                                 folders.Add(s.FileName);
                         }
                     }
-
+                
+            }
+            lblContext.Text = string.Format("{0} duplicate(s)", count);
 
             Files.Items.AddRange(folders.ToArray());
             Files.SelectedIndex = -1;
@@ -68,21 +72,26 @@ namespace SynoDuplicateFolders.Controls
         private void Files_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             Where.Nodes.Clear();
+            lblContext.Text = string.Empty;
+            if (Files.SelectedItem != null)
+            {
+                if (src.DuplicatesGroupByName.ContainsKey((string)Files.SelectedItem))
 
-            if (src.DuplicatesGroupByName.ContainsKey((string)Files.SelectedItem))
-                foreach (long index in src.DuplicatesGroupByName[(string)Files.SelectedItem])
-                    foreach (DuplicateFileInfo s in src.DuplicatesByGroup[index])
-                    {
-                        if (s.FileName == Files.Text)
+                    foreach (long index in src.DuplicatesGroupByName[(string)Files.SelectedItem])
+                        foreach (DuplicateFileInfo s in src.DuplicatesByGroup[index])
                         {
-                            Where.Add(s.FullPath);
-                            foreach (DuplicateFileInfo o in src.DuplicatesByGroup[index])
+                            if (s.FileName == Files.Text)
                             {
-                                Where.Add(o.FullPath);
+                                lblContext.Text = (string)Files.SelectedItem + "\r\n" + s.Length.ToFileSizeString();
+                                Where.Add(s.FullPath);
+                                foreach (DuplicateFileInfo o in src.DuplicatesByGroup[index])
+                                {
+                                    Where.Add(o.FullPath);
+                                }
                             }
                         }
-                    }
-            Where.ExpandAll();
+                Where.ExpandAll();
+            }
         }
     }
 }

@@ -33,6 +33,8 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.Files = new System.Windows.Forms.ListBox();
             this.Where = new System.Windows.Forms.TreeView();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.lblContext = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -41,12 +43,13 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 133);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -56,8 +59,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(550, 423);
-            this.splitContainer1.SplitterDistance = 183;
+            this.splitContainer1.Size = new System.Drawing.Size(544, 368);
+            this.splitContainer1.SplitterDistance = 181;
             this.splitContainer1.TabIndex = 0;
             // 
             // Candidates
@@ -66,7 +69,7 @@
             this.Candidates.Location = new System.Drawing.Point(0, 0);
             this.Candidates.Name = "Candidates";
             this.Candidates.PathSeparator = "/";
-            this.Candidates.Size = new System.Drawing.Size(183, 423);
+            this.Candidates.Size = new System.Drawing.Size(181, 368);
             this.Candidates.TabIndex = 1;
             this.Candidates.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.Candidates_AfterSelect);
             // 
@@ -84,8 +87,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.Where);
-            this.splitContainer2.Size = new System.Drawing.Size(363, 423);
-            this.splitContainer2.SplitterDistance = 121;
+            this.splitContainer2.Size = new System.Drawing.Size(359, 368);
+            this.splitContainer2.SplitterDistance = 105;
             this.splitContainer2.TabIndex = 0;
             // 
             // Files
@@ -94,7 +97,7 @@
             this.Files.FormattingEnabled = true;
             this.Files.Location = new System.Drawing.Point(0, 0);
             this.Files.Name = "Files";
-            this.Files.Size = new System.Drawing.Size(363, 121);
+            this.Files.Size = new System.Drawing.Size(359, 105);
             this.Files.TabIndex = 1;
             this.Files.SelectedIndexChanged += new System.EventHandler(this.Files_SelectedIndexChanged);
             // 
@@ -104,14 +107,38 @@
             this.Where.Location = new System.Drawing.Point(0, 0);
             this.Where.Name = "Where";
             this.Where.PathSeparator = "/";
-            this.Where.Size = new System.Drawing.Size(363, 298);
+            this.Where.Size = new System.Drawing.Size(359, 259);
             this.Where.TabIndex = 1;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Controls.Add(this.splitContainer1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.lblContext, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 130F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(550, 423);
+            this.tableLayoutPanel1.TabIndex = 1;
+            // 
+            // lblContext
+            // 
+            this.lblContext.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.lblContext.AutoSize = true;
+            this.lblContext.Location = new System.Drawing.Point(3, 58);
+            this.lblContext.Name = "lblContext";
+            this.lblContext.Size = new System.Drawing.Size(0, 13);
+            this.lblContext.TabIndex = 2;
             // 
             // DuplicateCandidatesView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "DuplicateCandidatesView";
             this.Size = new System.Drawing.Size(550, 423);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -122,6 +149,8 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -133,5 +162,7 @@
         private System.Windows.Forms.TreeView Candidates;
         private System.Windows.Forms.ListBox Files;
         private System.Windows.Forms.TreeView Where;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label lblContext;
     }
 }

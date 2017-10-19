@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("NAS");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("NAS");
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.exportSharesReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,8 +51,13 @@
             this.duplicateCandidatesView1 = new SynoDuplicateFolders.Controls.DuplicateCandidatesView();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.chartGrid1 = new SynoDuplicateFolders.Controls.ChartGrid();
             this.timeStampTrackBar = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
+            this.chartGrid1 = new SynoDuplicateFolders.Controls.ChartGrid();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.timeStampTrackBar1 = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
+            this.cmbFileDetails = new System.Windows.Forms.ComboBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -62,11 +67,6 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.timeStampTrackBar1 = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
-            this.cmbFileDetails = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -79,11 +79,11 @@
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
-            this.contextMenuStrip2.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
+            this.contextMenuStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -205,10 +205,10 @@
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            treeNode4.Name = "Node0";
-            treeNode4.Text = "NAS";
+            treeNode2.Name = "Node0";
+            treeNode2.Text = "NAS";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode4});
+            treeNode2});
             this.treeView1.ShowNodeToolTips = true;
             this.treeView1.Size = new System.Drawing.Size(119, 682);
             this.treeView1.TabIndex = 0;
@@ -293,6 +293,15 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1234, 650);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
+            // timeStampTrackBar
+            // 
+            this.timeStampTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.timeStampTrackBar.Location = new System.Drawing.Point(3, 567);
+            this.timeStampTrackBar.Name = "timeStampTrackBar";
+            this.timeStampTrackBar.Size = new System.Drawing.Size(1228, 80);
+            this.timeStampTrackBar.TabIndex = 6;
+            this.timeStampTrackBar.Scroll += new System.EventHandler(this.timeStampTrackBar_Scroll);
+            // 
             // chartGrid1
             // 
             this.chartGrid1.Configuration = null;
@@ -303,14 +312,73 @@
             this.chartGrid1.Size = new System.Drawing.Size(1228, 558);
             this.chartGrid1.TabIndex = 0;
             // 
-            // timeStampTrackBar
+            // tabPage4
             // 
-            this.timeStampTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.timeStampTrackBar.Location = new System.Drawing.Point(3, 567);
-            this.timeStampTrackBar.Name = "timeStampTrackBar";
-            this.timeStampTrackBar.Size = new System.Drawing.Size(1228, 80);
-            this.timeStampTrackBar.TabIndex = 6;
-            this.timeStampTrackBar.Scroll += new System.EventHandler(this.timeStampTrackBar_Scroll);
+            this.tabPage4.Controls.Add(this.tableLayoutPanel2);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(1240, 656);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "File Details";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Controls.Add(this.dataGridView1, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.timeStampTrackBar1, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.cmbFileDetails, 0, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 3;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 72F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 86F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1234, 650);
+            this.tableLayoutPanel2.TabIndex = 1;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 75);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.Size = new System.Drawing.Size(1228, 486);
+            this.dataGridView1.TabIndex = 1;
+            this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
+            this.dataGridView1.ColumnHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseDoubleClick);
+
+            // 
+            // timeStampTrackBar1
+            // 
+            this.timeStampTrackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.timeStampTrackBar1.Location = new System.Drawing.Point(3, 567);
+            this.timeStampTrackBar1.Name = "timeStampTrackBar1";
+            this.timeStampTrackBar1.Size = new System.Drawing.Size(1228, 80);
+            this.timeStampTrackBar1.TabIndex = 2;
+            this.timeStampTrackBar1.Scroll += new System.EventHandler(this.timeStampTrackBar1_Scroll);
+            // 
+            // cmbFileDetails
+            // 
+            this.cmbFileDetails.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.cmbFileDetails.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFileDetails.FormattingEnabled = true;
+            this.cmbFileDetails.Items.AddRange(new object[] {
+            "Owners",
+            "Most Modified",
+            "Least Modified",
+            "Groups"});
+            this.cmbFileDetails.Location = new System.Drawing.Point(514, 25);
+            this.cmbFileDetails.Name = "cmbFileDetails";
+            this.cmbFileDetails.Size = new System.Drawing.Size(206, 21);
+            this.cmbFileDetails.TabIndex = 3;
+            this.cmbFileDetails.SelectedIndexChanged += new System.EventHandler(this.cmbFileDetails_SelectedIndexChanged);
             // 
             // contextMenuStrip1
             // 
@@ -366,71 +434,6 @@
             this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.propertiesToolStripMenuItem.Text = "Properties";
             // 
-            // tabPage4
-            // 
-            this.tabPage4.Controls.Add(this.tableLayoutPanel2);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(1240, 656);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "File Details";
-            this.tabPage4.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 1;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.dataGridView1, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.timeStampTrackBar1, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.cmbFileDetails, 0, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 3;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 72F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 86F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1234, 650);
-            this.tableLayoutPanel2.TabIndex = 1;
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 75);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(1228, 486);
-            this.dataGridView1.TabIndex = 1;
-            // 
-            // timeStampTrackBar1
-            // 
-            this.timeStampTrackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.timeStampTrackBar1.Location = new System.Drawing.Point(3, 567);
-            this.timeStampTrackBar1.Name = "timeStampTrackBar1";
-            this.timeStampTrackBar1.Size = new System.Drawing.Size(1228, 80);
-            this.timeStampTrackBar1.TabIndex = 2;
-            this.timeStampTrackBar1.Scroll += new System.EventHandler(this.timeStampTrackBar1_Scroll);
-            // 
-            // cmbFileDetails
-            // 
-            this.cmbFileDetails.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.cmbFileDetails.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFileDetails.FormattingEnabled = true;
-            this.cmbFileDetails.Items.AddRange(new object[] {
-            "Owners",
-            "Most Modified",
-            "Least Modified",
-            "Groups"});
-            this.cmbFileDetails.Location = new System.Drawing.Point(514, 22);
-            this.cmbFileDetails.Name = "cmbFileDetails";
-            this.cmbFileDetails.Size = new System.Drawing.Size(206, 21);
-            this.cmbFileDetails.TabIndex = 3;
-            this.cmbFileDetails.SelectedIndexChanged += new System.EventHandler(this.cmbFileDetails_SelectedIndexChanged);
-            // 
             // SynoReportClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -456,11 +459,11 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.contextMenuStrip2.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
+            this.contextMenuStrip2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 

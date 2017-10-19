@@ -27,4 +27,12 @@ namespace SynoDuplicateFolders.Data
         long Size { get; }
     }
 
+    public interface IDuplicatesHistogramValue : ISynoReportDetail
+    {
+        long Minimum { get; }
+        long Maximum { get; }
+        long Count { get; }
+        long UniqueSize { get; }
+        long TotalSize { get; }
+    }
 }

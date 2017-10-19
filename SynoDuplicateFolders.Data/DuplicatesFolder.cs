@@ -40,6 +40,24 @@ namespace SynoDuplicateFolders.Data
                 return p.ToString();
             }
         }
+        public void Clear()
+        {
+            DuplicatesFolder root = this;
+            while (root.Parent != null)
+            {
+                root = root.Parent;
+            }
+            ClearFolder(root);
+        }
+        private void ClearFolder(DuplicatesFolder root)
+        {
+            root.Files.Clear();
+            foreach (DuplicatesFolder f in root.Folders.Values)
+            {
+                ClearFolder(f);
+            }
+            root.Folders.Clear();
+        }
     }
 }
 

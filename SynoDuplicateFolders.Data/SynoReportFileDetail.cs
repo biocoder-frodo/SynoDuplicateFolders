@@ -46,7 +46,11 @@ namespace SynoDuplicateFolders.Data
             _Timestamp = fi.LastWriteTimeUtc;
 
             SimpleCSVReader r = new SimpleCSVReader(src, '\t', new List<SimpleCSVReaderColumnNameReplacer>
-                        { new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Contains, "size", "size") });
+                        {
+                            new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Contains, "size", "size"),
+                            new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals, "shared folder", "share"),
+                            new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals, "modified time", "modify time"),
+                        });
 
             while (r.EndOfStream == false)
             {
@@ -142,7 +146,9 @@ namespace SynoDuplicateFolders.Data
             SimpleCSVReader r = new SimpleCSVReader(src, '\t',
                 new List<SimpleCSVReaderColumnNameReplacer>()
                 {
-                    new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Contains,"size","size")
+                    new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Contains,"size","size"),
+                    new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"username","owner"),
+                    new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"shared folder","share"),
                 }
                 );
 

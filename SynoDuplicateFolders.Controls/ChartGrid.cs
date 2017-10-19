@@ -125,23 +125,25 @@ namespace SynoDuplicateFolders.Controls
             string text = string.Empty;
             if (e.HitTestResult.ChartElementType == ChartElementType.DataPoint)
             {
-                var h = e.HitTestResult;
+                HitTestResult h = e.HitTestResult;
                 Series hovered = h.Series;
+                DataPoint dp = hovered.Points[h.PointIndex];
+
                 double size = _src.TotalSize(hovered.Name)/100.0;
               
-                if (hovered.Points[h.PointIndex].LegendText.Equals("Free")|| hovered.Points[h.PointIndex].LegendText.Equals("Used"))
+                if (dp.LegendText.Equals("Free")|| dp.LegendText.Equals("Used"))
                 {
                     text = string.Format("{0}: {2} ({1:0.0}%)",
-                        hovered.Name +" "+ hovered.Points[h.PointIndex].LegendText,
-                        hovered.Points[h.PointIndex].YValues[0],
-                        ((long)(size * hovered.Points[h.PointIndex].YValues[0])).ToFileSizeString());
+                        hovered.Name +" "+ dp.LegendText,
+                        dp.YValues[0],
+                        ((long)(size * dp.YValues[0])).ToFileSizeString());
                 }
                 else
                 {
                     text = string.Format("{0}: {2} ({1:0.0}%)",
-                        hovered.Name +"/"+ hovered.Points[h.PointIndex].LegendText,
-                        hovered.Points[h.PointIndex].YValues[0],
-                        ((long)(size * hovered.Points[h.PointIndex].YValues[0])).ToFileSizeString());
+                        hovered.Name +"/"+ dp.LegendText,
+                        dp.YValues[0],
+                        ((long)(size * dp.YValues[0])).ToFileSizeString());
                 }
             }
             if (!e.Text.Equals(text)) e.Text = text;
