@@ -2,13 +2,17 @@
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Diagnostics;
+
 using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.ComponentModel;
 using SynoDuplicateFolders.Data.SecureShell;
 using SynoDuplicateFolders.Properties;
 using SynoDuplicateFolders.Extensions;
+using SynoDuplicateFolders.Controls;
 
 using static SynoDuplicateFolders.Configuration.UserSectionHandler;
+using static SynoDuplicateFolders.Properties.Settings;
 using static System.Environment;
 using System.IO;
 using System.ComponentModel;
@@ -30,7 +34,7 @@ namespace SynoDuplicateFolders
         private ISynoReportCache cache = null;
         private CustomSettings config = null;
         private SynoReportDuplicateCandidates dupes = null;
-        
+
         private int fileSizeColumn = -1;
 
         public SynoReportClient()
@@ -43,6 +47,52 @@ namespace SynoDuplicateFolders
 
             CacheUpdateCompleted += SynoReportClient_CacheUpdateCompleted;
             DuplicatesAnalysisCompleted += SynoReportClient_DuplicatesAnalysisCompleted;
+
+            duplicateCandidatesView1.OnItemOpen += DuplicateCandidatesView1_OnItemOpen;
+            duplicateCandidatesView1.OnItemCompare += DuplicateCandidatesView1_OnItemCompare;
+        }
+
+        private void DuplicateCandidatesView1_OnItemCompare(object sender, ItemsComparedEventArgs e)
+        {
+            try
+            {
+                string args = Default.DiffArgs;
+                if (!args.Contains("{0}"))
+                {
+                    args += "{0}";
+                }
+                string list = string.Empty;
+                foreach (string p in e.Items)
+                {
+                    list += "\"" + p + "\"" + " ";
+                }
+                Process.Start(new ProcessStartInfo()
+                {
+                    FileName = Default.DiffExe,
+                    Arguments = string.Format(args, list)
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void DuplicateCandidatesView1_OnItemOpen(object sender, ItemOpenedEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo()
+                {
+                    FileName = e.Path,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void SynoReportClient_Load(object sender, EventArgs e)
@@ -51,11 +101,11 @@ namespace SynoDuplicateFolders
             {
                 FileInfo source = null;
                 string entropy = "Is a gift a gift without wrapping?";
-                if (!string.IsNullOrEmpty(Settings.Default.DPAPIVector) && !string.IsNullOrWhiteSpace(Settings.Default.DPAPIVector))
+                if (!string.IsNullOrEmpty(Default.DPAPIVector) && !string.IsNullOrWhiteSpace(Default.DPAPIVector))
                 {
                     try
                     {
-                        source = new FileInfo(Settings.Default.DPAPIVector);
+                        source = new FileInfo(Default.DPAPIVector);
                     }
                     catch (ArgumentException)
                     {
@@ -68,7 +118,7 @@ namespace SynoDuplicateFolders
                     }
                     else
                     {
-                        entropy = Settings.Default.DPAPIVector;
+                        entropy = Default.DPAPIVector;
                     }
                 }
 
@@ -83,9 +133,11 @@ namespace SynoDuplicateFolders
                 volumeHistoricChart1.Configuration = config;
                 chartGrid1.Configuration = config;
 
-                if (string.IsNullOrEmpty(Settings.Default.AutoRefreshServer) == false)
+                duplicateCandidatesView1.MaximumComparable = Default.MaximumComparable;
+
+                if (string.IsNullOrEmpty(Default.AutoRefreshServer) == false)
                 {
-                    string tag = Settings.Default.AutoRefreshServer;
+                    string tag = Default.AutoRefreshServer;
                     if (config.DSMHosts.Items.ContainsKey(tag))
                     {
                         Task.Factory.StartNew(() => SynoReportClient_CacheUpdate(tag));
@@ -118,7 +170,7 @@ namespace SynoDuplicateFolders
 
                 SynoReportViaSSH connection = null;
 
-                if (Settings.Default.UseProxy && h.Proxy == null)
+                if (Default.UseProxy && h.Proxy == null)
                 {
                     connection = new SynoReportViaSSH(h, new DefaultProxy());
                 }
@@ -134,26 +186,26 @@ namespace SynoDuplicateFolders
                     }
                 }
 
-                connection.RmExecutionMode = Settings.Default.RmExecutionMode;
+                connection.RmExecutionMode = Default.RmExecutionMode;
 
                 cache = connection;
 
-                if (!string.IsNullOrEmpty(Settings.Default.CacheFolder))
+                if (!string.IsNullOrEmpty(Default.CacheFolder))
                 {
-                    cache.Path = Path.Combine(Settings.Default.CacheFolder, h.Host);
+                    cache.Path = Path.Combine(Default.CacheFolder, h.Host);
                 }
                 else
                 {
                     cache.Path = Path.Combine(GetFolderPath(SpecialFolder.MyDocuments), Application.ProductName, h.Host);
                 }
 
-                if (Settings.Default.KeepAnalyzerDb == true)
+                if (Default.KeepAnalyzerDb == true)
                 {
                     cache.KeepAnalyzerDbCount = -1;
                 }
                 else
                 {
-                    cache.KeepAnalyzerDbCount = Settings.Default.KeepAnalyzerDbCount;
+                    cache.KeepAnalyzerDbCount = Default.KeepAnalyzerDbCount;
                 }
 
                 cache.DownloadUpdate += Cache_StatusUpdate;
@@ -162,6 +214,7 @@ namespace SynoDuplicateFolders
                 if (CacheUpdateCompleted != null)
                 {
                     CacheUpdateCompleted.Invoke(string.Format("{0} ({1})", connection.Host, connection.Version));
+                    duplicateCandidatesView1.HostName = connection.Host;
                 }
 
                 if (cache.GetReports(SynoReportType.DuplicateCandidates).Count > 0)
@@ -273,9 +326,9 @@ namespace SynoDuplicateFolders
 
 
                     grid.Visible = true;
-                   
+
                     grid.DataSource = (rows as ISynoReportBindingSource<T>).BindingSource;
-                    
+
                     if (grid.Columns.Contains("Size"))
                     {
                         fileSizeColumn = grid.Columns["Size"].Index;
@@ -491,7 +544,7 @@ namespace SynoDuplicateFolders
         private void dataGridView1_ColumnHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             DataGridView dgv = ((DataGridView)sender);
-            dgv.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = SortOrder.None;            
+            dgv.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = SortOrder.None;
             dataGridView1_ColumnHeaderMouseClick(dgv, e);
         }
     }

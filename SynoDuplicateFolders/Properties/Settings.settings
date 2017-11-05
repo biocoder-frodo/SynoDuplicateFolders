@@ -38,5 +38,14 @@
     <Setting Name="ProxyMethod" Type="System.String" Scope="User">
       <Value Profile="(Default)">Http</Value>
     </Setting>
+    <Setting Name="MaximumComparable" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="DiffExe" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\C\Program Files\KDiff3\kdiff3.exe</Value>
+    </Setting>
+    <Setting Name="DiffArgs" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

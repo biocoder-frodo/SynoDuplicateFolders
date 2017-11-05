@@ -166,5 +166,41 @@ namespace SynoDuplicateFolders.Properties {
                 this["ProxyMethod"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int MaximumComparable {
+            get {
+                return ((int)(this["MaximumComparable"]));
+            }
+            set {
+                this["MaximumComparable"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\C\\Program Files\\KDiff3\\kdiff3.exe")]
+        public string DiffExe {
+            get {
+                return ((string)(this["DiffExe"]));
+            }
+            set {
+                this["DiffExe"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DiffArgs {
+            get {
+                return ((string)(this["DiffArgs"]));
+            }
+            set {
+                this["DiffArgs"] = value;
+            }
+        }
     }
 }

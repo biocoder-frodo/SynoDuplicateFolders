@@ -8,6 +8,7 @@ Built on top of SSH.NET, SynoDuplicateFolders is a Windows Forms client applicat
 * Uses SSH shell commands and SCP to copy zipped CSV reports to a local folder,
 * Render the Duplicates report from the Storage Analyzer in a pair of treeview controls,
 * Can automatically delete older analyzer.db files that can take up quite some space.
+* Ability to use an external diff tool (like KDiff3) to evaluate the findings of the Synology Storage Analyzer
 
 ## Caveats
 * I've developed this for a DS1512+ that is now patched to DSM 6.1, with a English userinterface and the timezone set to GMT+01.

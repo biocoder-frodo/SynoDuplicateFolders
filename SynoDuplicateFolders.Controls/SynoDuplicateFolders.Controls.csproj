@@ -50,13 +50,14 @@
     <Compile Include="ChartGrid.Designer.cs">
       <DependentUpon>ChartGrid.cs</DependentUpon>
     </Compile>
-    <Compile Include="DuplicateCandidatesView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="DuplicateCandidatesView.cs" />
     <Compile Include="DuplicateCandidatesView.Designer.cs">
       <DependentUpon>DuplicateCandidatesView.cs</DependentUpon>
     </Compile>
     <Compile Include="IChartConfiguration.cs" />
+    <Compile Include="NoDblClickTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeStampTrackBar.cs">
       <SubType>UserControl</SubType>

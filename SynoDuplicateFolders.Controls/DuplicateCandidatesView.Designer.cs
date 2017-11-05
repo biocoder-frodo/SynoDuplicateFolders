@@ -28,13 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.Candidates = new System.Windows.Forms.TreeView();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.Files = new System.Windows.Forms.ListBox();
-            this.Where = new System.Windows.Forms.TreeView();
+            this.Where = new System.Windows.Forms.NoDblClickTreeView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.lblContext = new System.Windows.Forms.Label();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.openFileLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.compareExternallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -44,6 +51,7 @@
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -72,6 +80,7 @@
             this.Candidates.Size = new System.Drawing.Size(181, 368);
             this.Candidates.TabIndex = 1;
             this.Candidates.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.Candidates_AfterSelect);
+            this.Candidates.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Candidates_MouseUp);
             // 
             // splitContainer2
             // 
@@ -103,12 +112,15 @@
             // 
             // Where
             // 
+            this.Where.CheckBoxes = true;
             this.Where.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Where.Location = new System.Drawing.Point(0, 0);
             this.Where.Name = "Where";
             this.Where.PathSeparator = "/";
             this.Where.Size = new System.Drawing.Size(359, 259);
             this.Where.TabIndex = 1;
+            this.Where.BeforeCheck += new System.Windows.Forms.TreeViewCancelEventHandler(this.Where_BeforeCheck);
+            this.Where.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Where_MouseUp);
             // 
             // tableLayoutPanel1
             // 
@@ -134,6 +146,46 @@
             this.lblContext.Size = new System.Drawing.Size(0, 13);
             this.lblContext.TabIndex = 2;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openFileToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.openFileLocationToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.compareExternallyToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 104);
+            this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
+            // 
+            // openFileToolStripMenuItem
+            // 
+            this.openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
+            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileToolStripMenuItem.Text = "Open";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(268, 6);
+            // 
+            // openFileLocationToolStripMenuItem
+            // 
+            this.openFileLocationToolStripMenuItem.Name = "openFileLocationToolStripMenuItem";
+            this.openFileLocationToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
+            this.openFileLocationToolStripMenuItem.Text = "Open file location ...";
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(268, 6);
+            // 
+            // compareExternallyToolStripMenuItem
+            // 
+            this.compareExternallyToolStripMenuItem.Name = "compareExternallyToolStripMenuItem";
+            this.compareExternallyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.compareExternallyToolStripMenuItem.Text = "Compare ...";
+            // 
             // DuplicateCandidatesView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -151,6 +203,7 @@
             this.splitContainer2.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -161,8 +214,14 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TreeView Candidates;
         private System.Windows.Forms.ListBox Files;
-        private System.Windows.Forms.TreeView Where;
+        private System.Windows.Forms.NoDblClickTreeView Where;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label lblContext;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem openFileLocationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem compareExternallyToolStripMenuItem;
     }
 }
