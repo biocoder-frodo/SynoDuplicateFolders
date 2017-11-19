@@ -45,8 +45,8 @@ namespace SynoDuplicateFolders.Data.SecureShell
                     {
                         //System.Diagnostics.Debug.WriteLine(result2[row]);
 
-                        string permission = result2[row].Substring(0, 10);
-                        string parse = result2[row].Substring(10).TrimStart();
+                        string permission = result2[row].Substring(0, 11);
+                        string parse = result2[row].Substring(11).TrimStart();
                         string grp = parse.Substring(0, parse.IndexOf(' ', 0));
                         parse = parse.Substring(parse.IndexOf(' ', 0)).TrimStart();
                         string uid1 = parse.Substring(0, parse.IndexOf(' ', 0));
