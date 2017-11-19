@@ -194,23 +194,14 @@ namespace SynoDuplicateFolders.Data.SecureShell
                         {
                             if (file.Contains("/csv/"))
                             {
-
-                                CSVToCategory(SynoReportType.DuplicateCandidates, "duplicate_file.csv", file);
-                                CSVToCategory(SynoReportType.FileGroup, "file_group.csv", file);
-                                CSVToCategory(SynoReportType.FileOwner, "file_owner.csv", file);
-                                CSVToCategory(SynoReportType.LeastModified, "least_modify.csv", file);
-                                CSVToCategory(SynoReportType.MostModified, "most_modify.csv", file);
-                                CSVToCategory(SynoReportType.LargeFiles, "large_file.csv", file);
-                                CSVToCategory(SynoReportType.VolumeUsage, "volume_usage.csv", file);
-                                CSVToCategory(SynoReportType.ShareList, "share_list.csv", file);
-
+                                CSVToCategory(file);
                             }
                             else
                             {
                                 if (fi.FileName.EndsWith(".db") || fi.FileName.Equals("INFO"))
                                 {
                                     DateTime folder;
-                                    if (ParseReportFolderTimeStamp(fi, out folder))
+                                    if (ParseTimeStamp(fi, out folder))
                                     {
                                         if (dsm_databases.ContainsKey(folder) == false)
                                         {
@@ -229,7 +220,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
                         RaiseDownloadEvent(CacheStatus.Downloading, _files.Count, 0);
                         int n = 0;
-                        foreach (ICachedReportFile src in _files)
+                        foreach (ICachedReportFile src in _files.Values)
                         {
                             if (src.Type != SynoReportType.Unknown)
                             {

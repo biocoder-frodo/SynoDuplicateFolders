@@ -8,9 +8,20 @@ namespace SynoDuplicateFolders.Data
 {
     public abstract class BSynoReportCache : ISynoReportCache
     {
-        internal readonly Regex _report_ts = new Regex("^.*/([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})/.*$");
-
-        internal readonly List<ICachedReportFile> _files = new List<ICachedReportFile>();
+        internal readonly Regex _report_ts = new Regex(@"(^.*)/([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})/(.*$)");
+        internal readonly Regex _report_ts_local = new Regex(@"(^.*)_([0-9]{4})-([0-9]{2})-([0-9]{2})_([0-9]{2})-([0-9]{2})-([0-9]{2})_(.*$)");
+        internal readonly Dictionary<string, SynoReportType> filenames_type = new Dictionary<string, SynoReportType>()
+        {
+            { "duplicate_file.csv", SynoReportType.DuplicateCandidates },
+            { "file_group.csv", SynoReportType.FileGroup },
+            { "file_owner.csv", SynoReportType.FileOwner },
+            { "least_modify.csv", SynoReportType.LeastModified },
+            { "most_modify.csv", SynoReportType.MostModified },
+            { "large_file.csv", SynoReportType.LargeFiles },
+            { "volume_usage.csv", SynoReportType.VolumeUsage },
+            { "share_list.csv", SynoReportType.ShareList },
+        };
+        internal readonly CachedReportFilesDictionary _files = new CachedReportFilesDictionary();
         private readonly SortedList<DateTime, Dictionary<SynoReportType, ICachedReportFile>> _allreports = new SortedList<DateTime, Dictionary<SynoReportType, ICachedReportFile>>();
 
         private string _path = Environment.CurrentDirectory;
@@ -79,7 +90,7 @@ namespace SynoDuplicateFolders.Data
 
         public IList<ICachedReportFile> GetReports(SynoReportType type)
         {
-            return _files.Where(r => r.Type.Equals(type)).OrderByDescending(r => r.LocalFile.LastWriteTimeUtc).ToList();
+            return _files.Values.Where(r => r.Type.Equals(type)).OrderByDescending(r => r.LocalFile.LastWriteTimeUtc).ToList();
         }
         public ISynoCSVReport GetReport(ICachedReportFile file)
         {
@@ -162,39 +173,83 @@ namespace SynoDuplicateFolders.Data
             return report;
         }
 
-        internal bool ParseReportFolderTimeStamp(ConsoleFileInfo file, out DateTime ts)
+        internal bool ParseTimeStamp(ConsoleFileInfo file, out DateTime ts)
+        {
+            string preTs;
+            string postTs;
+            return ParseTimeStamp(file.Path, false, out ts, out preTs, out postTs);
+        }
+        private bool ParseTimeStamp(string fileName, bool localFile, out DateTime ts, out string preTs, out string postTs)
         {
             ts = default(DateTime);
-            if (_report_ts.IsMatch(file.Path))
+            preTs = string.Empty;
+            postTs = string.Empty;
+
+            Match m = localFile ? _report_ts_local.Match(fileName) : _report_ts.Match(fileName);
+
+            if (m.Success)
             {
-                Match m = _report_ts.Match(file.Path);
-                ts = new DateTime(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value),
-                    int.Parse(m.Groups[4].Value), int.Parse(m.Groups[5].Value), int.Parse(m.Groups[6].Value), DateTimeKind.Local);
+                ts = new DateTime(int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value), int.Parse(m.Groups[4].Value),
+                    int.Parse(m.Groups[5].Value), int.Parse(m.Groups[6].Value), int.Parse(m.Groups[7].Value), DateTimeKind.Local);
+                preTs = m.Groups[1].Value;
+                postTs = m.Groups[8].Value;
                 return true;
             }
             return false;
         }
-    
-        internal void CSVToCategory(SynoReportType t, string match, string filename)
+
+        internal void CSVToCategory(string filename)
         {
-            if (filename.Contains(match))
+            DateTime ts;
+            string preTs;
+            string postTs;
+
+            foreach (string match in filenames_type.Keys)
             {
-                CachedReportFile rf = new CachedReportFile(filename, t, Path);
-
-                _files.Add(rf);
-
-                if (_report_ts.IsMatch(filename))
+                if (filename.Contains(match))
                 {
-                    Match m = _report_ts.Match(filename);
-                    DateTime ts = new DateTime(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value), int.Parse(m.Groups[3].Value),
-                        int.Parse(m.Groups[4].Value), int.Parse(m.Groups[5].Value), int.Parse(m.Groups[6].Value), DateTimeKind.Local);
+                    CachedReportFile rf = new CachedReportFile(filename, filenames_type[match], Path);
 
-                    if (_allreports.ContainsKey(ts) == false) _allreports.Add(ts, new Dictionary<SynoReportType, ICachedReportFile>());
-                    _allreports[ts].Add(t, rf);
+                    _files.Add(rf);
+
+                    if (ParseTimeStamp(filename, false, out ts, out preTs, out postTs))
+                    {
+                        if (_allreports.ContainsKey(ts) == false) _allreports.Add(ts, new Dictionary<SynoReportType, ICachedReportFile>());
+                        _allreports[ts].Add(filenames_type[match], rf);
+                    }
+
+                    break;
                 }
-                rf = null;
             }
         }
+        internal void CSVToCategory(FileInfo local)
+        {
+            DateTime ts;
+            string preTs;
+            string postTs;
+            foreach (string match in filenames_type.Keys)
+            {
+                if (local.FullName.Contains(match))
+                {
+                    if (ParseTimeStamp(local.FullName, true, out ts, out preTs, out postTs))
+                    {
+                        CachedReportFile rf = new CachedReportFile(local, filenames_type[match], Path, preTs, postTs, match, ts);
+
+                        if (_files.ContainsKey(rf.LocalFile.FullName) == false)
+                        {
+                            _files.Add(rf);
+
+                            if (_allreports.ContainsKey(ts) == false) _allreports.Add(ts, new Dictionary<SynoReportType, ICachedReportFile>());
+                            if (_allreports[ts].ContainsKey(filenames_type[match]) == false)
+                                _allreports[ts].Add(filenames_type[match], rf);
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+
         public IList<DateTime> DateRange
         {
             get
@@ -204,6 +259,29 @@ namespace SynoDuplicateFolders.Data
         }
 
         public int KeepAnalyzerDbCount { get; set; }
-        
+
+        public void ScanCachedReports()
+        {
+            DownloadUpdate?.Invoke(this, new SynoReportCacheDownloadEventArgs(CacheStatus.Processing));
+            foreach (FileInfo local in new DirectoryInfo(Path).GetFiles())
+            {
+                CSVToCategory(local);
+
+            }
+            DownloadUpdate?.Invoke(this, new SynoReportCacheDownloadEventArgs(CacheStatus.Idle));
+        }
+    }
+
+    internal class CachedReportFilesDictionary : Dictionary<string, ICachedReportFile>
+    {
+        private new void Add(string key, ICachedReportFile item)
+        {
+            throw new NotSupportedException();
+        }
+        public void Add(ICachedReportFile item)
+        {
+            base.Add(item.LocalFile.FullName, item);
+        }
+
     }
 }

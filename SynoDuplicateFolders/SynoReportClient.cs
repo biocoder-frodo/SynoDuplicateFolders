@@ -211,6 +211,8 @@ namespace SynoDuplicateFolders
                 cache.DownloadUpdate += Cache_StatusUpdate;
                 connection.DownloadCSVFiles();
 
+                connection.ScanCachedReports();
+
                 if (CacheUpdateCompleted != null)
                 {
                     CacheUpdateCompleted.Invoke(string.Format("{0} ({1})", connection.Host, connection.Version));
