@@ -16,18 +16,11 @@ using static SynoDuplicateFolders.Properties.Settings;
 using static System.Environment;
 using System.IO;
 using System.ComponentModel;
-
+using static SynoDuplicateFolders.Controls.SortOrderManager;
 namespace SynoDuplicateFolders
 {
     public partial class SynoReportClient : Form
     {
-        private class CurrentSortOrder
-        {
-            public string Column;
-            public ListSortDirection Direction;
-        }
-        private readonly Dictionary<SynoReportType, CurrentSortOrder> sortOrderGrid = new Dictionary<SynoReportType, CurrentSortOrder>();
-        private SynoReportType detailsGridType;
         private event Action<string> CacheUpdateCompleted;
         private event Action DuplicatesAnalysisCompleted;
 
@@ -35,14 +28,11 @@ namespace SynoDuplicateFolders
         private CustomSettings config = null;
         private SynoReportDuplicateCandidates dupes = null;
 
-        private int fileSizeColumn = -1;
-
         public SynoReportClient()
         {
             InitializeComponent();
 
             dataGridView1.AutoGenerateColumns = true;
-            dataGridView1.CellFormatting += DataGridView1_CellFormatting;
             cmbFileDetails.SelectedIndex = 0;
 
             CacheUpdateCompleted += SynoReportClient_CacheUpdateCompleted;
@@ -50,6 +40,12 @@ namespace SynoDuplicateFolders
 
             duplicateCandidatesView1.OnItemOpen += DuplicateCandidatesView1_OnItemOpen;
             duplicateCandidatesView1.OnItemCompare += DuplicateCandidatesView1_OnItemCompare;
+            duplicateCandidatesView1.OnItemStatusUpdate += DuplicateCandidatesView1_OnItemStatusUpdate;
+        }
+
+        private void DuplicateCandidatesView1_OnItemStatusUpdate(object sender, string status)
+        {
+            toolStripStatusLabel1.Text = status;
         }
 
         private void DuplicateCandidatesView1_OnItemCompare(object sender, ItemsComparedEventArgs e)
@@ -259,19 +255,6 @@ namespace SynoDuplicateFolders
             chartGrid1.DataSource = cache.GetReport(timeStampTrackBar.Value, SynoReportType.VolumeUsage, SynoReportType.ShareList) as IVolumePieChart;
         }
 
-        private void DataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            if (e.ColumnIndex == fileSizeColumn)
-            {
-                e.Value = ((long)e.Value).ToFileSizeString();
-                e.FormattingApplied = true;
-            }
-            else
-            {
-                e.FormattingApplied = false;
-            }
-
-        }
         private void timeStampTrackBar1_Scroll(object sender, EventArgs e)
         {
             string value = cmbFileDetails.Text.ToLowerInvariant();
@@ -295,55 +278,11 @@ namespace SynoDuplicateFolders
         {
             timeStampTrackBar1_Scroll(sender, e);
         }
-
-        private void setDataSource<T>(DataGridView grid, DateTime ts, SynoReportType type) where T : class, ISynoReportDetail
+        private void setDataSource<T>(SynoReportDataGridView grid, DateTime ts, SynoReportType type) where T : class, ISynoReportDetail
         {
-            detailsGridType = type;
-            fileSizeColumn = -1;
             if (cache != null)
             {
-                var rows = cache.GetReport(ts, type);
-                if (rows != null)
-                {
-                    CurrentSortOrder sort;
-                    if (!sortOrderGrid.ContainsKey(type))
-                    {
-                        sort = new CurrentSortOrder() { Column = string.Empty, Direction = ListSortDirection.Ascending };
-                        if (grid.SortOrder != SortOrder.None)
-                        {
-                            sort.Column = grid.SortedColumn.Name;
-                            sort.Direction = grid.SortOrder == SortOrder.Ascending ? ListSortDirection.Ascending : ListSortDirection.Descending;
-                        }
-                        else
-                        {
-                            sort.Column = string.Empty;
-                            sort.Direction = ListSortDirection.Ascending;
-                        }
-                        sortOrderGrid.Add(type, sort);
-                    }
-                    else
-                    {
-                        sort = sortOrderGrid[type];
-                    }
-
-
-                    grid.Visible = true;
-
-                    grid.DataSource = (rows as ISynoReportBindingSource<T>).BindingSource;
-
-                    if (grid.Columns.Contains("Size"))
-                    {
-                        fileSizeColumn = grid.Columns["Size"].Index;
-                    }
-                    if (!string.IsNullOrEmpty(sort.Column))
-                    {
-                        grid.Sort(grid.Columns[sort.Column], sort.Direction);
-                    }
-                }
-                else
-                {
-                    grid.DataSource = null;
-                }
+                grid.setDataSource<T>(cache.GetReport(ts, type));
             }
         }
 
@@ -456,7 +395,7 @@ namespace SynoDuplicateFolders
             this.Text = "SynoReport Client - " + version;
             treeView1.SelectedNode.ToolTipText = version;
 
-            volumeHistoricChart1.ShowingType = SynoReportType.ShareList;
+            volumeHistoricChart1.View = vhcViewMode.VolumeTotals;
             volumeHistoricChart1.DataSource = cache;
 
             timeStampTrackBar.DateRange = cache.DateRange;
@@ -523,31 +462,9 @@ namespace SynoDuplicateFolders
             return r == DialogResult.OK;
         }
 
-        private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void duplicateCandidatesView1_Load(object sender, EventArgs e)
         {
-            DataGridView dgv = ((DataGridView)sender);
 
-            switch (dgv.SortOrder)
-            {
-                case SortOrder.Descending:
-                    sortOrderGrid[detailsGridType].Direction = ListSortDirection.Descending;
-                    sortOrderGrid[detailsGridType].Column = dgv.SortedColumn.Name;
-                    break;
-                case SortOrder.Ascending:
-                    sortOrderGrid[detailsGridType].Direction = ListSortDirection.Ascending;
-                    sortOrderGrid[detailsGridType].Column = dgv.SortedColumn.Name;
-                    break;
-                default:
-                    sortOrderGrid[detailsGridType].Direction = ListSortDirection.Ascending;
-                    sortOrderGrid[detailsGridType].Column = string.Empty;
-                    break;
-            }
-        }
-        private void dataGridView1_ColumnHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            DataGridView dgv = ((DataGridView)sender);
-            dgv.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = SortOrder.None;
-            dataGridView1_ColumnHeaderMouseClick(dgv, e);
         }
     }
 }

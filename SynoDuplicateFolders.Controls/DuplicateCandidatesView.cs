@@ -4,38 +4,16 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System;
 using System.IO;
-using System.Diagnostics;
+using System.ComponentModel;
+using SynoDuplicateFolders.Data.ComponentModel;
 
 namespace SynoDuplicateFolders.Controls
 {
-    public class ItemOpenedEventArgs : EventArgs
-    {
-        public readonly string Path;
-        internal ItemOpenedEventArgs(string path)
-        {
-            Path = path;
-        }
-    }
-    public class ItemsComparedEventArgs : EventArgs
-    {
-        private IList<string> items = null;
-        internal ItemsComparedEventArgs(IList<string> paths)
-        {
-            items = new List<string>(paths);
-        }
-
-        public IReadOnlyList<string> Items
-        {
-            get
-            {
-                return items as IReadOnlyList<string>;
-            }
-        }
-    }
     public partial class DuplicateCandidatesView : UserControl
     {
         public delegate void DuplicateCandidatesItemOpenHandler(object sender, ItemOpenedEventArgs e);
         public delegate void DuplicateCandidatesItemCompareHandler(object sender, ItemsComparedEventArgs e);
+        public delegate void DuplicateCandidatesItemStatusUpdate(object sender, string status);
 
         private enum FsType
         {
@@ -49,8 +27,10 @@ namespace SynoDuplicateFolders.Controls
         private FsType _checked_items = FsType.fsFile;
         private List<string> _checked = new List<string>();
         private int _maximum_comparable = 3;
+
         public event DuplicateCandidatesItemOpenHandler OnItemOpen;
         public event DuplicateCandidatesItemCompareHandler OnItemCompare;
+        public event DuplicateCandidatesItemStatusUpdate OnItemStatusUpdate;
 
         public DuplicateCandidatesView()
         {
@@ -100,6 +80,9 @@ namespace SynoDuplicateFolders.Controls
                         Candidates.Add(f);
                     }
                 }
+                SortOrderManager.SetSortOrder<IDuplicateFileInfo>("Size", ListSortDirection.Descending);
+                dataGridView1.setDataSource<IDuplicateFileInfo>(value);
+
             }
         }
 
@@ -110,7 +93,7 @@ namespace SynoDuplicateFolders.Controls
             _checked.Clear();
             List<string> folders = new List<string>();
             long count = 0;
-            string selected = '/' + Candidates.SelectedNode.FullPath;
+            string selected = '/' + e.Node.FullPath;
 
             if (src.DuplicatesGroupByPath.ContainsKey(selected))
             {
@@ -126,17 +109,18 @@ namespace SynoDuplicateFolders.Controls
                     }
 
             }
-            lblContext.Text = string.Format("{0} duplicate(s)", count);
+
+            OnItemStatusUpdate?.Invoke(this, string.Format("{0} duplicate(s)", count));
 
             Files.Items.AddRange(folders.ToArray());
             Files.SelectedIndex = -1;
         }
 
-        private void Files_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
+        private void Files_SelectedIndexChanged(object sender, EventArgs e)
+        {            
+            string status = string.Empty;
             Where.Nodes.Clear();
-            _checked.Clear();
-            lblContext.Text = string.Empty;
+            _checked.Clear();          
             if (Files.SelectedItem != null)
             {
                 if (src.DuplicatesGroupByName.ContainsKey((string)Files.SelectedItem))
@@ -146,7 +130,7 @@ namespace SynoDuplicateFolders.Controls
                         {
                             if (s.FileName == Files.Text)
                             {
-                                lblContext.Text = (string)Files.SelectedItem + "\r\n" + s.Length.ToFileSizeString();
+                                status = (string)Files.SelectedItem + "\r\n" + s.Length.ToFileSizeString();
                                 Where.Add(s.FullPath);
                                 foreach (DuplicateFileInfo o in src.DuplicatesByGroup[index])
                                 {
@@ -156,6 +140,7 @@ namespace SynoDuplicateFolders.Controls
                         }
                 Where.ExpandAll();
             }
+            OnItemStatusUpdate?.Invoke(this, status);
         }
 
         private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -338,6 +323,55 @@ namespace SynoDuplicateFolders.Controls
             e.Cancel = !expected;
             System.Diagnostics.Debug.WriteLine(string.Format("{0} {1}", System.DateTime.UtcNow.Ticks, expected ? "approved" : "canceled"));
             System.Diagnostics.Debug.WriteLine(string.Format("type of selection {0}, {1} item(s) in selection", _checked_items, _checked.Count));
+        }
+
+        private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex > -1)
+            {
+                DuplicateFileInfo d = dataGridView1.Rows[e.RowIndex].DataBoundItem as DuplicateFileInfo;
+                var nodes = Candidates.Nodes.Find(d.Path, true);
+                if (nodes.Length == 1)
+                {
+                    Candidates.CollapseAll();                
+                    nodes[0].EnsureVisible();
+                    Candidates.SelectedNode = nodes[0];
+                    Files.SelectedItem = d.FileName;
+                    nodes = Where.Nodes.Find(d.FullPath, true);
+                    if (nodes.Length == 1)
+                    {
+                        tabControl1.SelectedTab = tabPage1;
+                        Where.Select();
+                        nodes[0].EnsureVisible();
+                        Where.SelectedNode = nodes[0];
+                    }
+                }
+            }
+        }
+    }
+
+    public class ItemOpenedEventArgs : EventArgs
+    {
+        public readonly string Path;
+        internal ItemOpenedEventArgs(string path)
+        {
+            Path = path;
+        }
+    }
+    public class ItemsComparedEventArgs : EventArgs
+    {
+        private IList<string> items = null;
+        internal ItemsComparedEventArgs(IList<string> paths)
+        {
+            items = new List<string>(paths);
+        }
+
+        public IReadOnlyList<string> Items
+        {
+            get
+            {
+                return items as IReadOnlyList<string>;
+            }
         }
     }
 }

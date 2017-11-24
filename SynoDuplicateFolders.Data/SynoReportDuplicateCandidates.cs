@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
-using SynoDuplicateFolders.Extensions;
+using SynoDuplicateFolders.Data.ComponentModel;
+using System.Threading.Tasks;
 
 using System.Runtime.CompilerServices;
 
 namespace SynoDuplicateFolders.Data
 {
-    public class SynoReportDuplicateCandidates : BSynoCSVReport
+    public class SynoReportDuplicateCandidates : BSynoCSVReport, ISynoReportBindingSource<IDuplicateFileInfo>, ISynoReportBindingSource<IDuplicatesHistogramValue>
     {
         private readonly DuplicatesAggregate<long, DuplicateFileInfo> _dupes = new DuplicatesAggregate<long, DuplicateFileInfo>();
 
@@ -32,7 +33,8 @@ namespace SynoDuplicateFolders.Data
         public long UniqueSize { get { return _unique; } }
         public long TotalSize { get { return _total; } }
 
-
+        private SortableListBindingSource<IDuplicateFileInfo> _files = null;
+        private SortableListBindingSource<IDuplicatesHistogramValue> _histogram = null;
 
         public DuplicatesAggregate<long, DuplicateFileInfo> DuplicatesByGroup { get { return _dupes; } }
         public DuplicatesAggregate<string, long> DuplicatesGroupByName { get { return filtered ? _byname_filtered : _byname; } }
@@ -64,8 +66,49 @@ namespace SynoDuplicateFolders.Data
                 }
             }
         }
+
+        SortableListBindingSource<IDuplicatesHistogramValue> ISynoReportBindingSource<IDuplicatesHistogramValue>.BindingSource
+        {
+            get
+            {
+                if (_histogram == null)
+                {
+                    _histogram = new SortableListBindingSource<IDuplicatesHistogramValue>();
+                    foreach (var h in Histogram(102400))
+                    {
+                        _histogram.Add(h);
+                    };
+
+                }
+                return _histogram;
+            }
+        }
+
+        SortableListBindingSource<IDuplicateFileInfo> ISynoReportBindingSource<IDuplicateFileInfo>.BindingSource
+        {
+            get
+            {
+                if (_files == null)
+                {
+                    _files = new SortableListBindingSource<IDuplicateFileInfo>();
+                    foreach (var k in _dupes.Keys)
+                    {
+                        var q = _dupes[k];
+                        foreach (var d in q)
+                        {
+                            _files.Add(d);
+                        }
+                    }
+                }
+                return _files;
+            }
+        }
+
+
         public override void LoadReport(StreamReader src, FileInfo fi)
         {
+            List<DuplicateFileInfo> render_ts = new List<DuplicateFileInfo>();
+
             _Timestamp = fi.LastWriteTimeUtc;
 
             _total = 0;
@@ -75,6 +118,7 @@ namespace SynoDuplicateFolders.Data
             {
                 string t = src.ReadLine();
                 DuplicateFileInfo entry = new DuplicateFileInfo(t);
+                render_ts.Add(entry);
                 _total += entry.Length;
 
                 if (entry.Length > 0)
@@ -90,9 +134,15 @@ namespace SynoDuplicateFolders.Data
                 }
             }
 
-            _unique = _dupes.Values.Sum(g => g.First().Length);            
-            
-            BuildIndexes(_bypath, _byname, _tree );        
+            Parallel.ForEach(render_ts,
+                (f) =>
+            {
+                DateTime ts = f.TimeStamp;
+            });
+
+            _unique = _dupes.Values.Sum(g => g.First().Length);
+
+            BuildIndexes(_bypath, _byname, _tree);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -140,7 +190,7 @@ namespace SynoDuplicateFolders.Data
             }
 
         }
-        private void BuildIndexes(DuplicatesAggregate<string,long> bypath, DuplicatesAggregate<string, long> byname, DuplicatesFolder tree, Func<DuplicateFileInfo, bool> predicate = null)
+        private void BuildIndexes(DuplicatesAggregate<string, long> bypath, DuplicatesAggregate<string, long> byname, DuplicatesFolder tree, Func<DuplicateFileInfo, bool> predicate = null)
         {
             bypath.Clear();
             byname.Clear();

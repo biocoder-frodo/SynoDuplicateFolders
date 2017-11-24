@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("NAS");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("NAS");
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.exportSharesReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,7 +55,7 @@
             this.chartGrid1 = new SynoDuplicateFolders.Controls.ChartGrid();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridView1 = new SynoDuplicateFolders.Controls.SynoReportDataGridView();
             this.timeStampTrackBar1 = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
             this.cmbFileDetails = new System.Windows.Forms.ComboBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -205,10 +205,10 @@
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            treeNode2.Name = "Node0";
-            treeNode2.Text = "NAS";
+            treeNode1.Name = "Node0";
+            treeNode1.Text = "NAS";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode2});
+            treeNode1});
             this.treeView1.ShowNodeToolTips = true;
             this.treeView1.Size = new System.Drawing.Size(119, 682);
             this.treeView1.TabIndex = 0;
@@ -244,9 +244,9 @@
             this.volumeHistoricChart1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.volumeHistoricChart1.Location = new System.Drawing.Point(3, 3);
             this.volumeHistoricChart1.Name = "volumeHistoricChart1";
-            this.volumeHistoricChart1.ShowingType = SynoDuplicateFolders.Data.SynoReportType.VolumeUsage;
             this.volumeHistoricChart1.Size = new System.Drawing.Size(1234, 650);
             this.volumeHistoricChart1.TabIndex = 0;
+            this.volumeHistoricChart1.View = SynoDuplicateFolders.Controls.vhcViewMode.VolumeTotals;
             // 
             // tabPage2
             // 
@@ -262,10 +262,13 @@
             // duplicateCandidatesView1
             // 
             this.duplicateCandidatesView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.duplicateCandidatesView1.HostName = null;
             this.duplicateCandidatesView1.Location = new System.Drawing.Point(3, 3);
+            this.duplicateCandidatesView1.MaximumComparable = 3;
             this.duplicateCandidatesView1.Name = "duplicateCandidatesView1";
             this.duplicateCandidatesView1.Size = new System.Drawing.Size(1234, 650);
             this.duplicateCandidatesView1.TabIndex = 0;
+            this.duplicateCandidatesView1.Load += new System.EventHandler(this.duplicateCandidatesView1_Load);
             // 
             // tabPage3
             // 
@@ -349,11 +352,9 @@
             this.dataGridView1.Location = new System.Drawing.Point(3, 75);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(1228, 486);
             this.dataGridView1.TabIndex = 1;
-            this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
-            this.dataGridView1.ColumnHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseDoubleClick);
-
             // 
             // timeStampTrackBar1
             // 
@@ -507,7 +508,7 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private Controls.SynoReportDataGridView dataGridView1;
         private Controls.TimeStampTrackBar timeStampTrackBar1;
         private System.Windows.Forms.ComboBox cmbFileDetails;
     }

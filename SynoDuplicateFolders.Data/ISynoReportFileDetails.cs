@@ -35,4 +35,12 @@ namespace SynoDuplicateFolders.Data
         long UniqueSize { get; }
         long TotalSize { get; }
     }
+    public interface IDuplicateFileInfo : ISynoReportDetail
+    {
+        long Group { get; }
+        string FullPath { get; }
+        long Size { get; }
+        DateTime TimeStamp { get; }
+
+    }
 }

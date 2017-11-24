@@ -68,6 +68,13 @@
             this.cmbProxy = new System.Windows.Forms.ComboBox();
             this.btnApply = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.tabPageDiffTool = new System.Windows.Forms.TabPage();
+            this.txtDiffTool = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtDiffExeArgs = new System.Windows.Forms.TextBox();
+            this.cmbMaxCompare = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabConfig.SuspendLayout();
             this.tabpageServers.SuspendLayout();
@@ -77,6 +84,7 @@
             this.tabpageSecurity.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPageProxy.SuspendLayout();
+            this.tabPageDiffTool.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -100,6 +108,7 @@
             this.tabConfig.Controls.Add(this.tabCharting);
             this.tabConfig.Controls.Add(this.tabpageSecurity);
             this.tabConfig.Controls.Add(this.tabPageProxy);
+            this.tabConfig.Controls.Add(this.tabPageDiffTool);
             this.tabConfig.Location = new System.Drawing.Point(3, 3);
             this.tabConfig.Name = "tabConfig";
             this.tabConfig.SelectedIndex = 0;
@@ -199,6 +208,7 @@
             // 
             // comboBox1
             // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(8, 40);
             this.comboBox1.Name = "comboBox1";
@@ -469,6 +479,81 @@
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
+            // tabPageDiffTool
+            // 
+            this.tabPageDiffTool.Controls.Add(this.cmbMaxCompare);
+            this.tabPageDiffTool.Controls.Add(this.label5);
+            this.tabPageDiffTool.Controls.Add(this.txtDiffExeArgs);
+            this.tabPageDiffTool.Controls.Add(this.label4);
+            this.tabPageDiffTool.Controls.Add(this.label1);
+            this.tabPageDiffTool.Controls.Add(this.txtDiffTool);
+            this.tabPageDiffTool.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDiffTool.Name = "tabPageDiffTool";
+            this.tabPageDiffTool.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDiffTool.Size = new System.Drawing.Size(599, 330);
+            this.tabPageDiffTool.TabIndex = 4;
+            this.tabPageDiffTool.Text = "Differences";
+            this.tabPageDiffTool.UseVisualStyleBackColor = true;
+            // 
+            // txtDiffTool
+            // 
+            this.txtDiffTool.Location = new System.Drawing.Point(21, 43);
+            this.txtDiffTool.Name = "txtDiffTool";
+            this.txtDiffTool.Size = new System.Drawing.Size(264, 20);
+            this.txtDiffTool.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(18, 27);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(82, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "External diff tool";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(18, 126);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(164, 13);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "Maximum files/folders to compare";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(18, 69);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(134, 13);
+            this.label5.TabIndex = 5;
+            this.label5.Text = "External diff tool arguments";
+            // 
+            // txtDiffExeArgs
+            // 
+            this.txtDiffExeArgs.Location = new System.Drawing.Point(21, 85);
+            this.txtDiffExeArgs.Name = "txtDiffExeArgs";
+            this.txtDiffExeArgs.Size = new System.Drawing.Size(264, 20);
+            this.txtDiffExeArgs.TabIndex = 4;
+            // 
+            // cmbMaxCompare
+            // 
+            this.cmbMaxCompare.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMaxCompare.FormattingEnabled = true;
+            this.cmbMaxCompare.Items.AddRange(new object[] {
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"});
+            this.cmbMaxCompare.Location = new System.Drawing.Point(21, 142);
+            this.cmbMaxCompare.Name = "cmbMaxCompare";
+            this.cmbMaxCompare.Size = new System.Drawing.Size(70, 21);
+            this.cmbMaxCompare.TabIndex = 6;
+            // 
             // Preferences
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -492,6 +577,8 @@
             this.groupBox1.PerformLayout();
             this.tabPageProxy.ResumeLayout(false);
             this.tabPageProxy.PerformLayout();
+            this.tabPageDiffTool.ResumeLayout(false);
+            this.tabPageDiffTool.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -536,5 +623,12 @@
         private System.Windows.Forms.TextBox txtProxyHost;
         private System.Windows.Forms.RadioButton optProxy;
         private System.Windows.Forms.RadioButton optNoProxy;
+        private System.Windows.Forms.TabPage tabPageDiffTool;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtDiffTool;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtDiffExeArgs;
+        private System.Windows.Forms.ComboBox cmbMaxCompare;
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System.Windows.Forms;
 using System.Data.Linq;
 using System.Collections.Generic;
+using System;
 
 namespace SynoDuplicateFolders.Data.ComponentModel
 {   
-    public class SortableListBindingSource<T> : BindingSource
+    public class SortableListBindingSource<T> : BindingSource, IEnumerable<T>
         where T : class
     {
         private readonly SortableBindingList<T> _list;
@@ -27,6 +28,11 @@ namespace SynoDuplicateFolders.Data.ComponentModel
         protected new int Add(object value)
         {
             return base.Add(value);
+        }
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return _list.GetEnumerator();
         }
     }
 

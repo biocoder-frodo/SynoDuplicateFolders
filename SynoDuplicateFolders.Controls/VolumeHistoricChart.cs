@@ -4,14 +4,24 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-
+using System.Linq;
 namespace SynoDuplicateFolders.Controls
 {
+    public enum vhcViewMode
+    {
+        Shares,
+        Volume,
+        VolumeTotals
+    }
     public partial class VolumeHistoricChart : UserControl
     {
         private ISynoReportCache src = null;
         private ISynoChartData data = null;
-        private SynoReportType showing = SynoReportType.VolumeUsage;
+
+        private vhcViewMode _view = vhcViewMode.VolumeTotals;
+        private SynoReportType _viewtype = SynoReportType.VolumeUsage;
+        private List<string> _displaying_traces = null;
+
         private IChartConfiguration _legends = null;
         private bool invalidated = false;
         private readonly List<string> unknown_traces = new List<string>();
@@ -32,7 +42,7 @@ namespace SynoDuplicateFolders.Controls
                 Axis a = sender as Axis;
                 if (a.AxisName == AxisName.Y)
                 {
-                    if (ShowingType == SynoReportType.ShareList)
+                    if (_view == vhcViewMode.Shares || _view == vhcViewMode.VolumeTotals)
                     {
                         e.LocalizedValue = Convert.ToInt64(e.Value).ToFileSizeString(shares_range);
                     }
@@ -45,22 +55,27 @@ namespace SynoDuplicateFolders.Controls
             get { return _legends; }
             set { _legends = value; }
         }
-        public SynoReportType ShowingType
+
+        public vhcViewMode View
         {
-            get { return showing; }
+            get { return _view; }
             set
             {
-                if (value == SynoReportType.VolumeUsage || value == SynoReportType.ShareList)
+                switch (value)
                 {
-                    if (showing != value)
-                    {
-                        showing = value;
-                        DataSource = src;
-                    }
-                }
-                else
-                {
-                    throw new ArgumentException();
+                    case vhcViewMode.Shares:
+                    case vhcViewMode.Volume:
+                    case vhcViewMode.VolumeTotals:
+                        if (_view != value)
+                        {
+                            _view = value;
+                            _viewtype = _view == vhcViewMode.Shares ? SynoReportType.ShareList : SynoReportType.VolumeUsage;
+                            DataSource = src;
+
+                        }
+                        break;
+                    default:
+                        throw new ArgumentException();
                 }
             }
         }
@@ -71,11 +86,11 @@ namespace SynoDuplicateFolders.Controls
                 src = value;
                 if (src != null)
                 {
-                    switch (showing)
+                    switch (_viewtype)
                     {
                         case SynoReportType.ShareList:
                         case SynoReportType.VolumeUsage:
-                            data = src.GetReport(showing) as ISynoChartData;
+                            data = src.GetReport(_viewtype) as ISynoChartData;
                             break;
                         default:
                             break;
@@ -87,51 +102,60 @@ namespace SynoDuplicateFolders.Controls
 
                         long peak = 0;
 
-                        foreach (string s in data.Series)
+                        _displaying_traces = data.Series;
+                        if (_viewtype == SynoReportType.VolumeUsage)
                         {
-
-                            var series1 = new Series
-                            {
-                                Name = s,
-                                IsVisibleInLegend = true,
-                                IsXValueIndexed = false,
-                                ChartType = SeriesChartType.StepLine
-                            };
-
-                            Console.Write("trace " + s + ": ");
-                            if (_legends.ContainsKey(s))
-                            {
-                                Console.WriteLine(" picking dictionary color");
-                                series1.Color = _legends[s].Color;
-                            }
-                            else
-                            {
-                                unknown_traces.Add(s);
-                                Console.WriteLine(" picking default color");
-                            }
-
-                            chart1.Series.Add(series1);
-
-
-                            series1.Points.Clear();
-                            if (showing == SynoReportType.ShareList)
-                            {
-
-                                foreach (IXYDataPoint dp in data[s])
-                                {
-                                    if (peak < (long)dp.Y) peak = (long)dp.Y;
-                                    series1.Points.AddXY(dp.X, dp.Y);
-                                }
-                            }
-                            else
-                            {
-                                foreach (IXYDataPoint dp in data[s])
-                                {
-                                    series1.Points.AddXY(dp.X, dp.Y);
-                                }
-                            }
+                            _displaying_traces = data.Series.Where(s => s.Contains("Total")==(_view == vhcViewMode.VolumeTotals)).ToList();
                         }
 
+                        foreach (string s in _displaying_traces)
+                        {
+
+                                Series series1 = new Series()
+                                {
+                                    Name = s,
+                                    IsVisibleInLegend = true,
+                                    IsXValueIndexed = false,
+                                    ChartType = SeriesChartType.StepLine
+                                };
+
+                                Console.Write("trace " + s + ": ");
+                                if (_legends.ContainsKey(s))
+                                {
+                                    Console.WriteLine(" picking dictionary color");
+                                    series1.Color = _legends[s].Color;
+                                }
+                                else
+                                {
+                                    unknown_traces.Add(s);
+                                    Console.WriteLine(" picking default color");
+                                }
+
+                                chart1.Series.Add(series1);
+
+
+                                series1.Points.Clear();
+                                if (_viewtype == SynoReportType.ShareList)
+                                {
+
+                                    foreach (IXYDataPoint dp in data[s])
+                                    {
+                                        if (peak < (long)dp.Y) peak = (long)dp.Y;
+                                        series1.Points.AddXY(dp.X, dp.Y);
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (IXYDataPoint dp in data[s])
+                                    {
+                                        if (_viewtype == SynoReportType.VolumeUsage && s.Contains("Total"))
+                                        {
+                                            if (peak < (long)dp.Y) peak = (long)dp.Y;
+                                        }
+                                        series1.Points.AddXY(dp.X, dp.Y);
+                                    }
+                                }
+                            }
                         shares_range = peak.GetFileSizeRange();
 
                         invalidated = true;
@@ -167,14 +191,8 @@ namespace SynoDuplicateFolders.Controls
                     }
                     break;
                 case ChartElementType.PlottingArea:
-                    if (ShowingType == SynoReportType.ShareList)
-                    {
-                        ShowingType = SynoReportType.VolumeUsage;
-                    }
-                    else
-                    {
-                        ShowingType = SynoReportType.ShareList;
-                    }
+                    int v = Enum.GetValues(typeof(vhcViewMode)).Length;
+                    View = (vhcViewMode)(((int)_view + 1) %  v) ;
                     break;
                 default:
                     break;
@@ -188,7 +206,7 @@ namespace SynoDuplicateFolders.Controls
             {
 
                 int index = 0;
-                for (index = 0; index < data.Series.Count; index++)
+                for (index = 0; index < _displaying_traces.Count; index++)
                 {
                     if (unknown_traces.Contains(data.Series[index]))
                     {
@@ -207,7 +225,7 @@ namespace SynoDuplicateFolders.Controls
             if (h.ChartElementType == ChartElementType.DataPoint)
             {
                 DataPoint dp = h.Series.Points[h.PointIndex];
-                if (ShowingType == SynoReportType.ShareList)
+                if (_viewtype == SynoReportType.ShareList)
                 {
                     text = string.Format("{0}: {2} ({1})",
                         h.Series.Name,
@@ -216,10 +234,21 @@ namespace SynoDuplicateFolders.Controls
                 }
                 else
                 {
-                    text = string.Format("{0}: {2:0.0}%, ({1})",
-                        h.Series.Name,
-                        DateTime.FromOADate(dp.XValue),
-                        (float)dp.YValues[0]);
+                    if (h.Series.Name.Contains("Total"))
+                    {
+                        text = string.Format("{0}: {2} ({1})",
+                            h.Series.Name,
+                            DateTime.FromOADate(dp.XValue),
+                            ((long)dp.YValues[0]).ToFileSizeString());
+
+                    }
+                    else
+                    {
+                        text = string.Format("{0}: {2:0.0}%, ({1})",
+                            h.Series.Name,
+                            DateTime.FromOADate(dp.XValue),
+                            (float)dp.YValues[0]);
+                    }
                 }
                 if (!e.Text.Equals(text)) e.Text = text;
 

@@ -4,18 +4,19 @@ using SynoDuplicateFolders.Extensions;
 using System.Linq;
 namespace SynoDuplicateFolders.Data
 {
-    public class DuplicateFileInfo
+    public class DuplicateFileInfo : IDuplicateFileInfo
     {
         private const char tab = '\t';
         private const char pathsep = '/';
         private static readonly char[] pathsepsplit = new char[1] { pathsep };
         private static readonly char[] tabsplit = new char[1] { tab };
-
+        private static readonly CultureInfo _ci = new CultureInfo("en-US");
         public readonly long Group;
         public readonly string Share;
         public readonly string FullPath;
         public readonly long Length;
-        private readonly string _Timestamp;
+        private readonly string _TimeStamp;
+        private DateTime? _ts = null;
         public string Path;
         public string FileName;
         internal readonly string[] FoldersInPath;
@@ -34,18 +35,47 @@ namespace SynoDuplicateFolders.Data
             Share = columns[1];
             FullPath = columns[2];
             Length = long.Parse(columns[3]);
-            _Timestamp = columns[4];
+            _TimeStamp = columns[4];
             string[] p = FullPath.Substring(1).Split(pathsep);
-            FoldersInPath = p.Take(p.Count()-1).ToArray();
+            FoldersInPath = p.Take(p.Count() - 1).ToArray();
         }
-        public DateTime TimeStamp {
+        public DateTime TimeStamp
+        {
             get
             {
-                DateTime ts = default(DateTime);
-                DateTime.TryParseExact(_Timestamp, "yyyy/MM/dd HH:mm:ss", new CultureInfo("en-US"), (DateTimeStyles)((int)DateTimeStyles.AssumeLocal + DateTimeStyles.AllowInnerWhite), out ts);
-                return ts;
+                if (_ts.HasValue == false)
+                {
+                    //DateTime.TryParseExact(_TimeStamp, "yyyy/MM/dd HH:mm:ss", new CultureInfo("en-US"), (DateTimeStyles)((int)DateTimeStyles.AssumeLocal + DateTimeStyles.AllowInnerWhite), out ts);
+                    _ts = DateTime.ParseExact(_TimeStamp, "yyyy/MM/dd HH:mm:ss", _ci, (DateTimeStyles)((int)DateTimeStyles.AssumeLocal + DateTimeStyles.AllowInnerWhite));
+                }
+                return _ts.Value;
             }
         }
+
+        long IDuplicateFileInfo.Group
+        {
+            get
+            {
+                return this.Group;
+            }
+        }
+
+        long IDuplicateFileInfo.Size
+        {
+            get
+            {
+                return this.Length;
+            }
+        }
+
+        string IDuplicateFileInfo.FullPath
+        {
+            get
+            {
+                return this.FullPath;
+            }
+        }
+
         internal void Parse(DuplicateFileInfo entry)
         {
             if (this != entry)

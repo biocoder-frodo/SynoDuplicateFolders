@@ -34,14 +34,16 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.Files = new System.Windows.Forms.ListBox();
             this.Where = new System.Windows.Forms.NoDblClickTreeView();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.lblContext = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.openFileLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.compareExternallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.dataGridView1 = new SynoDuplicateFolders.Controls.SynoReportDataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -50,14 +52,17 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 133);
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -67,8 +72,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(544, 368);
-            this.splitContainer1.SplitterDistance = 181;
+            this.splitContainer1.Size = new System.Drawing.Size(536, 391);
+            this.splitContainer1.SplitterDistance = 178;
             this.splitContainer1.TabIndex = 0;
             // 
             // Candidates
@@ -77,7 +82,7 @@
             this.Candidates.Location = new System.Drawing.Point(0, 0);
             this.Candidates.Name = "Candidates";
             this.Candidates.PathSeparator = "/";
-            this.Candidates.Size = new System.Drawing.Size(181, 368);
+            this.Candidates.Size = new System.Drawing.Size(178, 391);
             this.Candidates.TabIndex = 1;
             this.Candidates.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.Candidates_AfterSelect);
             this.Candidates.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Candidates_MouseUp);
@@ -96,8 +101,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.Where);
-            this.splitContainer2.Size = new System.Drawing.Size(359, 368);
-            this.splitContainer2.SplitterDistance = 105;
+            this.splitContainer2.Size = new System.Drawing.Size(354, 391);
+            this.splitContainer2.SplitterDistance = 110;
             this.splitContainer2.TabIndex = 0;
             // 
             // Files
@@ -106,7 +111,7 @@
             this.Files.FormattingEnabled = true;
             this.Files.Location = new System.Drawing.Point(0, 0);
             this.Files.Name = "Files";
-            this.Files.Size = new System.Drawing.Size(359, 105);
+            this.Files.Size = new System.Drawing.Size(354, 110);
             this.Files.TabIndex = 1;
             this.Files.SelectedIndexChanged += new System.EventHandler(this.Files_SelectedIndexChanged);
             // 
@@ -117,34 +122,10 @@
             this.Where.Location = new System.Drawing.Point(0, 0);
             this.Where.Name = "Where";
             this.Where.PathSeparator = "/";
-            this.Where.Size = new System.Drawing.Size(359, 259);
+            this.Where.Size = new System.Drawing.Size(354, 277);
             this.Where.TabIndex = 1;
             this.Where.BeforeCheck += new System.Windows.Forms.TreeViewCancelEventHandler(this.Where_BeforeCheck);
             this.Where.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Where_MouseUp);
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.splitContainer1, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.lblContext, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 130F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(550, 423);
-            this.tableLayoutPanel1.TabIndex = 1;
-            // 
-            // lblContext
-            // 
-            this.lblContext.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.lblContext.AutoSize = true;
-            this.lblContext.Location = new System.Drawing.Point(3, 58);
-            this.lblContext.Name = "lblContext";
-            this.lblContext.Size = new System.Drawing.Size(0, 13);
-            this.lblContext.TabIndex = 2;
             // 
             // contextMenuStrip1
             // 
@@ -155,7 +136,7 @@
             this.toolStripSeparator2,
             this.compareExternallyToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 104);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 82);
             this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
             // 
             // openFileToolStripMenuItem
@@ -167,18 +148,18 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(268, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // openFileLocationToolStripMenuItem
             // 
             this.openFileLocationToolStripMenuItem.Name = "openFileLocationToolStripMenuItem";
-            this.openFileLocationToolStripMenuItem.Size = new System.Drawing.Size(271, 22);
+            this.openFileLocationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openFileLocationToolStripMenuItem.Text = "Open file location ...";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(268, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // compareExternallyToolStripMenuItem
             // 
@@ -186,11 +167,55 @@
             this.compareExternallyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.compareExternallyToolStripMenuItem.Text = "Compare ...";
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(550, 423);
+            this.tabControl1.TabIndex = 2;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.splitContainer1);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(542, 397);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Candidates Tree";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.dataGridView1);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(542, 397);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Candidates List";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 3);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView1.Size = new System.Drawing.Size(536, 391);
+            this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
+            // 
             // DuplicateCandidatesView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tableLayoutPanel1);
+            this.Controls.Add(this.tabControl1);
             this.Name = "DuplicateCandidatesView";
             this.Size = new System.Drawing.Size(550, 423);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -201,9 +226,11 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -212,16 +239,18 @@
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.TreeView Candidates;
         private System.Windows.Forms.ListBox Files;
         private System.Windows.Forms.NoDblClickTreeView Where;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Label lblContext;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem openFileLocationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem compareExternallyToolStripMenuItem;
+        private System.Windows.Forms.TreeView Candidates;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private Controls.SynoReportDataGridView dataGridView1;
     }
 }

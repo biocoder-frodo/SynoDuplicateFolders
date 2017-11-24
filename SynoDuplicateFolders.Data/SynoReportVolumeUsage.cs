@@ -7,6 +7,7 @@ namespace SynoDuplicateFolders.Data
 {
     public class SynoReportVolumeUsage : BSynoReportTimeLine, ISynoChartData
     {
+        private readonly List<string> _absolute_totals = new List<string>() { "Total Size", "Total Used" };
         public readonly Dictionary<string, string> Volumes = new Dictionary<string, string>();
         private readonly Dictionary<int, string> _volumes = new Dictionary<int, string>();
 
@@ -122,7 +123,10 @@ namespace SynoDuplicateFolders.Data
         {
             get
             {
-                return Volumes.Keys.ToList();
+                List<string> result = new List<string>();
+                result.AddRange(Volumes.Keys.ToList());
+                result.AddRange(_absolute_totals);
+                return result;
             }
         }
 
@@ -141,10 +145,33 @@ namespace SynoDuplicateFolders.Data
                 foreach (DateTime ts in _list.Keys)
                 {
                     var data = _list[ts] as SynoReportVolumeUsageValues;
-
-                    if (data.Used.ContainsKey(name))
+                    long size = 0;
+                    switch (name)
                     {
-                        yield return new TimeLineDataPoint<float>(ts, data.Used[name]);
+                        case "Total Size":
+                            
+                            foreach (string v in Volumes.Keys)
+                            {   if (data.Size.ContainsKey(v))
+                                size += data.Size[v];
+                            }
+                            yield return new TimeLineDataPoint<long>(ts, size);
+                            break;
+                        case "Total Used":
+
+                            foreach (string v in Volumes.Keys)
+                            {
+                                if (data.Size.ContainsKey(v))
+                                    size += Convert.ToInt64(data.Used[v]*Convert.ToDouble(data.Size[v])/100);
+                            }
+                            yield return new TimeLineDataPoint<long>(ts, size);
+                            break;
+                        default:
+
+                            if (data.Used.ContainsKey(name))
+                            {
+                                yield return new TimeLineDataPoint<float>(ts, data.Used[name]);
+                            }
+                            break;
                     }
                 }
             }

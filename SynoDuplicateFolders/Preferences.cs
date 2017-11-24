@@ -27,6 +27,10 @@ namespace SynoDuplicateFolders
         private string proxy_type = string.Empty;
         private string dpapi = string.Empty;
 
+        private string diffexe = string.Empty;
+        private string diffexeargs = string.Empty;
+        private int max_compare = 3;
+
         ConsoleCommandMode mode = ConsoleCommandMode.InteractiveSudo;
 
         bool keep = true;
@@ -49,6 +53,9 @@ namespace SynoDuplicateFolders
 
             if (!Default.AutoRefreshServer.Equals(server)
                 || !Default.DPAPIVector.Equals(dpapi)
+                || !Default.DiffExe.Equals(diffexe)
+                || !Default.DiffArgs.Equals(diffexeargs)
+                || !Default.MaximumComparable.Equals(max_compare)
                 || !Default.CacheFolder.Equals(folder)
                 || !Default.KeepAnalyzerDb.Equals(keep)
                 || !Default.KeepAnalyzerDbCount.Equals(keepCount)
@@ -64,6 +71,9 @@ namespace SynoDuplicateFolders
             {
                 Default.CacheFolder = folder;
                 Default.DPAPIVector = dpapi;
+                Default.DiffExe = diffexe;
+                Default.DiffArgs = diffexeargs;
+                Default.MaximumComparable = max_compare;
                 Default.AutoRefreshServer = server;
                 Default.KeepAnalyzerDb = keep;
                 Default.KeepAnalyzerDbCount = keepCount;
@@ -127,6 +137,10 @@ namespace SynoDuplicateFolders
 
             txtDPAPI.Text = Default.DPAPIVector;
 
+            txtDiffExeArgs.Text = Default.DiffArgs;
+            txtDiffTool.Text = Default.DiffExe;
+            cmbMaxCompare.Text = Default.MaximumComparable.ToString();
+
             optLoginAsRoot.Checked = true;
             optSudo.Checked = Default.RmExecutionMode == ConsoleCommandMode.Sudo;
             optInteractiveSudo.Checked = Default.RmExecutionMode == ConsoleCommandMode.InteractiveSudo;
@@ -178,6 +192,10 @@ namespace SynoDuplicateFolders
             use_proxy = optProxy.Checked;
 
             dpapi = txtDPAPI.Text;
+
+            diffexe = txtDiffTool.Text;
+            diffexeargs = txtDiffExeArgs.Text;
+            max_compare = int.Parse(cmbMaxCompare.Text);
 
         }
         #endregion
