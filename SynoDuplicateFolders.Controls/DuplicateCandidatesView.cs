@@ -130,7 +130,7 @@ namespace SynoDuplicateFolders.Controls
                         {
                             if (s.FileName == Files.Text)
                             {
-                                status = (string)Files.SelectedItem + "\r\n" + s.Length.ToFileSizeString();
+                                status = (string)Files.SelectedItem + " " + s.Length.ToFileSizeString();
                                 Where.Add(s.FullPath);
                                 foreach (DuplicateFileInfo o in src.DuplicatesByGroup[index])
                                 {
