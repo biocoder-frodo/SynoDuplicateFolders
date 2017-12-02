@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 
+using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Extensions;
+
 namespace SynoDuplicateFolders.Data
 {
     public class SynoReportShares : BSynoReportTimeLine, ISynoChartData

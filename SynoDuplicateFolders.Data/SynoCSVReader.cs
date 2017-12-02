@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Data
 {

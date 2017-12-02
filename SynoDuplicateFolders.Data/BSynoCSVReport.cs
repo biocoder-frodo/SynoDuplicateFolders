@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Data
 {

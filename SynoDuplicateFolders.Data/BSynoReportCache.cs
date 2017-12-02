@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+using SynoDuplicateFolders.Data.Core;
+
 namespace SynoDuplicateFolders.Data
 {
     public abstract class BSynoReportCache : ISynoReportCache

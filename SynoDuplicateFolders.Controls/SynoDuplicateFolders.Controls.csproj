@@ -50,6 +50,8 @@
     <Compile Include="ChartGrid.Designer.cs">
       <DependentUpon>ChartGrid.cs</DependentUpon>
     </Compile>
+    <Compile Include="ItemOpenedEventArgs.cs" />
+    <Compile Include="ItemsComparedEventArgs.cs" />
     <Compile Include="SortOrderManager.cs" />
     <Compile Include="DuplicateCandidatesView.cs">
       <SubType>UserControl</SubType>
@@ -97,6 +99,10 @@
       <Project>{3edde043-a9fd-4617-9eab-c248658826de}</Project>
       <Name>SynoDuplicateFolders.Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SynoDuplicateFolders.Data.Core\SynoDuplicateFolders.Data.Core.csproj">
+      <Project>{93c3b975-6715-4d7b-956a-1dc44fafd546}</Project>
+      <Name>SynoDuplicateFolders.Data.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SynoDuplicateFolders.Data\SynoDuplicateFolders.Data.csproj">
       <Project>{09866eda-9815-4250-ae9f-6fbb1eb7015b}</Project>
       <Name>SynoDuplicateFolders.Data</Name>
@@ -105,9 +111,6 @@
       <Project>{0e94e781-271c-49cb-95a8-70fb25f8fcf6}</Project>
       <Name>SynoDuplicateFolders.Extensions</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

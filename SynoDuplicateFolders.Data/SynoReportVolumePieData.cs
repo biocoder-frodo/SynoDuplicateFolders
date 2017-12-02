@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using SynoDuplicateFolders.Data.Core;
+
 namespace SynoDuplicateFolders.Data
 {
     public class SynoReportVolumePieData : SynoCSVReportPair<SynoReportSharesValues, SynoReportVolumeUsageValues>, IVolumePieChart, ISynoChartData

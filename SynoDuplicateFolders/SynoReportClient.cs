@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 using SynoDuplicateFolders.Data;
-using SynoDuplicateFolders.Data.ComponentModel;
+using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Data.SecureShell;
 using SynoDuplicateFolders.Properties;
 using SynoDuplicateFolders.Extensions;
@@ -15,8 +14,7 @@ using static SynoDuplicateFolders.Configuration.UserSectionHandler;
 using static SynoDuplicateFolders.Properties.Settings;
 using static System.Environment;
 using System.IO;
-using System.ComponentModel;
-using static SynoDuplicateFolders.Controls.SortOrderManager;
+
 namespace SynoDuplicateFolders
 {
     public partial class SynoReportClient : Form
@@ -78,12 +76,22 @@ namespace SynoDuplicateFolders
         {
             try
             {
-                Process.Start(new ProcessStartInfo()
+                if (e.OpenLocation)
                 {
-                    FileName = e.Path,
-                    UseShellExecute = true,
-                    Verb = "open"
-                });
+                    if (File.Exists(e.Path))
+                    {
+                        Process.Start(Path.Combine(GetFolderPath(SpecialFolder.Windows), "explorer.exe"), "/select, \"" + e.Path + "\"");
+                    }
+                }
+                else
+                {
+                    Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = e.Path,
+                        UseShellExecute = true,
+                        Verb = "open"
+                    });
+                }
             }
             catch (Exception ex)
             {

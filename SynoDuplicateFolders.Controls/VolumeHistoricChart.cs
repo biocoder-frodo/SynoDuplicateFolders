@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Linq;
+using SynoDuplicateFolders.Data.Core;
+
 namespace SynoDuplicateFolders.Controls
 {
     public enum vhcViewMode

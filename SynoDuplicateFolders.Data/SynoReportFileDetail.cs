@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Data.ComponentModel;
 
 namespace SynoDuplicateFolders.Data

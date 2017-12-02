@@ -1,9 +1,9 @@
 ﻿using System;
-using SynoDuplicateFolders.Data.ComponentModel;
+using SynoDuplicateFolders.Controls;
 
-namespace SynoDuplicateFolders.Data
+namespace SynoDuplicateFolders.Data.Core
 {
-    public interface ISynoReportDetail    {         }
+    public interface ISynoReportDetail { }
 
     public interface ISynoReportFileDetail : ISynoReportDetail
     {
@@ -11,7 +11,7 @@ namespace SynoDuplicateFolders.Data
         string Path { get; }
         string Name { get; }
         long Size { get; }
-        DateTime? LastModified {get;}
+        DateTime? LastModified { get; }
     }
     public interface ISynoReportOwnerDetail : ISynoReportDetail
     {
@@ -38,9 +38,12 @@ namespace SynoDuplicateFolders.Data
     public interface IDuplicateFileInfo : ISynoReportDetail
     {
         long Group { get; }
+
+        [ColumnWidth(600)]
         string FullPath { get; }
+
+        string Extension { get; }
         long Size { get; }
         DateTime TimeStamp { get; }
-
     }
 }

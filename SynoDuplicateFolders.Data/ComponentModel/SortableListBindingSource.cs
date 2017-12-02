@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using System.Data.Linq;
 using System.Collections.Generic;
-using System;
+using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Data.ComponentModel
 {   

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using SynoDuplicateFolders.Extensions;
+using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Controls
 {

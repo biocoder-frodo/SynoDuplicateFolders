@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Data.ComponentModel;
 using System.Threading.Tasks;
 
@@ -107,8 +108,6 @@ namespace SynoDuplicateFolders.Data
 
         public override void LoadReport(StreamReader src, FileInfo fi)
         {
-            List<DuplicateFileInfo> render_ts = new List<DuplicateFileInfo>();
-
             _Timestamp = fi.LastWriteTimeUtc;
 
             _total = 0;
@@ -118,7 +117,7 @@ namespace SynoDuplicateFolders.Data
             {
                 string t = src.ReadLine();
                 DuplicateFileInfo entry = new DuplicateFileInfo(t);
-                render_ts.Add(entry);
+
                 _total += entry.Length;
 
                 if (entry.Length > 0)
@@ -133,12 +132,6 @@ namespace SynoDuplicateFolders.Data
                     _zero.Add(entry);
                 }
             }
-
-            Parallel.ForEach(render_ts,
-                (f) =>
-            {
-                DateTime ts = f.TimeStamp;
-            });
 
             _unique = _dupes.Values.Sum(g => g.First().Length);
 

@@ -85,6 +85,7 @@
             this.Candidates.Size = new System.Drawing.Size(178, 391);
             this.Candidates.TabIndex = 1;
             this.Candidates.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.Candidates_AfterSelect);
+            this.Candidates.Enter += new System.EventHandler(this.Candidates_Enter);
             this.Candidates.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Candidates_MouseUp);
             // 
             // splitContainer2
@@ -125,6 +126,7 @@
             this.Where.Size = new System.Drawing.Size(354, 277);
             this.Where.TabIndex = 1;
             this.Where.BeforeCheck += new System.Windows.Forms.TreeViewCancelEventHandler(this.Where_BeforeCheck);
+            this.Where.Enter += new System.EventHandler(this.Where_Enter);
             this.Where.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Where_MouseUp);
             // 
             // contextMenuStrip1
@@ -209,7 +211,9 @@
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(536, 391);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellContextMenuStripNeeded += new System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventHandler(this.dataGridView1_CellContextMenuStripNeeded);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
+            this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
             // DuplicateCandidatesView
             // 

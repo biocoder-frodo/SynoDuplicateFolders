@@ -1,10 +1,12 @@
 ﻿using System;
 using SynoDuplicateFolders.Data;
+using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Extensions;
 using System.ComponentModel;
 using System.Windows.Forms;
 using static SynoDuplicateFolders.Controls.SortOrderManager;
 using SynoDuplicateFolders.Data.ComponentModel;
+using System.Reflection;
 
 namespace SynoDuplicateFolders.Controls
 {
@@ -75,6 +77,14 @@ namespace SynoDuplicateFolders.Controls
                 Visible = true;
 
                 DataSource = (rows as ISynoReportBindingSource<T>).BindingSource;
+                foreach (PropertyInfo p in typeof(T).GetProperties())
+                {
+                    var a = p.GetCustomAttribute<ColumnWidthAttribute>();
+                    if (a != null)
+                    {
+                        Columns[p.Name].Width = a.Width;
+                    }
+                };
 
                 if (Columns.Contains("Size"))
                 {

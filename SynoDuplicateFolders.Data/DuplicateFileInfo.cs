@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Extensions;
 using System.Linq;
 namespace SynoDuplicateFolders.Data
@@ -11,14 +12,51 @@ namespace SynoDuplicateFolders.Data
         private static readonly char[] pathsepsplit = new char[1] { pathsep };
         private static readonly char[] tabsplit = new char[1] { tab };
         private static readonly CultureInfo _ci = new CultureInfo("en-US");
+
         public readonly long Group;
         public readonly string Share;
         public readonly string FullPath;
         public readonly long Length;
-        private readonly string _TimeStamp;
-        private DateTime? _ts = null;
-        public string Path;
-        public string FileName;
+
+        private DateTime _ts;
+
+        private string _path;
+        private string _fileName;
+        private readonly string _extension = string.Empty;
+
+        public string Path
+        {
+            get
+            {
+                return _path;
+            }
+            private set
+            {
+                _path = value;
+            }
+        }
+        public string FileName
+        {
+            get
+            {
+                return _fileName;
+            }
+            private set
+            {
+                _fileName = value;
+            }
+        }
+        public string Extension
+        {
+            get
+            {
+                if (_extension == null)
+                {
+                }
+                return _extension;
+            }
+        }
+
         internal readonly string[] FoldersInPath;
 
         public DuplicateFileInfo(string synorow)
@@ -35,20 +73,23 @@ namespace SynoDuplicateFolders.Data
             Share = columns[1];
             FullPath = columns[2];
             Length = long.Parse(columns[3]);
-            _TimeStamp = columns[4];
+            _ts = DateTime.ParseExact(columns[4], "yyyy/MM/dd HH:mm:ss", _ci, (DateTimeStyles)((int)DateTimeStyles.AssumeLocal + DateTimeStyles.AllowInnerWhite));
+
             string[] p = FullPath.Substring(1).Split(pathsep);
             FoldersInPath = p.Take(p.Count() - 1).ToArray();
+
+            int dot = p[p.Count()-1].LastIndexOf('.');
+            if (dot > -1)
+            {
+                _extension = p[p.Count()-1].Substring(dot);
+            }
+
         }
         public DateTime TimeStamp
         {
             get
             {
-                if (_ts.HasValue == false)
-                {
-                    //DateTime.TryParseExact(_TimeStamp, "yyyy/MM/dd HH:mm:ss", new CultureInfo("en-US"), (DateTimeStyles)((int)DateTimeStyles.AssumeLocal + DateTimeStyles.AllowInnerWhite), out ts);
-                    _ts = DateTime.ParseExact(_TimeStamp, "yyyy/MM/dd HH:mm:ss", _ci, (DateTimeStyles)((int)DateTimeStyles.AssumeLocal + DateTimeStyles.AllowInnerWhite));
-                }
-                return _ts.Value;
+                return _ts;
             }
         }
 
@@ -76,6 +117,15 @@ namespace SynoDuplicateFolders.Data
             }
         }
 
+        string IDuplicateFileInfo.Extension
+        {
+            get
+            {
+                return this.Extension;
+            }
+        }
+
+
         internal void Parse(DuplicateFileInfo entry)
         {
             if (this != entry)
@@ -92,11 +142,11 @@ namespace SynoDuplicateFolders.Data
                 {
                     for (int p = 0; p <= p1; p++)
                     {
-                        Path += pathsep + folders1[p];
+                        _path += pathsep + folders1[p];
                     }
                     if (this.Path != null)
                     {
-                        FileName = this.FullPath.Substring(Path.Length);
+                        _fileName = this.FullPath.Substring(Path.Length);
                     }
                 }
                 for (int p = 0; p <= p2; p++)
@@ -105,14 +155,7 @@ namespace SynoDuplicateFolders.Data
                 }
                 if (entry.Path != null)
                     entry.FileName = entry.FullPath.Substring(entry.Path.Length);
-                //else
-                //{
-                //    for (int p = 0; p < FoldersInPath.Length; p++)
-                //    {
-                //        entry.Path += pathsep + folders1[p];
-                //    }
-                //    entry.FileName = entry.FullPath.Substring(entry.Path.Length+1);
-                //}
+
             }
         }
     }

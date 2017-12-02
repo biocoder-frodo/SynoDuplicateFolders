@@ -1,28 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Data
 {
-    public enum SynoReportType
-    {
-        VolumeUsage,
-        ShareList,
-        FileOwner,
-        FileGroup,
-        DuplicateCandidates,
-        LargeFiles,
-        MostModified,
-        LeastModified,
-        Unknown
-    }
-    public enum SynoReportMode
-    { 
-        SingleFile,
-        TimeLine
-    }
     public interface ISynoReportCache
     {
         event SynoReportCacheDownloadEventHandler DownloadUpdate;
@@ -41,5 +22,24 @@ namespace SynoDuplicateFolders.Data
         IList<DateTime> DateRange { get; }
 
         int KeepAnalyzerDbCount { get; set; }
+    }
+
+    public enum SynoReportType
+    {
+        VolumeUsage,
+        ShareList,
+        FileOwner,
+        FileGroup,
+        DuplicateCandidates,
+        LargeFiles,
+        MostModified,
+        LeastModified,
+        Unknown
+    }
+    
+    public enum SynoReportMode
+    {
+        SingleFile,
+        TimeLine
     }
 }

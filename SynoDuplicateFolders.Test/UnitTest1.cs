@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using SynoDuplicateFolders.Data;
+using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Test
 {

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
+
 using SynoDuplicateFolders.Data;
+using SynoDuplicateFolders.Data.Core;
 using System.Data.Linq;
 
 namespace SynoDuplicateFolders.Test

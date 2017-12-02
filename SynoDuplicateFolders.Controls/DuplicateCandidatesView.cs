@@ -1,4 +1,5 @@
 ﻿using SynoDuplicateFolders.Data;
+using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Extensions;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -22,7 +23,9 @@ namespace SynoDuplicateFolders.Controls
         }
         private SynoReportDuplicateCandidates src = null;
         private TreeNode context_node = null;
+
         private FileInfo _context_file = null;
+        private object _context_file_control = null;
 
         private FsType _checked_items = FsType.fsFile;
         private List<string> _checked = new List<string>();
@@ -38,6 +41,7 @@ namespace SynoDuplicateFolders.Controls
         }
 
         public string HostName { get; set; }
+
         public int MaximumComparable
         {
             set
@@ -56,6 +60,7 @@ namespace SynoDuplicateFolders.Controls
                 return _maximum_comparable;
             }
         }
+
         public SynoReportDuplicateCandidates DataSource
         {
             set
@@ -68,13 +73,6 @@ namespace SynoDuplicateFolders.Controls
                 _checked.Clear();
                 if (src != null)
                 {
-                    //foreach (string f in src.DuplicatesGroupByPath.Keys)
-                    //{
-                    //    if (src.DuplicatesGroupByPath[f].Count > 10)
-                    //    {
-                    //        Candidates.Add(f);
-                    //    }
-                    //}
                     foreach (var f in src.Folders.Values)
                     {
                         Candidates.Add(f);
@@ -117,10 +115,10 @@ namespace SynoDuplicateFolders.Controls
         }
 
         private void Files_SelectedIndexChanged(object sender, EventArgs e)
-        {            
+        {
             string status = string.Empty;
             Where.Nodes.Clear();
-            _checked.Clear();          
+            _checked.Clear();
             if (Files.SelectedItem != null)
             {
                 if (src.DuplicatesGroupByName.ContainsKey((string)Files.SelectedItem))
@@ -143,30 +141,9 @@ namespace SynoDuplicateFolders.Controls
             OnItemStatusUpdate?.Invoke(this, status);
         }
 
-        private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void control_Enter(object sender)
         {
-            if (_context_file != null)
-            {
-                if (e.ClickedItem != compareExternallyToolStripMenuItem)
-                {                    
-                    if (OnItemOpen != null)
-                    {
-                        if (e.ClickedItem == openFileToolStripMenuItem)
-                        {
-                            OnItemOpen(this, new ItemOpenedEventArgs(_context_file.FullName));
-                        }
-                        if (e.ClickedItem == openFileLocationToolStripMenuItem)
-                        {
-                            OnItemOpen(this, new ItemOpenedEventArgs(_context_file.DirectoryName));
-                        }
-                    }
-                }
-                else
-                {
-                    OnItemCompare?.Invoke(this, new ItemsComparedEventArgs(_checked));
-                }
-            }
-
+            _context_file_control = sender;
         }
 
         private void treeView_MouseUp(TreeView sender, MouseEventArgs e)
@@ -184,26 +161,48 @@ namespace SynoDuplicateFolders.Controls
                 {
                     if (context_node.FullPath.Contains("/"))
                     {
-                        if (!string.IsNullOrWhiteSpace(HostName))
-                        {
+                        _context_file = GetUNCPath(context_node, out location, out file, out isFile);
 
-                            _context_file = GetUNCPath(context_node, out location, out file, out isFile);
+                        setContextMenuStripItems(location, file, isFile);
 
-                            openFileLocationToolStripMenuItem.Enabled = location;
-                            openFileToolStripMenuItem.Enabled = file;
-                            compareExternallyToolStripMenuItem.Enabled = (_checked.Count > 1 && _checked.Count <= _maximum_comparable);
-                            contextMenuStrip1.Show(sender, e.Location);
-                        }
+                        contextMenuStrip1.Show(sender, e.Location);
                     }
                 }
             }
         }
+
+        private void setContextMenuStripItems(bool location, bool file, bool isFile)
+        {
+            openFileLocationToolStripMenuItem.Enabled = location;
+            openFileToolStripMenuItem.Enabled = file;
+            openFileToolStripMenuItem.Tag = isFile;
+            compareExternallyToolStripMenuItem.Enabled = (_checked.Count > 1 && _checked.Count <= _maximum_comparable);
+        }
+
+        #region GetUNCPath
         private FileInfo GetUNCPath(TreeNode node, out bool location, out bool file, out bool isFile)
+        {
+            return GetUNCPath(node.FullPath, out location, out file, out isFile);
+        }
+
+        private FileInfo GetUNCPath(DataGridViewCellContextMenuStripNeededEventArgs e, out bool location, out bool file, out bool isFile)
+        {
+            var r = dataGridView1.Rows[e.RowIndex].DataBoundItem as DuplicateFileInfo;
+
+            return GetUNCPath(r, out location, out file, out isFile);
+        }
+
+        private FileInfo GetUNCPath(DuplicateFileInfo duplicate, out bool location, out bool file, out bool isFile)
+        {
+            return GetUNCPath(duplicate.FullPath.Substring(1), out location, out file, out isFile);
+        }
+
+        private FileInfo GetUNCPath(string path, out bool location, out bool file, out bool isFile)
         {
             FileInfo result = null;
             try
             {
-                string path = node.FullPath.Substring(node.FullPath.IndexOf('/'));
+                path = RemoveVolumeFromPath(path);
 
                 if (PathCanBeOpened(path, out location, out file, out isFile, out result) == false)
                 {
@@ -230,12 +229,13 @@ namespace SynoDuplicateFolders.Controls
                 return null;
             }
         }
+
         private bool PathCanBeOpened(string path, out bool openFileLocation, out bool openFile, out bool isFile, out FileInfo result)
         {
             openFileLocation = false;
             openFile = false;
             isFile = false;
-
+            if (string.IsNullOrWhiteSpace(HostName)) throw new ArgumentException("The HostName property must be set, it cannot be empty.");
             var uncpath = string.Format("{0}{1}", Path.DirectorySeparatorChar, Path.DirectorySeparatorChar) + HostName + path.Replace('/', Path.DirectorySeparatorChar);
 
             result = null;
@@ -265,15 +265,11 @@ namespace SynoDuplicateFolders.Controls
             return openFile || openFileLocation;
         }
 
-        private void Candidates_MouseUp(object sender, MouseEventArgs e)
+        private string RemoveVolumeFromPath(string path)
         {
-            treeView_MouseUp(sender as TreeView, e);
+            return path.Substring(path.IndexOf('/'));
         }
-
-        private void Where_MouseUp(object sender, MouseEventArgs e)
-        {
-            treeView_MouseUp(sender as TreeView, e);
-        }
+        #endregion
 
         private void Where_BeforeCheck(object sender, TreeViewCancelEventArgs e)
         {
@@ -327,13 +323,13 @@ namespace SynoDuplicateFolders.Controls
 
         private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.RowIndex > -1)
+            if (e.RowIndex != -1)
             {
                 DuplicateFileInfo d = dataGridView1.Rows[e.RowIndex].DataBoundItem as DuplicateFileInfo;
                 var nodes = Candidates.Nodes.Find(d.Path, true);
                 if (nodes.Length == 1)
                 {
-                    Candidates.CollapseAll();                
+                    Candidates.CollapseAll();
                     nodes[0].EnsureVisible();
                     Candidates.SelectedNode = nodes[0];
                     Files.SelectedItem = d.FileName;
@@ -348,31 +344,105 @@ namespace SynoDuplicateFolders.Controls
                 }
             }
         }
-    }
 
-    public class ItemOpenedEventArgs : EventArgs
-    {
-        public readonly string Path;
-        internal ItemOpenedEventArgs(string path)
+        private void dataGridView1_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
         {
-            Path = path;
-        }
-    }
-    public class ItemsComparedEventArgs : EventArgs
-    {
-        private IList<string> items = null;
-        internal ItemsComparedEventArgs(IList<string> paths)
-        {
-            items = new List<string>(paths);
-        }
-
-        public IReadOnlyList<string> Items
-        {
-            get
+            bool location;
+            bool file;
+            bool isFile;
+            if (e.RowIndex != -1)
             {
-                return items as IReadOnlyList<string>;
+                control_Enter(sender);
+                _context_file = GetUNCPath(e, out location, out file, out isFile);
+                setContextMenuStripItems(location, file, isFile);
+                e.ContextMenuStrip = contextMenuStrip1;
+
             }
         }
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            _checked_items = FsType.fsFile;
+            _checked.Clear();
+            foreach (DataGridViewRow row in (sender as SynoReportDataGridView).SelectedRows)
+            {
+                var d = row.DataBoundItem as DuplicateFileInfo;
+                _checked.Add(d.FullPath.Substring(1));
+            }
+
+        }
+
+        private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (_context_file != null)
+            {
+                if (e.ClickedItem != compareExternallyToolStripMenuItem)
+                {
+                    if (OnItemOpen != null)
+                    {
+                        if (e.ClickedItem == openFileToolStripMenuItem)
+                        {
+                            OnItemOpen(this, new ItemOpenedEventArgs(_context_file.FullName, false, (bool)openFileToolStripMenuItem.Tag));
+                        }
+                        if (e.ClickedItem == openFileLocationToolStripMenuItem)
+                        {
+                            OnItemOpen(this, new ItemOpenedEventArgs(_context_file.FullName, true, true));
+                        }
+                    }
+                }
+                else
+                {
+                    if (_context_file_control == dataGridView1)
+                    {
+                        List<string> test = new List<string>();
+                        foreach (string path in _checked)
+                        {
+                            bool location;
+                            bool file;
+                            bool isFile;
+                            FileInfo fi = GetUNCPath(path, out location, out file, out isFile);
+                            if (fi != null)
+                            {
+                                test.Add(fi.FullName);
+                            }
+                        }
+                        if (test.Count > 1)
+                        {
+                            _checked = test;
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    OnItemCompare?.Invoke(this, new ItemsComparedEventArgs(_checked));
+                }
+            }
+
+        }
+
+        #region Treeview handlers
+        private void Candidates_MouseUp(object sender, MouseEventArgs e)
+        {
+            treeView_MouseUp(sender as TreeView, e);
+        }
+
+        private void Where_MouseUp(object sender, MouseEventArgs e)
+        {
+            treeView_MouseUp(sender as TreeView, e);
+        }
+
+        private void Candidates_Enter(object sender, EventArgs e)
+        {
+            control_Enter(sender);
+        }
+
+        private void Where_Enter(object sender, EventArgs e)
+        {
+            control_Enter(sender);
+        }
+        #endregion
+
     }
 }
 
