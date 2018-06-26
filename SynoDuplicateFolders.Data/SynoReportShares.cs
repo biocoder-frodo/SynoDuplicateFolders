@@ -171,12 +171,22 @@ namespace SynoDuplicateFolders.Data
 
             Dictionary<string, int> map = new Dictionary<string, int>();
             string[] columns = src.ReadLine().ToLowerInvariant().Split('\t');
+
             for (int i = columns.GetLowerBound(0); i <= columns.GetUpperBound(0); i++)
             {
                 columns[i] = columns[i].Trim();
                 map.Add(columns[i], i);
             }
+
+            if (map.Count.Equals(2))
+            {
+                map.Add("volume", 1);
+                map["size"] = 2;
+            }
+
             if (map.ContainsKey("shared folder")) map.Add("share", map["shared folder"]);
+            Console.WriteLine("columns in {0} = {1}", fi.FullName, map.Count);
+
             while (src.EndOfStream == false)
             {
                 columns = src.ReadLine().ToLowerInvariant().Split('\t');
@@ -184,29 +194,19 @@ namespace SynoDuplicateFolders.Data
                 {
                     columns[i] = columns[i].Trim().RemoveEnclosingCharacter("\"");
                 }
-                try
+
+                Shares.Add(columns[map["share"]]);
+                Volumes.Add(columns[map["share"]], "/"+columns[map["volume"]].Replace("_",""));
+                Used.Add(columns[map["share"]], long.Parse(columns[map["size"]]));
+                if (columns.Count() > 3)
                 {
-                    Shares.Add(columns[map["share"]]);
-                    Volumes.Add(columns[map["share"]], "/"+columns[map["share"] + 1].Replace("_",""));
-                    Used.Add(columns[map["share"]], long.Parse(columns[2 * map["size"]]));
-                    if (columns.Count() > 3)
-                    {
-                        Quota.Add(columns[map["share"]], long.Parse(columns[2 * map["size"] + 1]));
-                        System.Diagnostics.Debug.Assert(Quota[columns[map["share"]]].Equals(0));
-                    }
-                    else
-                    {
-                        Quota.Add(columns[map["share"]], 0);
-                    }
+                    Quota.Add(columns[map["share"]], long.Parse(columns[map["size"] + 1]));                        
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine(ex.Message);
+                    Quota.Add(columns[map["share"]], 0);
                 }
-                //Volumes.Add(columns[map["volume"]]);
-                //Size.Add(columns[map["volume"]], long.Parse(columns[map["size"]]));
-                //Used.Add(columns[map["volume"]], float.Parse(columns[map["used"]].Replace("%", "")));
-                //DaysTillFull.Add(columns[map["volume"]], int.Parse(columns[map["days till full"]]));
+
             }
         }
     }

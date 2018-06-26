@@ -194,10 +194,11 @@ namespace SynoDuplicateFolders.Data
         {
             _Timestamp = fi.LastWriteTimeUtc;
 
-            SimpleCSVReader r = new SimpleCSVReader(src, ',',
+            SimpleCSVReader r = new SimpleCSVReader(src, new char[]{ '\t', ','} ,
                                                     new List<SimpleCSVReaderColumnNameReplacer>()
                                                     {
-                                                        new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals, "daty to full", "days till full")
+                                                        new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals, "daty to full", "days till full"),
+                                                        new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals, "days to full", "days till full")
                                                     });
 
             while (r.EndOfStream == false)

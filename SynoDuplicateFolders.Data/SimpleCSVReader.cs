@@ -15,36 +15,62 @@ namespace SynoDuplicateFolders.Data
         public SimpleCSVReader(StreamReader src, char separator)
             : this(src, separator, new List<SimpleCSVReaderColumnNameReplacer>())
         { }
+
         public SimpleCSVReader(StreamReader src, char separator, IList<SimpleCSVReaderColumnNameReplacer> renamedcolumns)
         {
             _src = src;
             _sep = separator;
             _renames = renamedcolumns;
             string[] columns = _src.ReadLine().ToLowerInvariant().Split(_sep);
-            for (int i = columns.GetLowerBound(0); i <= columns.GetUpperBound(0); i++)
+            RenameColumns(columns);
+        }
+        public SimpleCSVReader(StreamReader src, char[] separator)
+            : this(src, separator, new List<SimpleCSVReaderColumnNameReplacer>())
+        { }
+        public SimpleCSVReader(StreamReader src, char[] separator, IList<SimpleCSVReaderColumnNameReplacer> renamedcolumns)
+        {
+            string first = src.ReadLine().ToLowerInvariant();
+            _src = src;
+            foreach (char c in separator)
             {
-                columns[i] = columns[i].Trim();
-                foreach (SimpleCSVReaderColumnNameReplacer rule in renamedcolumns)
+                if (first.Contains(c.ToString()))
                 {
-                    switch (rule.Comparison)
-                    {
-                        case SimpleCSVReaderReplaceMode.Equals:
-                            {
-                                if (columns[i].Equals(rule.Match)) columns[i] = rule.ReplaceBy;
-                                break;
-                            }
-                        case SimpleCSVReaderReplaceMode.Contains:
-                            {
-                                if (columns[i].Contains(rule.Match)) columns[i] = rule.ReplaceBy;
-                                break;
-                            }
-                        default: break;
-                    }
+                    _sep = c;
+                    break;
                 }
-                _map.Add(columns[i], i);
+            }
+            _renames = renamedcolumns;
+            string[] columns = first.Split(_sep);
+            RenameColumns(columns);
+        }
+        private void RenameColumns(string[] columns)
+        {
+            if (_renames != null)
+            {
+                for (int i = columns.GetLowerBound(0); i <= columns.GetUpperBound(0); i++)
+                {
+                    columns[i] = columns[i].Trim();
+                    foreach (SimpleCSVReaderColumnNameReplacer rule in _renames)
+                    {
+                        switch (rule.Comparison)
+                        {
+                            case SimpleCSVReaderReplaceMode.Equals:
+                                {
+                                    if (columns[i].Equals(rule.Match)) columns[i] = rule.ReplaceBy;
+                                    break;
+                                }
+                            case SimpleCSVReaderReplaceMode.Contains:
+                                {
+                                    if (columns[i].Contains(rule.Match)) columns[i] = rule.ReplaceBy;
+                                    break;
+                                }
+                            default: break;
+                        }
+                    }
+                    _map.Add(columns[i], i);
+                }
             }
         }
-
         public bool EndOfStream { get { return _src.EndOfStream; } }
         public void ReadLine()
         {

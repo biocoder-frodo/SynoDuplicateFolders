@@ -113,6 +113,7 @@
             this.Files.Location = new System.Drawing.Point(0, 0);
             this.Files.Name = "Files";
             this.Files.Size = new System.Drawing.Size(354, 110);
+            this.Files.Sorted = true;
             this.Files.TabIndex = 1;
             this.Files.SelectedIndexChanged += new System.EventHandler(this.Files_SelectedIndexChanged);
             // 

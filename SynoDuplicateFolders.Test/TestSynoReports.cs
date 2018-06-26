@@ -18,56 +18,64 @@ namespace SynoDuplicateFolders.Test
                 SynoReportType.DuplicateCandidates, new List<string>() {
                 "synoreport_Duplicates_2015-10-31_10-46-27_csv_duplicate_file.csv.zip",
                 "duplicate_file.csv",
-                Path.Combine("reports-2-0-0-0164","duplicate_file.csv")
+                Path.Combine("reports-2-0-0-0164","duplicate_file.csv"),
+                Path.Combine("reports-2-0-1-0198","duplicate_file.csv")
                 }
             },
             {
                 SynoReportType.FileGroup, new List<string>() {
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_file_group.csv.zip",
                 "file_group.csv",
-                Path.Combine("reports-2-0-0-0164","file_group.csv")
+                Path.Combine("reports-2-0-0-0164","file_group.csv"),
+                Path.Combine("reports-2-0-1-0198","file_group.csv")
                 }
             },
             {
                 SynoReportType.FileOwner, new List<string>() {
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_file_owner.csv.zip",
                 "file_owner.csv",
-                Path.Combine("reports-2-0-0-0164","file_owner.csv")
+                Path.Combine("reports-2-0-0-0164","file_owner.csv"),
+                Path.Combine("reports-2-0-1-0198","file_owner.csv")
                 }
             },
             {
                 SynoReportType.LargeFiles, new List<string>() {
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_large_file.csv.zip",
                 "large_file.csv",
-                Path.Combine("reports-2-0-0-0164","large_file.csv")
+                Path.Combine("reports-2-0-0-0164","large_file.csv"),
+                Path.Combine("reports-2-0-1-0198","large_file.csv")
                 }
             },
             {
                 SynoReportType.LeastModified, new List<string>() {
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_least_modify.csv.zip",
                 "least_modify.csv",
-                Path.Combine("reports-2-0-0-0164","least_modify.csv")
+                Path.Combine("reports-2-0-0-0164","least_modify.csv"),
+                Path.Combine("reports-2-0-1-0198","least_modify.csv")
                 }
             },
             {
                 SynoReportType.MostModified, new List<string>() {
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_most_modify.csv.zip",
                 "most_modify.csv",
-                Path.Combine("reports-2-0-0-0164","most_modify.csv")
+                Path.Combine("reports-2-0-0-0164","most_modify.csv"),
+                Path.Combine("reports-2-0-1-0198","most_modify.csv")
                 }
             },
             {
                 SynoReportType.ShareList, new List<string>() {
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_share_list.csv.zip",
                 "share_list.csv",
-                Path.Combine("reports-2-0-0-0164","share_list.csv")
+                Path.Combine("reports-2-0-0-0164","share_list.csv"),
+                Path.Combine("reports-2-0-1-0198","share_list.csv")
                 }
             },
             {
                 SynoReportType.VolumeUsage, new List<string>() {
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_volume_usage.csv.zip",
                 "volume_usage.csv",
-                Path.Combine("reports-2-0-0-0164","volume_usage.csv")
+                Path.Combine("reports-2-0-0-0164","volume_usage.csv"),
+                Path.Combine("reports-2-0-1-0198","volume_usage.csv")
                 }
             }
 
