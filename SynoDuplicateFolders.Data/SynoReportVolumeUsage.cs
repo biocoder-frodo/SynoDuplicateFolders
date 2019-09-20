@@ -131,6 +131,17 @@ namespace SynoDuplicateFolders.Data
             }
         }
 
+        public List<string> ActiveSeries
+        {
+            get
+            {                 
+                List<string> result = new List<string>();
+                result.AddRange((_list[_list.Keys.Max()] as SynoReportVolumeUsageValues).Volumes);
+                result.AddRange(_absolute_totals);
+                return result;
+            }
+        }
+
         public IEnumerable<IXYDataPoint> this[int index]
         {
             get

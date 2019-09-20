@@ -163,7 +163,10 @@ namespace SynoDuplicateFolders
         {
             ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Processing));
         }
-
+        private void ProgressUpdateFailed()
+        {
+            ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Idle));
+        }
         private void SynoReportClient_CacheUpdate(string host)
         {
             try
@@ -236,10 +239,15 @@ namespace SynoDuplicateFolders
             catch (SynoReportViaSSHLoginFailure ex)
             {
                 MessageBox.Show(ex.Message);
+                
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                Invoke(new Action(ProgressUpdateFailed));
             }
         }
 
@@ -371,6 +379,11 @@ namespace SynoDuplicateFolders
                 case CacheStatus.FetchingVersionInfoCompleted:
                     toolStripStatusLabel1.Text = "DSM version " + e.Message;
                     break;
+
+                case CacheStatus.Cleanup:
+                    toolStripStatusLabel1.Text = "Removing Storage Analyzer database files...";
+                    break;
+
                 case CacheStatus.Downloading:
                     toolStripStatusLabel1.Text = string.Format("Downloading files.. [{0} of {1}]", e.FilesFetched, e.TotalFiles);
                     toolStripProgressBar1.Minimum = 0;

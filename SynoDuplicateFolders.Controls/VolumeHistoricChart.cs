@@ -104,10 +104,10 @@ namespace SynoDuplicateFolders.Controls
 
                         long peak = 0;
 
-                        _displaying_traces = data.Series;
+                        _displaying_traces = data.ActiveSeries;
                         if (_viewtype == SynoReportType.VolumeUsage)
                         {
-                            _displaying_traces = data.Series.Where(s => s.Contains("Total")==(_view == vhcViewMode.VolumeTotals)).ToList();
+                            _displaying_traces = _displaying_traces.Where(s => s.Contains("Total")==(_view == vhcViewMode.VolumeTotals)).ToList();
                         }
 
                         foreach (string s in _displaying_traces)

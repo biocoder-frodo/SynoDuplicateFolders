@@ -20,8 +20,8 @@ namespace SynoDuplicateFolders
 
             Host = new DSMHost();
 
-            txtSynoReportHome.Text = "/volume1/homes/admin/synoreport/";
-            txtUser.Text = "admin";
+            txtSynoReportHome.Text = DSMHost.SynoReportHomeDefault(DSMHost.DefaultUserName);
+            txtUser.Text = DSMHost.DefaultUserName;
             chkSynoReportHome.CheckState = CheckState.Unchecked;
             chkUser.CheckState = CheckState.Unchecked;
             txtPort.Text = Host.ElementInformation.Properties["port"].DefaultValue.ToString();
@@ -36,7 +36,9 @@ namespace SynoDuplicateFolders
             txtPassword.Text = "";
             txtUser.Text = Host.UserName.ToLower();
             txtHost.Text = Host.Host;
-            txtSynoReportHome.Text = string.IsNullOrWhiteSpace(host.SynoReportHome) ? "/volume1/homes/" + host.UserName + "/synoreport/" : host.SynoReportHome;
+            txtSynoReportHome.Text = string.IsNullOrWhiteSpace(host.SynoReportHome) ? DSMHost.SynoReportHomeDefault(host.UserName) : host.SynoReportHome;
+            chkSynoReportHome.CheckState = CheckState.Checked;
+            if (txtSynoReportHome.Text == DSMHost.SynoReportHomeDefault(host.UserName)) chkSynoReportHome.CheckState = CheckState.Unchecked;
             txtPort.Text = host.Port.ToString();
         }
         private void HostConfiguration_Load(object sender, EventArgs e)

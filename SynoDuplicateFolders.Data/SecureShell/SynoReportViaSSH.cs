@@ -62,7 +62,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         {
             get
             {
-                string result = string.Format("/volume1/homes/{0}/synoreport/", _host.UserName);
+                string result = DSMHost.SynoReportHomeDefault(_host.UserName);
                 if (!string.IsNullOrWhiteSpace(_host.SynoReportHome))
                 {
                     if (_host.SynoReportHome.StartsWith("/") && _host.SynoReportHome.EndsWith("/synoreport/"))
@@ -160,7 +160,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 _files.Clear();
 
                 using (SshClient sc = new SshClient(_ci))
-                {   
+                {
                     //_ci.AuthenticationBanner += delegate (object sender, AuthenticationBannerEventArgs e)
                     //  {
                     //      Console.WriteLine(e.BannerMessage);
@@ -213,7 +213,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                             }
                         }
                     }
-
+                }
                     using (ScpClient cp = new ScpClient(_ci))
                     {
                         cp.Connect();
@@ -247,15 +247,17 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
                     }
 
-                }
 
+                List<ConsoleFileInfo> removal = new List<ConsoleFileInfo>();
                 if (KeepAnalyzerDbCount >= 0)
                 {
                     List<DateTime> remove = dsm_databases.Keys.Take(dsm_databases.Count - KeepAnalyzerDbCount).ToList();
                     foreach (DateTime r in remove)
                     {
-                        console.RemoveFiles(this, dsm_databases[r]);
+                        removal.AddRange(dsm_databases[r]);
                     }
+                    RaiseDownloadEvent(CacheStatus.Cleanup);
+                    console.RemoveFiles(this, removal);
                 }
 
             }

@@ -44,6 +44,20 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 this["user"] = value;
             }
         }
+
+        public static string DefaultUserName
+        {
+            get
+            {
+                return "admin";
+            }
+        }
+
+        public static string SynoReportHomeDefault(string userName)
+        {
+            return string.Format("/volume1/homes/{0}/synoreport/", string.IsNullOrEmpty(userName) ? DefaultUserName : userName);
+        }
+
         [ConfigurationProperty("home", IsRequired = false)]
         public string SynoReportHome
         {

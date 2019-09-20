@@ -127,6 +127,15 @@ namespace SynoDuplicateFolders.Data
                 return Shares.Keys.ToList();
             }
         }
+
+        public List<string> ActiveSeries
+        {
+            get
+            {
+                return (_list[_list.Keys.Max()] as SynoReportSharesValues).Shares;                
+            }
+        }
+
         public IEnumerable<IXYDataPoint> this[int index]
         {
             get

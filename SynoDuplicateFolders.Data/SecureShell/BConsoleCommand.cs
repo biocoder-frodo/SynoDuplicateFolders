@@ -48,9 +48,17 @@ namespace SynoDuplicateFolders.Data.SecureShell
         public abstract List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, bool Disconnect = true);
         public abstract void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases);
 
+        internal string RemoveFileCommand(string path)
+        {
+            return string.Format("rm {0}", path);
+        }
+        internal string RemoveFileCommand(SynoReportViaSSH connection, ConsoleFileInfo file)
+        {
+            return RemoveFileCommand(connection.SynoReportHome.Replace("/synoreport/", "") + file.Path);
+        }
         internal void RemoveFile(SynoReportViaSSH connection, ConsoleFileInfo file, ConsoleCommandMode mode, SshClient session = null)
         {
-            RunCommand(connection, string.Format("rm {0}", connection.SynoReportHome.Substring(0,connection.SynoReportHome.Length - "synoreport/".Length) + file.Path.Substring(1)), mode, session);
+            RunCommand(connection, RemoveFileCommand(connection, file), mode, session);
         }
 
         internal string RunCommand(SynoReportViaSSH connection, string command, ConsoleCommandMode mode = ConsoleCommandMode.Directly, SshClient session = null)

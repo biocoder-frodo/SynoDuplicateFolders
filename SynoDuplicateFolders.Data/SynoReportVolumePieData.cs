@@ -34,6 +34,14 @@ namespace SynoDuplicateFolders.Data
             }
         }
 
+        public List<string> ActiveSeries
+        {
+            get
+            {
+                return Series;
+            }
+        }
+
         public IEnumerable<IXYDataPoint> this[int index]
         {
             get

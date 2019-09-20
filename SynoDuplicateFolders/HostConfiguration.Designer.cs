@@ -103,7 +103,6 @@
             // chkSynoReportHome
             // 
             this.chkSynoReportHome.AutoSize = true;
-            this.chkSynoReportHome.Enabled = false;
             this.chkSynoReportHome.Location = new System.Drawing.Point(13, 114);
             this.chkSynoReportHome.Name = "chkSynoReportHome";
             this.chkSynoReportHome.Size = new System.Drawing.Size(61, 17);

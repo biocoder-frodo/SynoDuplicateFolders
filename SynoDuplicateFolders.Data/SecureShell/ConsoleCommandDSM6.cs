@@ -1,9 +1,8 @@
 ﻿using Renci.SshNet;
-using Renci.SshNet.Common;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
@@ -75,16 +74,39 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
         public override void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases)
         {
-            using (SshClient scr = new SshClient(session.ConnectionInfo))
+            if (dsm_databases.Count>0)
+            { 
+            string script = session.SynoReportHome.Replace("/synoreport/", "/") + "test.sh";
+            using (MemoryStream ms = new MemoryStream())
             {
-                scr.Connect();
+                    using (StreamWriter sw = new System.IO.StreamWriter(ms))
+                    {
+                        sw.AutoFlush = true;
+                        sw.Write("#!/bin/bash\n");
+                        foreach (var file in dsm_databases)
+                        {
+                            sw.Write(base.RemoveFileCommand(session, file));
+                            sw.Write("\n");
+                        }
 
-                foreach (var db in dsm_databases)
-                {
-                    RemoveFile(session, db, session.RmExecutionMode, scr);
+                        ms.Seek(0, SeekOrigin.Begin);
+                        using (ScpClient cp = new ScpClient(session.ConnectionInfo))
+                        {
+                            cp.Connect();
+                            cp.Upload(ms, script);
+                            cp.Disconnect();
+                        }
+
+                        using (SshClient scr = new SshClient(session.ConnectionInfo))
+                        {
+                            scr.Connect();
+                            RunCommand(session, "chmod +x " + script, session.RmExecutionMode, scr);
+                            RunCommand(session, "./test.sh", session.RmExecutionMode, scr);
+                            RunCommand(session, RemoveFileCommand(script), session.RmExecutionMode, scr);
+                            scr.Disconnect();
+                        }
+                    }
                 }
-
-                scr.Disconnect();
             }
         }
     }
