@@ -64,11 +64,11 @@ namespace SynoDuplicateFolders.Test
     public static class AssertException
     {
 
-        public static void ThrowsParamName<T>(TestDelegate code, string param) where T : Exception, new()
+        public static void ThrowsParamName<T>(TestDelegate code, string param) where T : Exception
         {
-            T ex = Assert.Throws<T>(code, "The {0} exception was not raised.", new T().GetType().Name);
+            T ex = Assert.Throws<T>(code, "The {0} exception was not raised.", typeof(T).Name);
             var prop = ex.GetType().GetProperty("ParamName");
-            Assert.NotNull(prop, "The {0} exception does not implement a ParamName property.", new T().GetType().Name);
+            Assert.NotNull(prop, "The {0} exception does not implement a ParamName property.", typeof(T).Name);
             Assert.That(prop.GetMethod.Invoke(ex, null), Is.EqualTo(param), "An unexpected parameter name was returned.");
         }
 
