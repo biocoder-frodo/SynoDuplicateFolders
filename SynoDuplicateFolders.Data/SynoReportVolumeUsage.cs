@@ -114,8 +114,7 @@ namespace SynoDuplicateFolders.Data
                         }
                     }
                     sw.WriteLine();
-                }
-                sw.Close();
+                }               
             }
 
         }

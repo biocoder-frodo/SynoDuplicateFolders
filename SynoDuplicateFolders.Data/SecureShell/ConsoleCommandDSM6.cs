@@ -58,7 +58,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                         string file = parse.Substring(35).TrimStart();
 
 
-                        DateTime ts = default(DateTime);
+                        DateTime ts;
                         DateTime.TryParse(ft, out ts);
 
 

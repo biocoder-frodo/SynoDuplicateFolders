@@ -4,7 +4,7 @@ using SynoDuplicateFolders.Configuration;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
-    public class DSMHost : ConfigurationElement, IElementProvider
+    public sealed class DSMHost : ConfigurationElement, IElementProvider
     {
         [ConfigurationProperty("host", IsRequired = true, IsKey = true)]
         public string Host

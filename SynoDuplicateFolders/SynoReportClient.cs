@@ -41,9 +41,9 @@ namespace SynoDuplicateFolders
             duplicateCandidatesView1.OnItemStatusUpdate += DuplicateCandidatesView1_OnItemStatusUpdate;
         }
 
-        private void DuplicateCandidatesView1_OnItemStatusUpdate(object sender, string status)
+        private void DuplicateCandidatesView1_OnItemStatusUpdate(object sender, ItemStatusUpdateEventArgs e)
         {
-            toolStripStatusLabel1.Text = status;
+            toolStripStatusLabel1.Text = e.Status;
         }
 
         private void DuplicateCandidatesView1_OnItemCompare(object sender, ItemsComparedEventArgs e)

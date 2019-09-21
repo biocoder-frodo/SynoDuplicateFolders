@@ -82,8 +82,10 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 SshClient sshClient = new SshClient(session.ConnectionInfo);
 
                 sshClient.Connect();
-                IDictionary<TerminalModes, uint> termkvp = new Dictionary<TerminalModes, uint>();
-                termkvp.Add(TerminalModes.ECHO, 53);
+                IDictionary<TerminalModes, uint> termkvp = new Dictionary<TerminalModes, uint>
+                {
+                    { TerminalModes.ECHO, 53 }
+                };
 
                 ShellStream shellStream = sshClient.CreateShellStream("xterm", 80, 24, 800, 600, 1024, termkvp);
 

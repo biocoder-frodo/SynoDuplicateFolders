@@ -5,7 +5,7 @@ using SynoDuplicateFolders.Extensions;
 using System.Linq;
 namespace SynoDuplicateFolders.Data
 {
-    public class DuplicateFileInfo : IDuplicateFileInfo
+    public sealed class DuplicateFileInfo : IDuplicateFileInfo
     {
         private const char tab = '\t';
         private const char pathsep = '/';

@@ -14,7 +14,7 @@ namespace SynoDuplicateFolders.Controls
     {
         public delegate void DuplicateCandidatesItemOpenHandler(object sender, ItemOpenedEventArgs e);
         public delegate void DuplicateCandidatesItemCompareHandler(object sender, ItemsComparedEventArgs e);
-        public delegate void DuplicateCandidatesItemStatusUpdate(object sender, string status);
+        public delegate void DuplicateCandidatesItemStatusUpdate(object sender, ItemStatusUpdateEventArgs e);
 
         private enum FsType
         {
@@ -108,7 +108,7 @@ namespace SynoDuplicateFolders.Controls
 
             }
 
-            OnItemStatusUpdate?.Invoke(this, string.Format("{0} duplicate(s)", count));
+            OnItemStatusUpdate?.Invoke(this, new ItemStatusUpdateEventArgs(string.Format("{0} duplicate(s)", count)));
 
             Files.Items.AddRange(folders.ToArray());
             Files.SelectedIndex = -1;
@@ -138,7 +138,7 @@ namespace SynoDuplicateFolders.Controls
                         }
                 Where.ExpandAll();
             }
-            OnItemStatusUpdate?.Invoke(this, status);
+            OnItemStatusUpdate?.Invoke(this, new ItemStatusUpdateEventArgs(status));
         }
 
         private void control_Enter(object sender)

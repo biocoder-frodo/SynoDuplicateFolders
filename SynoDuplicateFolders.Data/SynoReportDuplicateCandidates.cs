@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace SynoDuplicateFolders.Data
 {
-    public class SynoReportDuplicateCandidates : BSynoCSVReport, ISynoReportBindingSource<IDuplicateFileInfo>, ISynoReportBindingSource<IDuplicatesHistogramValue>
+    public sealed class SynoReportDuplicateCandidates : BSynoCSVReport, ISynoReportBindingSource<IDuplicateFileInfo>, ISynoReportBindingSource<IDuplicatesHistogramValue>
     {
         private readonly DuplicatesAggregate<long, DuplicateFileInfo> _dupes = new DuplicatesAggregate<long, DuplicateFileInfo>();
 

@@ -5,7 +5,7 @@ namespace SynoDuplicateFolders.Controls
 {
     public class ItemsComparedEventArgs : EventArgs
     {
-        private IList<string> items = null;
+        private readonly IList<string> items = null;
         internal ItemsComparedEventArgs(IList<string> paths)
         {
             items = new List<string>(paths);

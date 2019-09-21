@@ -6,7 +6,7 @@ using Renci.SshNet;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
-    public class DSMAuthenticationKeyFile : ConfigurationElement, IElementProvider
+    public sealed class DSMAuthenticationKeyFile : ConfigurationElement, IElementProvider
     {
         private readonly WrappedPassword<DSMAuthenticationKeyFile> wrapped;
 

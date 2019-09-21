@@ -12,7 +12,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         Password,
         PrivateKeyFile
     }
-    public class DSMAuthentication : ConfigurationElement, IElementProvider
+    public sealed class DSMAuthentication : ConfigurationElement, IElementProvider
     {
         private readonly WrappedPassword<DSMAuthentication> wrapped;
 
