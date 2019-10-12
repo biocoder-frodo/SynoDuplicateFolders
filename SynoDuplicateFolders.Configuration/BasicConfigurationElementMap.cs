@@ -50,17 +50,13 @@ namespace SynoDuplicateFolders.Configuration
             return _provider.GetElementName();
         }
 
-        public T this[object key]
+        public T TryGet(object key)
         {
-            get
-            {
-                return base.BaseGet(key) as T;
-            }
-
+            return ContainsKey(key) ? base.BaseGet(key) as T : null;
         }
         public bool ContainsKey(object key)
         {
-            return this[(object)key] != null;
+            return base.BaseGet(key) != null;
         }
         public T this[int index]
         {

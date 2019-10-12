@@ -79,49 +79,51 @@ namespace SynoDuplicateFolders.Data.SecureShell
         {
             try
             {
-                SshClient sshClient = new SshClient(session.ConnectionInfo);
+                using (SshClient sshClient = new SshClient(session.ConnectionInfo))
+                {
 
-                sshClient.Connect();
-                IDictionary<TerminalModes, uint> termkvp = new Dictionary<TerminalModes, uint>
+                    sshClient.Connect();
+                    IDictionary<TerminalModes, uint> termkvp = new Dictionary<TerminalModes, uint>
                 {
                     { TerminalModes.ECHO, 53 }
                 };
 
-                ShellStream shellStream = sshClient.CreateShellStream("xterm", 80, 24, 800, 600, 1024, termkvp);
+                    ShellStream shellStream = sshClient.CreateShellStream("xterm", 80, 24, 800, 600, 1024, termkvp);
 
 
-                //Get logged in
-                string rep = shellStream.Expect(new Regex(@"[$>]")); //expect user prompt
-                                                                     //this.writeOutput(results, rep);
-                                                                     //
-                                                                     //send command
-                shellStream.WriteLine("sudo " + command);
-                rep = shellStream.Expect(new Regex(@"([$#>:])")); //expect password or user prompt
-                //this.writeOutput(results, rep);
+                    //Get logged in
+                    string rep = shellStream.Expect(new Regex(@"[$>]")); //expect user prompt
+                                                                         //this.writeOutput(results, rep);
+                                                                         //
+                                                                         //send command
+                    shellStream.WriteLine("sudo " + command);
+                    rep = shellStream.Expect(new Regex(@"([$#>:])")); //expect password or user prompt
+                                                                      //this.writeOutput(results, rep);
 
-                //check to send password
-                if (rep.Contains(":"))
-                {
-                    //send password
-                    shellStream.WriteLine(session.Password);
-                    rep = shellStream.Expect(new Regex(@"[$#>]"), new TimeSpan(0, 0, 10)); //expect user or root prompt
-                                                                                           //this.writeOutput(results, rep);
-                    if (rep == null)
+                    //check to send password
+                    if (rep.Contains(":"))
                     {
-                        System.Diagnostics.Debug.WriteLine("sudo action failed?");
+                        //send password
+                        shellStream.WriteLine(session.Password);
+                        rep = shellStream.Expect(new Regex(@"[$#>]"), new TimeSpan(0, 0, 10)); //expect user or root prompt
+                                                                                               //this.writeOutput(results, rep);
+                        if (rep == null)
+                        {
+                            System.Diagnostics.Debug.WriteLine("sudo action failed?");
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("{0}\r\n{1}", command, rep);
+                        }
                     }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine("{0}\r\n{1}", command, rep);
-                    }
+
+                    sshClient.Disconnect();
                 }
-
-                sshClient.Disconnect();
             }//try to open connection
             catch (Exception ex)
             {
                 System.Console.WriteLine(ex.ToString());
-                throw ex;
+                throw ;
             }
 
         }

@@ -39,7 +39,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
             else
             {
                 _ci = new ConnectionInfo(host.Host, host.Port, host.UserName, methods);
-            }            
+            }
         }
 
         public ConsoleCommandMode RmExecutionMode { get; set; }
@@ -214,38 +214,38 @@ namespace SynoDuplicateFolders.Data.SecureShell
                         }
                     }
                 }
-                    using (ScpClient cp = new ScpClient(_ci))
+                using (ScpClient cp = new ScpClient(_ci))
+                {
+                    cp.Connect();
+
+                    RaiseDownloadEvent(CacheStatus.Downloading, _files.Count, 0);
+                    int n = 0;
+                    foreach (ICachedReportFile src in _files.Values)
                     {
-                        cp.Connect();
-
-                        RaiseDownloadEvent(CacheStatus.Downloading, _files.Count, 0);
-                        int n = 0;
-                        foreach (ICachedReportFile src in _files.Values)
+                        if (src.Type != SynoReportType.Unknown)
                         {
-                            if (src.Type != SynoReportType.Unknown)
+                            int attempts = 0;
+                            bool result = false;
+
+                            while (result == false && attempts < 2)
                             {
-                                int attempts = 0;
-                                bool result = false;
-
-                                while (result == false && attempts < 2)
-                                {
-                                    attempts++;
-                                    result = DownloadFile(cp, src.Source, src.LocalFile);
-                                }
-
-                                if (result == false)
-                                {
-                                    cp.Disconnect();
-                                    cp.Connect();
-                                }
+                                attempts++;
+                                result = DownloadFile(cp, src.Source, src.LocalFile);
                             }
 
-                            RaiseDownloadEvent(CacheStatus.Downloading, _files.Count, ++n);
+                            if (result == false)
+                            {
+                                cp.Disconnect();
+                                cp.Connect();
+                            }
                         }
 
-                        cp.Disconnect();
-
+                        RaiseDownloadEvent(CacheStatus.Downloading, _files.Count, ++n);
                     }
+
+                    cp.Disconnect();
+
+                }
 
 
                 List<ConsoleFileInfo> removal = new List<ConsoleFileInfo>();
@@ -275,7 +275,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
             }
         }
     }
-
+    [Serializable]
     public class SynoReportViaSSHException : Exception
     {
         internal SynoReportViaSSHException(string message, Exception innerException)
@@ -284,6 +284,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
         }
     }
+    [Serializable]
     public class SynoReportViaSSHLoginFailure : Exception
     {
         internal SynoReportViaSSHLoginFailure(string message, Exception innerException)

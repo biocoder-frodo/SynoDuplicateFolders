@@ -74,37 +74,43 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
         public override void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases)
         {
-            if (dsm_databases.Count>0)
-            { 
-            string script = session.SynoReportHome.Replace("/synoreport/", "/") + "test.sh";
-            using (MemoryStream ms = new MemoryStream())
+            readonly string scriptName = "SynoDuplicateFoldersRemoveSADB.sh";
+            if (dsm_databases.Count > 0)
             {
-                    using (StreamWriter sw = new System.IO.StreamWriter(ms))
+                string script = session.SynoReportHome.Replace("/synoreport/", "/") + scriptName;
+                MemoryStream ms = null;
+                //StreamWriter sw = null;
+
+                ms = new MemoryStream();
+                using (StreamWriter sw = new StreamWriter(ms))
+                {
+
+                    sw.Write("#!/bin/bash\n");
+                    foreach (var file in dsm_databases)
                     {
-                        sw.AutoFlush = true;
-                        sw.Write("#!/bin/bash\n");
-                        foreach (var file in dsm_databases)
-                        {
-                            sw.Write(base.RemoveFileCommand(session, file));
-                            sw.Write("\n");
-                        }
+                        sw.Write(base.RemoveFileCommand(session, file));
+                        sw.Write("\n");
+                    }
+                    sw.Flush();
 
-                        ms.Seek(0, SeekOrigin.Begin);
-                        using (ScpClient cp = new ScpClient(session.ConnectionInfo))
-                        {
-                            cp.Connect();
-                            cp.Upload(ms, script);
-                            cp.Disconnect();
-                        }
+                    ms.Seek(0, SeekOrigin.Begin);
 
-                        using (SshClient scr = new SshClient(session.ConnectionInfo))
-                        {
-                            scr.Connect();
-                            RunCommand(session, "chmod +x " + script, session.RmExecutionMode, scr);
-                            RunCommand(session, "./test.sh", session.RmExecutionMode, scr);
-                            RunCommand(session, RemoveFileCommand(script), session.RmExecutionMode, scr);
-                            scr.Disconnect();
-                        }
+                    using (ScpClient cp = new ScpClient(session.ConnectionInfo))
+                    {
+                        //System.Windows.Forms.MessageBox.Show(script);
+                        cp.Connect();
+                        cp.Upload(ms, script);
+                        cp.Disconnect();
+                        ms = null;
+                    }
+
+                    using (SshClient scr = new SshClient(session.ConnectionInfo))
+                    {
+                        scr.Connect();
+                        RunCommand(session, "chmod +x " + script, session.RmExecutionMode, scr);
+                        RunCommand(session, "./" + scriptName, session.RmExecutionMode, scr);
+                        RunCommand(session, RemoveFileCommand(script), session.RmExecutionMode, scr);
+                        scr.Disconnect();
                     }
                 }
             }

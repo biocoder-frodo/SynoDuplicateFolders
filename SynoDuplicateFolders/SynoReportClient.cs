@@ -29,6 +29,7 @@ namespace SynoDuplicateFolders
         public SynoReportClient()
         {
             InitializeComponent();
+            this.components.Add(new Disposer(this.OnDispose));
 
             dataGridView1.AutoGenerateColumns = true;
             cmbFileDetails.SelectedIndex = 0;
@@ -40,7 +41,10 @@ namespace SynoDuplicateFolders
             duplicateCandidatesView1.OnItemCompare += DuplicateCandidatesView1_OnItemCompare;
             duplicateCandidatesView1.OnItemStatusUpdate += DuplicateCandidatesView1_OnItemStatusUpdate;
         }
-
+        private void OnDispose(bool disposing)
+        {
+            if (dupes!=null)dupes.Dispose();
+        }
         private void DuplicateCandidatesView1_OnItemStatusUpdate(object sender, ItemStatusUpdateEventArgs e)
         {
             toolStripStatusLabel1.Text = e.Status;
@@ -118,7 +122,10 @@ namespace SynoDuplicateFolders
 
                     if (source != null && source.Exists)
                     {
-                        entropy = new StreamReader(source.FullName).ReadToEnd();
+                        using (var sr = new StreamReader(source.FullName))
+                        {
+                            entropy = sr.ReadToEnd();
+                        }
                     }
                     else
                     {
@@ -173,7 +180,7 @@ namespace SynoDuplicateFolders
             {
                 Invoke(new Action(ProgressUpdateProcessing));
 
-                DSMHost h = config.DSMHosts.Items[host];
+                DSMHost h = config.DSMHosts.Items.TryGet(host);
 
                 SynoReportViaSSH connection = null;
 
@@ -243,7 +250,7 @@ namespace SynoDuplicateFolders
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message+"\n"+ex.StackTrace);
             }
             finally
             {
@@ -263,7 +270,10 @@ namespace SynoDuplicateFolders
 
         private void preferences_Click(object sender, EventArgs e)
         {
-            new Preferences(config).ShowDialog();
+            using (var p = new Preferences(config))
+            {
+                p.ShowDialog();
+            }
         }
 
         private void timeStampTrackBar_Scroll(object sender, EventArgs e)
@@ -327,24 +337,28 @@ namespace SynoDuplicateFolders
             }
             else if (e.ClickedItem == propertiesToolStripMenuItem)
             {
-                var srv = new HostConfiguration(config.DSMHosts.Items[tag]);
-                srv.ShowDialog();
-                if (srv.Canceled == false)
+                using (var srv = new HostConfiguration(config.DSMHosts.Items.TryGet(tag)))
                 {
-                    config.CurrentConfiguration.Save();
+                    srv.ShowDialog();
+                    if (srv.Canceled == false)
+                    {
+                        config.CurrentConfiguration.Save();
+                    }
                 }
             }
         }
 
         private void addServerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var srv = new HostConfiguration();
-            srv.ShowDialog();
-            if (srv.Canceled == false)
+            using (var srv = new HostConfiguration())
             {
-                config.DSMHosts.Items.Add(srv.Host);
-                config.CurrentConfiguration.Save();
-                PopulateServerTree();
+                srv.ShowDialog();
+                if (srv.Canceled == false)
+                {
+                    config.DSMHosts.Items.Add(srv.Host);
+                    config.CurrentConfiguration.Save();
+                    PopulateServerTree();
+                }
             }
         }
 
@@ -448,8 +462,7 @@ namespace SynoDuplicateFolders
 
         private void exportVolumeReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string file;
-            if (SaveDialog("Save Volume report...", out file))
+            if (SaveDialog("Save Volume report...", out string file))
             {
                 (cache.GetReport(SynoReportType.VolumeUsage) as SynoReportVolumeUsage).WriteTimeLineData(file);
             }
@@ -457,8 +470,7 @@ namespace SynoDuplicateFolders
 
         private void exportSharesReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string file;
-            if (SaveDialog("Save Shares report...", out file))
+            if (SaveDialog("Save Shares report...", out string file))
             {
                 (cache.GetReport(SynoReportType.ShareList) as SynoReportShares).WriteTimeLineData(file);
             }
@@ -487,5 +499,6 @@ namespace SynoDuplicateFolders
         {
 
         }
+
     }
 }

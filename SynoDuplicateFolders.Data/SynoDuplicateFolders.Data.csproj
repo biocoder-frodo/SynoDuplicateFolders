@@ -34,9 +34,6 @@
     <SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
-      <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -97,6 +94,10 @@
     <Compile Include="SynoReportVolumeUsage.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\SSH.NET\src\Renci.SshNet\Renci.SshNet.csproj">
+      <Project>{2f5f8c90-0bd1-424f-997c-7bc6280919d1}</Project>
+      <Name>Renci.SshNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SynoDuplicateFolders.Configuration\SynoDuplicateFolders.Configuration.csproj">
       <Project>{3edde043-a9fd-4617-9eab-c248658826de}</Project>
       <Name>SynoDuplicateFolders.Configuration</Name>
@@ -109,9 +110,6 @@
       <Project>{0e94e781-271c-49cb-95a8-70fb25f8fcf6}</Project>
       <Name>SynoDuplicateFolders.Extensions</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

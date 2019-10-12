@@ -39,7 +39,7 @@ namespace SynoDuplicateFolders.Properties
         {
             get
             {
-                return ChartLegends.Items[key] as IChartLegend;
+                return ChartLegends.Items.TryGet(key) as IChartLegend;
             }
         }
 

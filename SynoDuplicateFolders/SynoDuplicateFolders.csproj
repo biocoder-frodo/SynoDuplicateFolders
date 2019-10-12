@@ -25,8 +25,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-	<RunCodeAnalysis>false</RunCodeAnalysis>
-<SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,8 +37,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-	<RunCodeAnalysis>false</RunCodeAnalysis>
-	<SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -58,6 +58,9 @@
   <ItemGroup>
     <Compile Include="ChartLegend.cs" />
     <Compile Include="CustomSettings.cs" />
+    <Compile Include="Disposer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="HostConfiguration.cs">
       <SubType>Form</SubType>
     </Compile>

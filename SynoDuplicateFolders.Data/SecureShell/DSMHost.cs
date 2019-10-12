@@ -91,28 +91,18 @@ namespace SynoDuplicateFolders.Data.SecureShell
         }
         public DSMAuthentication GetAuthenticationMethod(DSMAuthenticationMethod method)
         {
-            if (AuthenticationSection.ContainsKey(method))
-            {
-                return AuthenticationSection[method];
-            }
-            else
-            {                
-                return null;
-            }
+            return AuthenticationSection.TryGet(method);
         }        
 
         public DSMAuthentication GetOrAddAuthenticationMethod(DSMAuthenticationMethod method)
         {
-            if (AuthenticationSection.ContainsKey(method))
+            DSMAuthentication am = AuthenticationSection.TryGet(method);
+            if (am==null)
             {
-                return AuthenticationSection[method];
+                am = new DSMAuthentication(method);
+                AuthenticationSection.Add(am);
             }
-            else
-            {
-                var added = new DSMAuthentication(method);
-                AuthenticationSection.Add(added);
-                return added;
-            }
+            return am;
         }
         public DSMAuthentication UpdateAuthenticationMethod(DSMAuthenticationMethod method, bool add)
         {
@@ -121,9 +111,10 @@ namespace SynoDuplicateFolders.Data.SecureShell
         }
         public void RemoveAuthenticationMethod(DSMAuthenticationMethod method)
         {
-            if (AuthenticationSection.ContainsKey(method))
+            DSMAuthentication am = AuthenticationSection.TryGet(method);
+            if (am!=null)
             {
-                AuthenticationSection.Remove(AuthenticationSection[method]);
+                AuthenticationSection.Remove(am);
             }
         }
         public bool HasAuthenticationMethod(DSMAuthenticationMethod method)

@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 
 namespace SynoDuplicateFolders.Data
 {
-    public sealed class SynoReportDuplicateCandidates : BSynoCSVReport, ISynoReportBindingSource<IDuplicateFileInfo>, ISynoReportBindingSource<IDuplicatesHistogramValue>
+    public sealed class SynoReportDuplicateCandidates : BSynoCSVReport, ISynoReportBindingSource<IDuplicateFileInfo>, ISynoReportBindingSource<IDuplicatesHistogramValue>, IDisposable
     {
         private readonly DuplicatesAggregate<long, DuplicateFileInfo> _dupes = new DuplicatesAggregate<long, DuplicateFileInfo>();
 
@@ -227,6 +227,44 @@ namespace SynoDuplicateFolders.Data
 
             return query.ToList();
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                    if (_files != null) _files.Dispose();
+                    if(_histogram!=null)_histogram.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~SynoReportDuplicateCandidates()
+        // {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
 
     }
 
