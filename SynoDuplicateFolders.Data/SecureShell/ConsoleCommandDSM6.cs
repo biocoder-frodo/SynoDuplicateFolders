@@ -74,7 +74,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
         public override void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases)
         {
-            readonly string scriptName = "SynoDuplicateFoldersRemoveSADB.sh";
+            string scriptName = "SynoDuplicateFoldersRemoveSADB.sh";
             if (dsm_databases.Count > 0)
             {
                 string script = session.SynoReportHome.Replace("/synoreport/", "/") + scriptName;
