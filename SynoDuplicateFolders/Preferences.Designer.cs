@@ -47,6 +47,7 @@
             this.colorDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taggedColorBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabpageSecurity = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.optInteractiveSudo = new System.Windows.Forms.RadioButton();
             this.optSudo = new System.Windows.Forms.RadioButton();
@@ -66,15 +67,17 @@
             this.optProxy = new System.Windows.Forms.RadioButton();
             this.optNoProxy = new System.Windows.Forms.RadioButton();
             this.cmbProxy = new System.Windows.Forms.ComboBox();
-            this.btnApply = new System.Windows.Forms.Button();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.tabPageDiffTool = new System.Windows.Forms.TabPage();
-            this.txtDiffTool = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.cmbMaxCompare = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.txtDiffExeArgs = new System.Windows.Forms.TextBox();
-            this.cmbMaxCompare = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtDiffTool = new System.Windows.Forms.TextBox();
+            this.btnApply = new System.Windows.Forms.Button();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.optPassPhraseInteractive = new System.Windows.Forms.RadioButton();
+            this.optUseStoredPassPhrases = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabConfig.SuspendLayout();
             this.tabpageServers.SuspendLayout();
@@ -82,6 +85,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).BeginInit();
             this.tabpageSecurity.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPageProxy.SuspendLayout();
             this.tabPageDiffTool.SuspendLayout();
@@ -263,6 +267,7 @@
             // 
             // tabpageSecurity
             // 
+            this.tabpageSecurity.Controls.Add(this.groupBox2);
             this.tabpageSecurity.Controls.Add(this.groupBox1);
             this.tabpageSecurity.Controls.Add(this.label2);
             this.tabpageSecurity.Controls.Add(this.txtDPAPI);
@@ -274,6 +279,17 @@
             this.tabpageSecurity.Text = "Security";
             this.tabpageSecurity.UseVisualStyleBackColor = true;
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.optUseStoredPassPhrases);
+            this.groupBox2.Controls.Add(this.optPassPhraseInteractive);
+            this.groupBox2.Location = new System.Drawing.Point(6, 177);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(578, 72);
+            this.groupBox2.TabIndex = 5;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Keyfile pass phrases";
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.optInteractiveSudo);
@@ -281,7 +297,7 @@
             this.groupBox1.Controls.Add(this.optLoginAsRoot);
             this.groupBox1.Location = new System.Drawing.Point(6, 40);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(578, 190);
+            this.groupBox1.Size = new System.Drawing.Size(578, 131);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Analyzer.db remove method";
@@ -468,17 +484,6 @@
             this.cmbProxy.Size = new System.Drawing.Size(90, 21);
             this.cmbProxy.TabIndex = 0;
             // 
-            // btnApply
-            // 
-            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.Location = new System.Drawing.Point(532, 380);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(83, 28);
-            this.btnApply.TabIndex = 2;
-            this.btnApply.Text = "Apply";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
             // tabPageDiffTool
             // 
             this.tabPageDiffTool.Controls.Add(this.cmbMaxCompare);
@@ -494,47 +499,6 @@
             this.tabPageDiffTool.TabIndex = 4;
             this.tabPageDiffTool.Text = "Differences";
             this.tabPageDiffTool.UseVisualStyleBackColor = true;
-            // 
-            // txtDiffTool
-            // 
-            this.txtDiffTool.Location = new System.Drawing.Point(21, 43);
-            this.txtDiffTool.Name = "txtDiffTool";
-            this.txtDiffTool.Size = new System.Drawing.Size(264, 20);
-            this.txtDiffTool.TabIndex = 0;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(18, 27);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "External diff tool";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(18, 126);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(164, 13);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Maximum files/folders to compare";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(18, 69);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(134, 13);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "External diff tool arguments";
-            // 
-            // txtDiffExeArgs
-            // 
-            this.txtDiffExeArgs.Location = new System.Drawing.Point(21, 85);
-            this.txtDiffExeArgs.Name = "txtDiffExeArgs";
-            this.txtDiffExeArgs.Size = new System.Drawing.Size(264, 20);
-            this.txtDiffExeArgs.TabIndex = 4;
             // 
             // cmbMaxCompare
             // 
@@ -553,6 +517,82 @@
             this.cmbMaxCompare.Name = "cmbMaxCompare";
             this.cmbMaxCompare.Size = new System.Drawing.Size(70, 21);
             this.cmbMaxCompare.TabIndex = 6;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(18, 69);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(134, 13);
+            this.label5.TabIndex = 5;
+            this.label5.Text = "External diff tool arguments";
+            // 
+            // txtDiffExeArgs
+            // 
+            this.txtDiffExeArgs.Location = new System.Drawing.Point(21, 85);
+            this.txtDiffExeArgs.Name = "txtDiffExeArgs";
+            this.txtDiffExeArgs.Size = new System.Drawing.Size(264, 20);
+            this.txtDiffExeArgs.TabIndex = 4;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(18, 126);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(164, 13);
+            this.label4.TabIndex = 3;
+            this.label4.Text = "Maximum files/folders to compare";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(18, 27);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(82, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "External diff tool";
+            // 
+            // txtDiffTool
+            // 
+            this.txtDiffTool.Location = new System.Drawing.Point(21, 43);
+            this.txtDiffTool.Name = "txtDiffTool";
+            this.txtDiffTool.Size = new System.Drawing.Size(264, 20);
+            this.txtDiffTool.TabIndex = 0;
+            // 
+            // btnApply
+            // 
+            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnApply.Location = new System.Drawing.Point(532, 380);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(83, 28);
+            this.btnApply.TabIndex = 2;
+            this.btnApply.Text = "Apply";
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
+            // optPassPhraseInteractive
+            // 
+            this.optPassPhraseInteractive.AutoSize = true;
+            this.optPassPhraseInteractive.Checked = true;
+            this.optPassPhraseInteractive.Enabled = false;
+            this.optPassPhraseInteractive.Location = new System.Drawing.Point(16, 19);
+            this.optPassPhraseInteractive.Name = "optPassPhraseInteractive";
+            this.optPassPhraseInteractive.Size = new System.Drawing.Size(162, 17);
+            this.optPassPhraseInteractive.TabIndex = 0;
+            this.optPassPhraseInteractive.TabStop = true;
+            this.optPassPhraseInteractive.Text = "Ask pass phrase interactively";
+            this.optPassPhraseInteractive.UseVisualStyleBackColor = true;
+            // 
+            // optUseStoredPassPhrases
+            // 
+            this.optUseStoredPassPhrases.AutoSize = true;
+            this.optUseStoredPassPhrases.Enabled = false;
+            this.optUseStoredPassPhrases.Location = new System.Drawing.Point(16, 42);
+            this.optUseStoredPassPhrases.Name = "optUseStoredPassPhrases";
+            this.optUseStoredPassPhrases.Size = new System.Drawing.Size(136, 17);
+            this.optUseStoredPassPhrases.TabIndex = 1;
+            this.optUseStoredPassPhrases.Text = "Use stored pass phrase";
+            this.optUseStoredPassPhrases.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -573,6 +613,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).EndInit();
             this.tabpageSecurity.ResumeLayout(false);
             this.tabpageSecurity.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tabPageProxy.ResumeLayout(false);
@@ -630,5 +672,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtDiffExeArgs;
         private System.Windows.Forms.ComboBox cmbMaxCompare;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton optUseStoredPassPhrases;
+        private System.Windows.Forms.RadioButton optPassPhraseInteractive;
     }
 }

@@ -268,7 +268,6 @@
             this.duplicateCandidatesView1.Name = "duplicateCandidatesView1";
             this.duplicateCandidatesView1.Size = new System.Drawing.Size(1234, 650);
             this.duplicateCandidatesView1.TabIndex = 0;
-            this.duplicateCandidatesView1.Load += new System.EventHandler(this.duplicateCandidatesView1_Load);
             // 
             // tabPage3
             // 

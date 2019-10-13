@@ -14,31 +14,36 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
         private IDSMVersion _version = null;
 
-        public SynoReportViaSSH(DSMHost host, IProxySettings proxy = null)
+        public SynoReportViaSSH(DSMHost host, Func<string, string> getPassPhraseMethod, IProxySettings proxy = null)
         {
+            bool canceled = false;
+
             RmExecutionMode = ConsoleCommandMode.InteractiveSudo;
 
-            _host = host;
+            _host = host ?? throw new ArgumentNullException(nameof(host));
+            if (getPassPhraseMethod == null) throw new ArgumentNullException(nameof(getPassPhraseMethod));
 
             int i = 0;
             AuthenticationMethod[] methods = new AuthenticationMethod[host.AuthenticationSection.Count];
             foreach (var m in host.AuthenticationMethods)
             {
-                methods[i++] = m.getAuthenticationMethod();
+                methods[i++] = m.getAuthenticationMethod(host.StorePassPhrases, getPassPhraseMethod, out canceled);
             }
-
-            if (proxy != null)
+            if (!canceled)
             {
-                ProxyTypes proxypath;
-                if (!Enum.TryParse(proxy.ProxyType, true, out proxypath))
+                if (proxy != null)
                 {
-                    proxypath = ProxyTypes.None;
+                    ProxyTypes proxypath;
+                    if (!Enum.TryParse(proxy.ProxyType, true, out proxypath))
+                    {
+                        proxypath = ProxyTypes.None;
+                    }
+                    _ci = new ConnectionInfo(host.Host, host.Port, host.UserName, proxypath, proxy.Host, proxy.Port, proxy.UserName, proxy.Password, methods);
                 }
-                _ci = new ConnectionInfo(host.Host, host.Port, host.UserName, proxypath, proxy.Host, proxy.Port, proxy.UserName, proxy.Password, methods);
-            }
-            else
-            {
-                _ci = new ConnectionInfo(host.Host, host.Port, host.UserName, methods);
+                else
+                {
+                    _ci = new ConnectionInfo(host.Host, host.Port, host.UserName, methods);
+                }
             }
         }
 

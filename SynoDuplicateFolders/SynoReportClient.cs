@@ -26,6 +26,8 @@ namespace SynoDuplicateFolders
         private CustomSettings config = null;
         private SynoReportDuplicateCandidates dupes = null;
 
+        private bool _PassPhraseUpdate = false;
+
         public SynoReportClient()
         {
             InitializeComponent();
@@ -43,7 +45,7 @@ namespace SynoDuplicateFolders
         }
         private void OnDispose(bool disposing)
         {
-            if (dupes!=null)dupes.Dispose();
+            if (dupes != null) dupes.Dispose();
         }
         private void DuplicateCandidatesView1_OnItemStatusUpdate(object sender, ItemStatusUpdateEventArgs e)
         {
@@ -182,21 +184,23 @@ namespace SynoDuplicateFolders
 
                 DSMHost h = config.DSMHosts.Items.TryGet(host);
 
+                h.StorePassPhrases = Default.StorePassPhrases;
+
                 SynoReportViaSSH connection = null;
 
                 if (Default.UseProxy && h.Proxy == null)
                 {
-                    connection = new SynoReportViaSSH(h, new DefaultProxy());
+                    connection = new SynoReportViaSSH(h, GetPassPhrase, new DefaultProxy());
                 }
                 else
                 {
                     if (h.Proxy != null)
                     {
-                        connection = new SynoReportViaSSH(h, h.Proxy);
+                        connection = new SynoReportViaSSH(h, GetPassPhrase, h.Proxy);
                     }
                     else
                     {
-                        connection = new SynoReportViaSSH(h);
+                        connection = new SynoReportViaSSH(h, GetPassPhrase);
                     }
                 }
 
@@ -233,6 +237,11 @@ namespace SynoDuplicateFolders
                     duplicateCandidatesView1.HostName = connection.Host;
                 }
 
+                if (_PassPhraseUpdate)
+                {
+                    config.CurrentConfiguration.Save();
+                }
+
                 if (cache.GetReports(SynoReportType.DuplicateCandidates).Count > 0)
                 {
                     dupes = cache.GetReport(SynoReportType.DuplicateCandidates) as SynoReportDuplicateCandidates;
@@ -246,16 +255,27 @@ namespace SynoDuplicateFolders
             catch (SynoReportViaSSHLoginFailure ex)
             {
                 MessageBox.Show(ex.Message);
-                
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message+"\n"+ex.StackTrace);
+                MessageBox.Show(ex.Message + "\n" + ex.StackTrace);
             }
             finally
             {
                 Invoke(new Action(ProgressUpdateFailed));
             }
+        }
+        private string GetPassPhrase(string fileName)
+        {
+            string result;
+            using (PassPhrase dialog = new PassPhrase(fileName))
+            {
+                dialog.ShowDialog();
+                _PassPhraseUpdate = Default.StorePassPhrases;
+                result = dialog.Password;
+            }
+            return result;
         }
 
         private void Cache_StatusUpdate(object sender, SynoReportCacheDownloadEventArgs e)
@@ -474,8 +494,8 @@ namespace SynoDuplicateFolders
             {
                 (cache.GetReport(SynoReportType.ShareList) as SynoReportShares).WriteTimeLineData(file);
             }
-
         }
+
         private bool SaveDialog(string title, out string filename)
         {
             DialogResult r;
@@ -493,11 +513,6 @@ namespace SynoDuplicateFolders
                 filename = saveFileDialog1.FileName;
             }
             return r == DialogResult.OK;
-        }
-
-        private void duplicateCandidatesView1_Load(object sender, EventArgs e)
-        {
-
         }
 
     }

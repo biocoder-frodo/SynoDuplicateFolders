@@ -208,30 +208,32 @@
             // 
             // listView1
             // 
+            this.listView1.CheckBoxes = true;
             this.listView1.Enabled = false;
+            this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(18, 149);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(300, 100);
             this.listView1.TabIndex = 20;
             this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.Details;
             // 
             // chkKeyFiles
             // 
             this.chkKeyFiles.AutoSize = true;
-            this.chkKeyFiles.Enabled = false;
             this.chkKeyFiles.Location = new System.Drawing.Point(18, 126);
             this.chkKeyFiles.Name = "chkKeyFiles";
-            this.chkKeyFiles.Size = new System.Drawing.Size(104, 17);
+            this.chkKeyFiles.Size = new System.Drawing.Size(429, 17);
             this.chkKeyFiles.TabIndex = 19;
-            this.chkKeyFiles.Text = "Private Key Files";
+            this.chkKeyFiles.Text = "Private Key Files (Put a checkmark in front of the filename if a pass-phrase is r" +
+    "equired)";
             this.chkKeyFiles.UseVisualStyleBackColor = true;
             this.chkKeyFiles.CheckedChanged += new System.EventHandler(this.chkKeyFiles_CheckedChanged);
             // 
             // chkKeyBoardInteractive
             // 
             this.chkKeyBoardInteractive.AutoSize = true;
-            this.chkKeyBoardInteractive.Enabled = false;
             this.chkKeyBoardInteractive.Location = new System.Drawing.Point(18, 54);
             this.chkKeyBoardInteractive.Name = "chkKeyBoardInteractive";
             this.chkKeyBoardInteractive.Size = new System.Drawing.Size(123, 17);
@@ -263,7 +265,6 @@
             // chkAuthNone
             // 
             this.chkAuthNone.AutoSize = true;
-            this.chkAuthNone.Enabled = false;
             this.chkAuthNone.Location = new System.Drawing.Point(18, 31);
             this.chkAuthNone.Name = "chkAuthNone";
             this.chkAuthNone.Size = new System.Drawing.Size(52, 17);

@@ -82,6 +82,15 @@ namespace SynoDuplicateFolders
                 if (method != null)
                 {
                     method.UserName = Host.UserName;
+                    foreach (ListViewItem k in listView1.Items)
+                    {
+                        var kf = new DSMAuthenticationKeyFile()
+                        {
+                            UsePassphrase =  k.Checked,
+                            FileName = k.Text
+                        };
+                        method.AuthenticationKeys.Items.Add(kf);
+                    }
                 }
             }
             else

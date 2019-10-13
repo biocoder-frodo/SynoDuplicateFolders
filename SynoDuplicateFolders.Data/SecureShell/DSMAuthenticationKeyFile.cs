@@ -40,6 +40,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 this["usePassPhrase"] = value;
             }
         }
+
         [ConfigurationProperty("passPhrase", IsRequired = false)]
         internal string WrappedPassPhrase
         {
@@ -57,11 +58,34 @@ namespace SynoDuplicateFolders.Data.SecureShell
             internal get { return wrapped.Password; }
             set { wrapped.Password = value; }
         }
-        internal PrivateKeyFile getKeyFile()
+        public bool StorePassPhrases { get; set; }
+        public Func<string,string> GetPassPhrase { get; set; }
+        internal PrivateKeyFile getKeyFile(out bool canceled)
         {
-            return UsePassphrase ? new PrivateKeyFile(FileName, PassPhrase) : new PrivateKeyFile(FileName);
-        }
+            canceled = false;
+            if (UsePassphrase && GetPassPhrase != null)
+            {
+                string pass = GetPassPhrase(FileName);
+                canceled = string.IsNullOrEmpty(pass);
 
+                if (StorePassPhrases)
+                {
+                    if (WrappedPassPhrase.Length == 0)
+                    {
+                        PassPhrase = pass;
+                    }
+                    return new PrivateKeyFile(FileName, PassPhrase);
+                }
+                else
+                {
+                    return new PrivateKeyFile(FileName, pass);
+                }
+            }
+            else
+            {
+                return new PrivateKeyFile(FileName);
+            }
+        }
         object IElementProvider.GetElementKey()
         {
             return FileName;

@@ -19,6 +19,7 @@ namespace SynoDuplicateFolders
         private string server = string.Empty;
         private string folder = string.Empty;
         private bool use_proxy = false;
+        private bool store_passphrases = false;
 
         private string proxy_host = string.Empty;
         private int proxy_port = 8080;
@@ -61,6 +62,7 @@ namespace SynoDuplicateFolders
                 || !Default.KeepAnalyzerDbCount.Equals(keepCount)
                 || !Default.RmExecutionMode.Equals(mode)
                 || !Default.UseProxy.Equals(use_proxy)
+                || !Default.StorePassPhrases.Equals(store_passphrases)
                 || !_proxy.ProxyType.Equals(proxy_type)
                 || !_proxy.Host.Equals(proxy_host)
                 || !_proxy.UserName.Equals(proxy_user)
@@ -79,6 +81,7 @@ namespace SynoDuplicateFolders
                 Default.KeepAnalyzerDbCount = keepCount;
                 Default.RmExecutionMode = mode;
                 Default.UseProxy = use_proxy;
+                Default.StorePassPhrases = store_passphrases;
                 _proxy.ProxyType = proxy_type;
                 _proxy.Host = proxy_host;
                 _proxy.UserName = proxy_user;
@@ -131,6 +134,10 @@ namespace SynoDuplicateFolders
                 txtFolder.Text = Path.Combine(GetFolderPath(SpecialFolder.MyDocuments), Application.ProductName);
 
             }
+
+            optUseStoredPassPhrases.Checked = Default.StorePassPhrases;
+            optPassPhraseInteractive.Checked = !Default.StorePassPhrases;
+
             optAnalyzerDbKeep.Checked = Default.KeepAnalyzerDb;
             optAnalyzerDbRemove.Checked = !Default.KeepAnalyzerDb;
             txtKeep.Text = Default.KeepAnalyzerDbCount.ToString();
@@ -190,6 +197,7 @@ namespace SynoDuplicateFolders
             proxy_password = txtProxyPassword.Text;
             proxy_type = cmbProxy.Text;
             use_proxy = optProxy.Checked;
+            store_passphrases = optUseStoredPassPhrases.Checked;
 
             dpapi = txtDPAPI.Text;
 
@@ -272,5 +280,6 @@ namespace SynoDuplicateFolders
         }
 
         #endregion
+
     }
 }

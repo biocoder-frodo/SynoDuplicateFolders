@@ -52,7 +52,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 return "admin";
             }
         }
-
+       
         public static string SynoReportHomeDefault(string userName)
         {
             return string.Format("/volume1/homes/{0}/synoreport/", string.IsNullOrEmpty(userName) ? DefaultUserName : userName);
@@ -121,7 +121,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         {
             return AuthenticationSection.ContainsKey(method);
         }
-
+        public bool StorePassPhrases { get; set; }
         public DSMProxy Proxy
         {
             get

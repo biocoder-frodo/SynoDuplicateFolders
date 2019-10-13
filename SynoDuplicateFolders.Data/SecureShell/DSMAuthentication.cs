@@ -68,8 +68,10 @@ namespace SynoDuplicateFolders.Data.SecureShell
             internal get { return wrapped.Password; }
             set { wrapped.Password = value; }
         }
-        internal AuthenticationMethod getAuthenticationMethod()
+        internal AuthenticationMethod getAuthenticationMethod(bool storePassPhrases, Func<string,string> getPassPhrase, out bool canceled)
         {
+            canceled = false;
+
             switch (Method)
             {
                 case DSMAuthenticationMethod.KeyboardInteractive:
@@ -81,7 +83,11 @@ namespace SynoDuplicateFolders.Data.SecureShell
                     PrivateKeyFile[] keys = new PrivateKeyFile[AuthenticationKeys.Items.Count];
                     foreach (DSMAuthenticationKeyFile k in AuthenticationKeys.Items)
                     {
-                        keys[i++] = k.getKeyFile();
+                        bool empty = false;
+                        k.GetPassPhrase = getPassPhrase;
+                        k.StorePassPhrases = storePassPhrases;
+                        keys[i++] = k.getKeyFile(out empty);
+                        if (empty) canceled = true;
                     }
                     return new PrivateKeyAuthenticationMethod(UserName, keys);
                 default:
