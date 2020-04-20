@@ -110,16 +110,20 @@ namespace SynoDuplicateFolders.Data
             private readonly string _group;
             private readonly string _share;
             private readonly long _size;
+            private readonly string _username;
 
-            internal GroupDetail(string group, string share, long size)
+            internal GroupDetail(string group, string share, long size, string username)
             {
                 _group = group;
                 _share = share;
                 _size = size;
+                _username = username;
             }
             public string Group { get { return _group; } }
             public string Share { get { return _share; } }
             public long Size { get { return _size; } }
+
+            public string UserName { get { return _username; } }
         }
 
         private readonly SortableListBindingSource<ISynoReportGroupDetail> _files = new SortableListBindingSource<ISynoReportGroupDetail>();
@@ -135,12 +139,25 @@ namespace SynoDuplicateFolders.Data
         {
             _Timestamp = fi.LastWriteTimeUtc;
 
-            SimpleCSVReader r = new SimpleCSVReader(src, ',');
+            SimpleCSVReader r = new SimpleCSVReader(src, new char[] { '\t', ',' }, new List<SimpleCSVReaderColumnNameReplacer>()
+            {
+                new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"file type", "group"),
+                new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"shared folder", "share"),
+                new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"size (including recycle bins)(byte)", "size"),
+                new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"size (excluding recycle bins)(byte)", "nobinsize"),
+            });
+
             while (r.EndOfStream == false)
             {
                 r.ReadLine();
-
-                _files.Add(new GroupDetail(r.GetValue("group"), r.GetValue("share"), long.Parse(r.GetValue("size"))));
+                if (r.Columns.ContainsKey("username"))
+                {
+                    _files.Add(new GroupDetail(r.GetValue("group"), r.GetValue("share"), long.Parse(r.GetValue("size")), r.GetValue("username")));
+                }
+                else
+                {
+                    _files.Add(new GroupDetail(r.GetValue("group"), r.GetValue("share"), long.Parse(r.GetValue("size")), string.Empty));
+                }
             }
 
             src.Close();
@@ -219,13 +236,18 @@ namespace SynoDuplicateFolders.Data
             _Timestamp = fi.LastWriteTimeUtc;
 
             SimpleCSVReader r = new SimpleCSVReader(src, '\t',
-                new List<SimpleCSVReaderColumnNameReplacer>()
-                {
-                    new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Contains,"size","size"),
+                   new List<SimpleCSVReaderColumnNameReplacer>()
+                   {
+
+                    new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"size (including recycle bins)(byte)","size"),
+                    new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"size (excluding recycle bins)(byte)","nobinsize"),
+                    new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"size(byte)","size"),
                     new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"username","owner"),
                     new SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode.Equals,"shared folder","share"),
-                }
-                );
+                   }
+                   );
+
+
 
             while (r.EndOfStream == false)
             {

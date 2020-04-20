@@ -8,8 +8,9 @@ namespace SynoDuplicateFolders.Data.SecureShell
 {
     internal class ConsoleCommandDSM4 : BConsoleCommand
     {
-        public ConsoleCommandDSM4(Dictionary<string, string> version)
+        public ConsoleCommandDSM4(Dictionary<string, string> version, string home)
         {
+            _homepath = home;
             _properties = version;
         }
         public override IDSMVersion GetVersionInfo()
@@ -20,10 +21,10 @@ namespace SynoDuplicateFolders.Data.SecureShell
         {
             return new DSMVersion4(GetVersionProperties(client));
         }
-        public override List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, bool Disconnect = true)
+        public override List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, SynoReportViaSSH session, bool Disconnect = true)
         {
             List<ConsoleFileInfo> result = new List<ConsoleFileInfo>();
-            var cmd2 = client.RunCommand("ls -lARe synoreport");
+            var cmd2 = client.RunCommand("cd " + session.SynoReportHome + ";ls -lARe synoreport/");
             string[] result2 = cmd2.Result.Split('\n');
 
             if (Disconnect == true) client.Disconnect();

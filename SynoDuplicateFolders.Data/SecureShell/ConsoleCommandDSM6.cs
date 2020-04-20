@@ -8,8 +8,9 @@ namespace SynoDuplicateFolders.Data.SecureShell
 {
     internal class ConsoleCommandDSM6 : BConsoleCommand
     {
-        public ConsoleCommandDSM6(Dictionary<string, string> version)
+        public ConsoleCommandDSM6(Dictionary<string, string> version, string home)
         {
+            _homepath = home;
             _properties = version;
         }
         public override IDSMVersion GetVersionInfo()
@@ -22,11 +23,11 @@ namespace SynoDuplicateFolders.Data.SecureShell
             return new DSMVersion6(GetVersionProperties(client));
         }
 
-        public override List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, bool Disconnect = true)
+        public override List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, SynoReportViaSSH session, bool Disconnect = true)
         {
 
             List<ConsoleFileInfo> result = new List<ConsoleFileInfo>();
-            var cmd2 = client.RunCommand("ls -latR --time-style=full-iso synoreport");
+            var cmd2 = client.RunCommand("cd "+ session.SynoReportHome+";ls -latR --time-style=full-iso synoreport");
             string[] result2 = cmd2.Result.Split('\n');
 
             if (Disconnect == true) client.Disconnect();
@@ -73,11 +74,11 @@ namespace SynoDuplicateFolders.Data.SecureShell
         }
 
         public override void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases)
-        {
+        {            
             string scriptName = "SynoDuplicateFoldersRemoveSADB.sh";
             if (dsm_databases.Count > 0)
             {
-                string script = session.SynoReportHome.Replace("/synoreport/", "/") + scriptName;
+                string script = this.HomePath + scriptName;
                 MemoryStream ms = null;
                 //StreamWriter sw = null;
 

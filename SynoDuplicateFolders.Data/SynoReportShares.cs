@@ -193,6 +193,8 @@ namespace SynoDuplicateFolders.Data
             }
 
             if (map.ContainsKey("shared folder")) map.Add("share", map["shared folder"]);
+            if (map.ContainsKey("size (including recycle bins)(byte)")) map.Add("size", map["size (including recycle bins)(byte)"]);
+
             Console.WriteLine("columns in {0} = {1}", fi.FullName, map.Count);
 
             while (src.EndOfStream == false)
@@ -202,17 +204,26 @@ namespace SynoDuplicateFolders.Data
                 {
                     columns[i] = columns[i].Trim().RemoveEnclosingCharacter("\"");
                 }
-
+                string volume = "/" + columns[map["volume"]].Replace("_", "").Replace(" ", "");
                 Shares.Add(columns[map["share"]]);
-                Volumes.Add(columns[map["share"]], "/"+columns[map["volume"]].Replace("_",""));
+                Volumes.Add(columns[map["share"]], volume);
                 Used.Add(columns[map["share"]], long.Parse(columns[map["size"]]));
-                if (columns.Count() > 3)
+                if (map.ContainsKey("quota") == false)
                 {
-                    Quota.Add(columns[map["share"]], long.Parse(columns[map["size"] + 1]));                        
+                    if (columns.Count() > 3)
+                    {
+                        Quota.Add(columns[map["share"]], long.Parse(columns[map["size"] + 1]));
+                    }
+                    else
+                    {
+                        Quota.Add(columns[map["share"]], 0);
+                    }
                 }
                 else
                 {
-                    Quota.Add(columns[map["share"]], 0);
+                    if (long.TryParse(columns[map["quota"]], out long quota) == false) quota = 0;
+
+                    Quota.Add(columns[map["share"]], quota);
                 }
 
             }

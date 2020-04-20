@@ -70,7 +70,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 string result = DSMHost.SynoReportHomeDefault(_host.UserName);
                 if (!string.IsNullOrWhiteSpace(_host.SynoReportHome))
                 {
-                    if (_host.SynoReportHome.StartsWith("/") && _host.SynoReportHome.EndsWith("/synoreport/"))
+                    if (_host.SynoReportHome.StartsWith("/") && _host.SynoReportHome.EndsWith("/"))
                     {
                         result = _host.SynoReportHome;
                     }
@@ -188,7 +188,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
                     console = GetConsole(sc);
 
-                    List<ConsoleFileInfo> files = console.GetDirectoryContentsRecursive(sc);
+                    List<ConsoleFileInfo> files = console.GetDirectoryContentsRecursive(sc, this);
 
                     foreach (ConsoleFileInfo fi in files)
                     {
@@ -235,7 +235,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                             while (result == false && attempts < 2)
                             {
                                 attempts++;
-                                result = DownloadFile(cp, src.Source, src.LocalFile);
+                                result = DownloadFile(cp, SynoReportHome + src.Source, src.LocalFile);
                             }
 
                             if (result == false)

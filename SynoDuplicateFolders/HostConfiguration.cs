@@ -3,6 +3,7 @@ using SynoDuplicateFolders.Data.SecureShell;
 using SynoDuplicateFolders.Extensions;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using static SynoDuplicateFolders.Properties.Settings;
 
 namespace SynoDuplicateFolders
 {
@@ -10,6 +11,8 @@ namespace SynoDuplicateFolders
     internal partial class HostConfiguration : Form
     {
         private static readonly Regex portspec = new Regex("(.*/{0}):([0-9]+)$");
+        private static readonly Regex pathspec = new Regex(@"^((\/volume[0-9]+\/homes\/[a-z0-9]+\/?)(synoreport\/?){0,1})|^(\/volume[0-9]+\/[\/a-z0-9]+)");
+        private static readonly Regex NAME_REGEX = new Regex(@"^[a-z][-a-z0-9]*");
 
         public readonly DSMHost Host;
 
@@ -25,6 +28,16 @@ namespace SynoDuplicateFolders
             chkSynoReportHome.CheckState = CheckState.Unchecked;
             chkUser.CheckState = CheckState.Unchecked;
             txtPort.Text = Host.ElementInformation.Properties["port"].DefaultValue.ToString();
+
+            Host.KeepDsmFilesCustom = false;
+
+            chkKeep.Checked = Host.KeepDsmFilesCustom;
+
+            txtKeep.Text = Host.KeepDsmCount.ToString();
+            optAnalyzerDbKeep.Checked = Host.KeepAllDsmFiles;
+            optAnalyzerDbRemove.Checked = !Host.KeepAllDsmFiles;
+
+            chkKeep_CheckedChanged(null, null);
         }
 
         public HostConfiguration(DSMHost host)
@@ -34,17 +47,28 @@ namespace SynoDuplicateFolders
             Host = host;
 
             txtPassword.Text = "";
-            txtUser.Text = Host.UserName.ToLower();
+
             txtHost.Text = Host.Host;
-            txtSynoReportHome.Text = string.IsNullOrWhiteSpace(host.SynoReportHome) ? DSMHost.SynoReportHomeDefault(host.UserName) : host.SynoReportHome;
-            chkSynoReportHome.CheckState = CheckState.Checked;
-            if (txtSynoReportHome.Text == DSMHost.SynoReportHomeDefault(host.UserName)) chkSynoReportHome.CheckState = CheckState.Unchecked;
             txtPort.Text = host.Port.ToString();
+
+            txtUser.Text = Host.UserName;
+            chkUser.Checked = !txtUser.Text.Equals(DSMHost.DefaultUserName);
+            txtSynoReportHome.Text = string.IsNullOrWhiteSpace(host.SynoReportHome) ? DSMHost.SynoReportHomeDefault(host.UserName) : host.SynoReportHome;
+            chkSynoReportHome.Checked = !txtSynoReportHome.Text.Equals(DSMHost.SynoReportHomeDefault(host.UserName));
+            
+            chkKeep.Checked = Host.KeepDsmFilesCustom;
+
+            txtKeep.Text = Host.KeepDsmCount.ToString();
+            optAnalyzerDbKeep.Checked = Host.KeepAllDsmFiles;
+            optAnalyzerDbRemove.Checked = !Host.KeepAllDsmFiles;
+
+            chkKeep_CheckedChanged(null, null);
         }
+        private void KeepDSMControlsUpdate()
+        { }
         private void HostConfiguration_Load(object sender, EventArgs e)
         {
             listView1.View = View.List;
-
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -53,8 +77,46 @@ namespace SynoDuplicateFolders
             Hide();
         }
 
+        private bool ValidateHomePath()
+        {
+            string p1 = txtSynoReportHome.Text;
+            var m1 = pathspec.Match(p1); ;
+            if (m1.Success && (m1.Groups[1].Value.Equals(p1) || m1.Groups[4].Value.Equals(p1)))
+            {
+                return true;
+            }
+            else
+            {
+                MessageBox.Show("Please enter a pathname with only letters and numbers.\r\nThe path must begin with \\volume? ...", "Absolute pathname");
+                return false; 
+            }
+        }
         private void btnOk_Click(object sender, EventArgs e)
         {
+
+            if (chkSynoReportHome.Checked)
+            {
+                if (ValidateHomePath())
+                {
+                    if (!txtSynoReportHome.Text.EndsWith("/")) txtSynoReportHome.Text += "/";
+
+                    if (Host.SynoReportHome.Equals(txtSynoReportHome.Text) == false && txtSynoReportHome.Text.EndsWith("/synoreport/"))
+                    {
+
+                        if (MessageBox.Show(string.Format("Are you sure your Storage Analyzer reports can be found in '{0}'?", txtSynoReportHome.Text + "synoreport/"),
+                            "Please confirm path",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+
+            Host.KeepDsmFilesCustom = chkKeep.Checked;
+            Host.KeepDsmCount = int.Parse(txtKeep.Text);
+            Host.KeepAllDsmFiles = optAnalyzerDbKeep.Checked;
+
             Host.Host = txtHost.Text;
             Host.Port = int.Parse(txtPort.Text);
             Host.UserName = txtUser.Text;
@@ -86,7 +148,7 @@ namespace SynoDuplicateFolders
                     {
                         var kf = new DSMAuthenticationKeyFile()
                         {
-                            UsePassphrase =  k.Checked,
+                            UsePassphrase = k.Checked,
                             FileName = k.Text
                         };
                         method.AuthenticationKeys.Items.Add(kf);
@@ -94,24 +156,71 @@ namespace SynoDuplicateFolders
                 }
             }
             else
-            {; }
+            {
+                ;
+            }
 
             Hide();
 
         }
 
+        private void chkKeep_CheckedChanged(object sender, EventArgs e)
+        {
+            bool custom = chkKeep.CheckState != CheckState.Unchecked;
+            
+            optAnalyzerDbKeep.Enabled = custom;
+            optAnalyzerDbRemove.Enabled = custom;
+            txtKeep.Enabled = custom;
+
+            if (!custom)
+            {
+                txtKeep.Text = Default.KeepAnalyzerDbCount.ToString();
+                optAnalyzerDbKeep.Checked = Default.KeepAnalyzerDb;
+                optAnalyzerDbRemove.Checked = !Default.KeepAnalyzerDb;
+            }
+        }
+
+        private void optAnalyzerDbRemove_CheckedChanged(object sender, EventArgs e)
+        {
+            bool enable = optAnalyzerDbRemove.Checked;
+            txtKeep.Enabled = enable;
+        }
         private void chkUser_CheckedChanged(object sender, EventArgs e)
         {
-            bool custom = chkUser.CheckState != CheckState.Unchecked;
+            bool custom = chkUser.CheckState != CheckState.Unchecked;//&& txtUser.Text.Equals(DSMHost.DefaultUserName)==false;
 
             lblUser.Enabled = custom;
             txtUser.Enabled = custom;
 
             if (!custom)
             {
-                txtUser.Text = "admin";
-                chkSynoReportHome_CheckedChanged(sender, e);
+                txtUser.Text = DSMHost.DefaultUserName;
             }
+            else
+            {
+                txtUser.Focus();
+            }
+            chkSynoReportHome_CheckedChanged(sender, e);
+        }
+        private void txtUser_Leave(object sender, EventArgs e)
+        {
+            chkSynoReportHome_CheckedChanged(sender, e);
+        }
+        private void txtUser_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+            e.Cancel = !NAME_REGEX.IsMatch((sender as TextBox).Text);
+            
+            if (string.IsNullOrWhiteSpace((sender as TextBox).Text) == true)
+            {
+                e.Cancel = false;
+                chkUser.Checked = false;
+            }
+            if (!e.Cancel && (sender as TextBox).Text.Equals(DSMHost.DefaultUserName))
+            {
+                chkUser.Checked = false;
+            }
+            Console.WriteLine((sender as TextBox).Name + " CancelEventArgs e.Cancel = " + e.Cancel);
         }
 
         private void chkSynoReportHome_CheckedChanged(object sender, EventArgs e)
@@ -122,14 +231,22 @@ namespace SynoDuplicateFolders
 
             if (!custom)
             {
-                txtSynoReportHome.Text = "/volume1/homes/" + txtUser.Text + "/synoreport/";
+                txtSynoReportHome.Text = DSMHost.SynoReportHomeDefault(txtUser.Text);
+            }
+            else
+            {
+                txtSynoReportHome.Focus();
             }
 
         }
-
-        private void txtUser_Leave(object sender, EventArgs e)
+        private void txtSynoReportHome_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            chkSynoReportHome_CheckedChanged(sender, e);
+            e.Cancel = !ValidateHomePath();
+            if (!e.Cancel && (sender as TextBox).Text.Equals(DSMHost.SynoReportHomeDefault(txtUser.Text)))
+            {
+                if (chkSynoReportHome.Checked)    
+                    chkSynoReportHome.Checked = false;
+            }
         }
 
         private void txtHost_TextChanged(object sender, EventArgs e)
@@ -168,7 +285,7 @@ namespace SynoDuplicateFolders
 
         private void btnKeyFileRemove_Click(object sender, EventArgs e)
         {
-            foreach(int i in listView1.SelectedIndices)
+            foreach (int i in listView1.SelectedIndices)
             {
                 listView1.Items.Remove(listView1.Items[i]);
             }
@@ -191,6 +308,46 @@ namespace SynoDuplicateFolders
                 filename = openFileDialog1.FileName;
             }
             return r == DialogResult.OK;
+        }
+
+
+        private bool _allowedKeyPress;
+
+        private void txtHost_KeyPress(object sender, KeyPressEventArgs e)
+        { 
+            _allowedKeyPress = true;
+
+            if (e.KeyChar == '.' || e.KeyChar == ':')
+            {
+                _allowedKeyPress = false;
+                if (txtHost.Text.EndsWith(e.KeyChar.ToString()) == false)
+                _allowedKeyPress = true;
+            }
+            if (!_allowedKeyPress)
+                e.Handled = true;
+        }
+
+        private void txtPort_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar >= '0' && e.KeyChar <= '9') _allowedKeyPress = true;
+            if (!_allowedKeyPress)
+                e.Handled = true;
+        }
+
+        private void txtHost_KeyDown(object sender, KeyEventArgs e)
+        {
+            _allowedKeyPress = e.KeyCode == Keys.Back;
+        }
+        private void txtPort_KeyDown(object sender, KeyEventArgs e)
+        {
+            _allowedKeyPress = e.KeyCode == Keys.Back;
+        }
+
+        private void txtKeep_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            int value = 0;
+            int.TryParse(txtKeep.Text, out value);
+            e.Cancel = value < 1;
         }
     }
 }

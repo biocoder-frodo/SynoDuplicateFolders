@@ -9,22 +9,33 @@ namespace SynoDuplicateFolders.Data.SecureShell
 {
     public abstract class BConsoleCommand : IConsoleCommand
     {
+        internal string _homepath = null;
         internal static readonly string sudo = "sudo {0}";
         internal Dictionary<string, string> _properties = null;
+
+        private static string GetHomePath(SshClient client)
+        {
+            return client.RunCommand("readlink -f ~").Result.Split('\n')[0];
+        }
         internal static IConsoleCommand GetDSMConsole(SshClient client)
         {
+            string home = GetHomePath(client);
+            if (!home.EndsWith("/")) home += "/";
             Dictionary<string, string> properties = GetVersionProperties(client);
             IDSMVersion version = new DSMVersion4(properties);
             if (version.MajorVersion >= 6)
             {
-                return new ConsoleCommandDSM6(properties);
+                return new ConsoleCommandDSM6(properties, home);
             }
             else
             {
-                return new ConsoleCommandDSM4(properties);
+                return new ConsoleCommandDSM4(properties, home);
             }
         }
-
+        internal string HomePath
+        {
+            get { return _homepath; }
+        }
         internal static Dictionary<string, string> GetVersionProperties(SshClient client)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -45,7 +56,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         }
         public abstract IDSMVersion GetVersionInfo();
         public abstract IDSMVersion GetVersionInfo(SshClient client);
-        public abstract List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, bool Disconnect = true);
+        public abstract List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, SynoReportViaSSH session, bool Disconnect = true);
         public abstract void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases);
 
         internal string RemoveFileCommand(string path)
@@ -54,7 +65,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         }
         internal string RemoveFileCommand(SynoReportViaSSH connection, ConsoleFileInfo file)
         {
-            return RemoveFileCommand(connection.SynoReportHome.Replace("/synoreport/", "") + file.Path);
+            return RemoveFileCommand(connection.SynoReportHome + file.Path);
         }
         internal void RemoveFile(SynoReportViaSSH connection, ConsoleFileInfo file, ConsoleCommandMode mode, SshClient session = null)
         {
@@ -123,7 +134,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
             catch (Exception ex)
             {
                 System.Console.WriteLine(ex.ToString());
-                throw ;
+                throw;
             }
 
         }

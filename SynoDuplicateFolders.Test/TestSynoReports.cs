@@ -19,7 +19,8 @@ namespace SynoDuplicateFolders.Test
                 "synoreport_Duplicates_2015-10-31_10-46-27_csv_duplicate_file.csv.zip",
                 "duplicate_file.csv",
                 Path.Combine("reports-2-0-0-0164","duplicate_file.csv"),
-                Path.Combine("reports-2-0-1-0198","duplicate_file.csv")
+                Path.Combine("reports-2-0-1-0198","duplicate_file.csv"),
+                Path.Combine("reports-2-0-1-0208","duplicate_file.csv")
                 }
             },
             {
@@ -27,7 +28,8 @@ namespace SynoDuplicateFolders.Test
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_file_group.csv.zip",
                 "file_group.csv",
                 Path.Combine("reports-2-0-0-0164","file_group.csv"),
-                Path.Combine("reports-2-0-1-0198","file_group.csv")
+                Path.Combine("reports-2-0-1-0198","file_group.csv"),
+                Path.Combine("reports-2-0-1-0208","file_group.csv")
                 }
             },
             {
@@ -35,7 +37,8 @@ namespace SynoDuplicateFolders.Test
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_file_owner.csv.zip",
                 "file_owner.csv",
                 Path.Combine("reports-2-0-0-0164","file_owner.csv"),
-                Path.Combine("reports-2-0-1-0198","file_owner.csv")
+                Path.Combine("reports-2-0-1-0198","file_owner.csv"),
+                Path.Combine("reports-2-0-1-0208","file_owner.csv")
                 }
             },
             {
@@ -43,7 +46,8 @@ namespace SynoDuplicateFolders.Test
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_large_file.csv.zip",
                 "large_file.csv",
                 Path.Combine("reports-2-0-0-0164","large_file.csv"),
-                Path.Combine("reports-2-0-1-0198","large_file.csv")
+                Path.Combine("reports-2-0-1-0198","large_file.csv"),
+                Path.Combine("reports-2-0-1-0208","large_file.csv")
                 }
             },
             {
@@ -51,7 +55,8 @@ namespace SynoDuplicateFolders.Test
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_least_modify.csv.zip",
                 "least_modify.csv",
                 Path.Combine("reports-2-0-0-0164","least_modify.csv"),
-                Path.Combine("reports-2-0-1-0198","least_modify.csv")
+                Path.Combine("reports-2-0-1-0198","least_modify.csv"),
+                Path.Combine("reports-2-0-1-0208","least_modify.csv")
                 }
             },
             {
@@ -59,7 +64,8 @@ namespace SynoDuplicateFolders.Test
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_most_modify.csv.zip",
                 "most_modify.csv",
                 Path.Combine("reports-2-0-0-0164","most_modify.csv"),
-                Path.Combine("reports-2-0-1-0198","most_modify.csv")
+                Path.Combine("reports-2-0-1-0198","most_modify.csv"),
+                Path.Combine("reports-2-0-1-0208","most_modify.csv")
                 }
             },
             {
@@ -67,7 +73,8 @@ namespace SynoDuplicateFolders.Test
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_share_list.csv.zip",
                 "share_list.csv",
                 Path.Combine("reports-2-0-0-0164","share_list.csv"),
-                Path.Combine("reports-2-0-1-0198","share_list.csv")
+                Path.Combine("reports-2-0-1-0198","share_list.csv"),
+                Path.Combine("reports-2-0-1-0208","share_list.csv")
                 }
             },
             {
@@ -75,7 +82,8 @@ namespace SynoDuplicateFolders.Test
                 "synoreport_MyFirstReport_2013-11-17_21-13-16_csv_volume_usage.csv.zip",
                 "volume_usage.csv",
                 Path.Combine("reports-2-0-0-0164","volume_usage.csv"),
-                Path.Combine("reports-2-0-1-0198","volume_usage.csv")
+                Path.Combine("reports-2-0-1-0198","volume_usage.csv"),
+                Path.Combine("reports-2-0-1-0208","volume_usage.csv")
                 }
             }
 
@@ -97,15 +105,19 @@ namespace SynoDuplicateFolders.Test
         [Test]
         public void TestFileGroup()
         {
+            int emptyfiles = 0;
+            int files = 0;
             foreach (var report in TestHelper<SynoReportGroups>.LoadTests(SynoReportType.FileGroup, input))
             {
+                files++;
                 Assert.NotNull(report, "The report should not be a null reference.");
                 var rows = report.BindingSource.DataSource as SortableBindingList<ISynoReportGroupDetail>;
                 Assert.NotNull(rows, "The binding source should have a datasource instance.");
-                if (rows.Count == 0) throw new InconclusiveException("The number of rows should be larger than zero.");
-                Assert.AreEqual(0, rows.Count, "The number of rows does not match.");
+                if (rows.Count == 0) emptyfiles++;
+                Assert.LessOrEqual(rows.Count,1, "The number of rows does not match.");
 
             }
+            if (emptyfiles==files && files>0) throw new InconclusiveException("The number of rows should be larger than zero.");
         }
 
         [Test]

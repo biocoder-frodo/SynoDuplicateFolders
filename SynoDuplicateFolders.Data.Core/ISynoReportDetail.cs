@@ -22,6 +22,7 @@ namespace SynoDuplicateFolders.Data.Core
     }
     public interface ISynoReportGroupDetail : ISynoReportDetail
     {
+        string UserName { get; }
         string Group { get; }
         string Share { get; }
         long Size { get; }

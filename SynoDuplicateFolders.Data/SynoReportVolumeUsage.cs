@@ -225,10 +225,15 @@ namespace SynoDuplicateFolders.Data
                     else
                     {
                         string pct = r.GetValue("used").Replace("%", "");
-                        Volumes.Add(r.GetValue("volume"));
-                        Size.Add(r.GetValue("volume"), long.Parse(r.GetValue("size")));
-                        Used.Add(r.GetValue("volume"), float.Parse(pct, System.Globalization.CultureInfo.InvariantCulture));
-                        DaysTillFull.Add(r.GetValue("volume"), days);
+                        string volume = r.GetValue("volume");
+                        if (volume.Contains(" "))
+                        { 
+                            volume = "/" + volume.Replace(" ", "");
+                        }
+                        Volumes.Add(volume);
+                        Size.Add(volume, long.Parse(r.GetValue("size")));
+                        Used.Add(volume, float.Parse(pct, System.Globalization.CultureInfo.InvariantCulture));
+                        DaysTillFull.Add(volume, days);
                     };
                 }
 

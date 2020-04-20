@@ -216,14 +216,21 @@ namespace SynoDuplicateFolders
                 {
                     cache.Path = Path.Combine(GetFolderPath(SpecialFolder.MyDocuments), Application.ProductName, h.Host);
                 }
-
-                if (Default.KeepAnalyzerDb == true)
+                var k = h as IKeepDSMFiles;
+                if (k.Custom)
                 {
-                    cache.KeepAnalyzerDbCount = -1;
+                    cache.KeepAnalyzerDbCount = k.KeepCount;
                 }
                 else
                 {
-                    cache.KeepAnalyzerDbCount = Default.KeepAnalyzerDbCount;
+                    if (Default.KeepAnalyzerDb == true)
+                    {
+                        cache.KeepAnalyzerDbCount = -1;
+                    }
+                    else
+                    {
+                        cache.KeepAnalyzerDbCount = Default.KeepAnalyzerDbCount;
+                    }
                 }
 
                 cache.DownloadUpdate += Cache_StatusUpdate;
@@ -375,9 +382,18 @@ namespace SynoDuplicateFolders
                 srv.ShowDialog();
                 if (srv.Canceled == false)
                 {
-                    config.DSMHosts.Items.Add(srv.Host);
-                    config.CurrentConfiguration.Save();
-                    PopulateServerTree();
+                    if (config.DSMHosts.Items.ContainsKey(srv.Host.Host) == false)
+                    {
+                        config.DSMHosts.Items.Add(srv.Host);
+                        config.CurrentConfiguration.Save();
+                        PopulateServerTree();
+                    }
+                    else
+                    {
+                        MessageBox.Show(string.Format("There is already a configuration present for the host named '{0}'", srv.Host.Host),
+                            "Duplicate host", MessageBoxButtons.OK,
+                            MessageBoxIcon.Exclamation);
+                    }
                 }
             }
         }

@@ -50,6 +50,10 @@
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.chkAuthNone = new System.Windows.Forms.CheckBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.txtKeep = new System.Windows.Forms.TextBox();
+            this.optAnalyzerDbRemove = new System.Windows.Forms.RadioButton();
+            this.optAnalyzerDbKeep = new System.Windows.Forms.RadioButton();
+            this.chkKeep = new System.Windows.Forms.CheckBox();
             this.grpMethods.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,15 +64,18 @@
             this.txtHost.Size = new System.Drawing.Size(263, 20);
             this.txtHost.TabIndex = 0;
             this.txtHost.TextChanged += new System.EventHandler(this.txtHost_TextChanged);
+            this.txtHost.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtHost_KeyDown);
+            this.txtHost.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtHost_KeyPress);
             // 
             // txtUser
             // 
             this.txtUser.Enabled = false;
             this.txtUser.Location = new System.Drawing.Point(80, 82);
             this.txtUser.Name = "txtUser";
-            this.txtUser.Size = new System.Drawing.Size(238, 20);
+            this.txtUser.Size = new System.Drawing.Size(89, 20);
             this.txtUser.TabIndex = 3;
             this.txtUser.Leave += new System.EventHandler(this.txtUser_Leave);
+            this.txtUser.Validating += new System.ComponentModel.CancelEventHandler(this.txtUser_Validating);
             // 
             // lblHost
             // 
@@ -103,7 +110,7 @@
             // chkSynoReportHome
             // 
             this.chkSynoReportHome.AutoSize = true;
-            this.chkSynoReportHome.Location = new System.Drawing.Point(13, 114);
+            this.chkSynoReportHome.Location = new System.Drawing.Point(12, 113);
             this.chkSynoReportHome.Name = "chkSynoReportHome";
             this.chkSynoReportHome.Size = new System.Drawing.Size(61, 17);
             this.chkSynoReportHome.TabIndex = 4;
@@ -115,7 +122,7 @@
             // 
             this.lblReports.AutoSize = true;
             this.lblReports.Enabled = false;
-            this.lblReports.Location = new System.Drawing.Point(80, 115);
+            this.lblReports.Location = new System.Drawing.Point(80, 114);
             this.lblReports.Name = "lblReports";
             this.lblReports.Size = new System.Drawing.Size(73, 13);
             this.lblReports.TabIndex = 8;
@@ -124,14 +131,15 @@
             // txtSynoReportHome
             // 
             this.txtSynoReportHome.Enabled = false;
-            this.txtSynoReportHome.Location = new System.Drawing.Point(80, 131);
+            this.txtSynoReportHome.Location = new System.Drawing.Point(80, 130);
             this.txtSynoReportHome.Name = "txtSynoReportHome";
             this.txtSynoReportHome.Size = new System.Drawing.Size(238, 20);
             this.txtSynoReportHome.TabIndex = 5;
+            this.txtSynoReportHome.Validating += new System.ComponentModel.CancelEventHandler(this.txtSynoReportHome_Validating);
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(323, 452);
+            this.btnOk.Location = new System.Drawing.Point(326, 542);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(74, 36);
             this.btnOk.TabIndex = 6;
@@ -141,7 +149,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(403, 452);
+            this.btnCancel.Location = new System.Drawing.Point(406, 542);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(74, 36);
             this.btnCancel.TabIndex = 7;
@@ -166,6 +174,8 @@
             this.txtPort.Size = new System.Drawing.Size(72, 20);
             this.txtPort.TabIndex = 12;
             this.txtPort.TabStop = false;
+            this.txtPort.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPort_KeyDown);
+            this.txtPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPort_KeyPress);
             // 
             // grpMethods
             // 
@@ -177,7 +187,7 @@
             this.grpMethods.Controls.Add(this.chkPassword);
             this.grpMethods.Controls.Add(this.txtPassword);
             this.grpMethods.Controls.Add(this.chkAuthNone);
-            this.grpMethods.Location = new System.Drawing.Point(12, 157);
+            this.grpMethods.Location = new System.Drawing.Point(12, 172);
             this.grpMethods.Name = "grpMethods";
             this.grpMethods.Size = new System.Drawing.Size(462, 270);
             this.grpMethods.TabIndex = 15;
@@ -276,11 +286,61 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // txtKeep
+            // 
+            this.txtKeep.Enabled = false;
+            this.txtKeep.Location = new System.Drawing.Point(426, 501);
+            this.txtKeep.Name = "txtKeep";
+            this.txtKeep.Size = new System.Drawing.Size(41, 20);
+            this.txtKeep.TabIndex = 18;
+            this.txtKeep.Validating += new System.ComponentModel.CancelEventHandler(this.txtKeep_Validating);
+            // 
+            // optAnalyzerDbRemove
+            // 
+            this.optAnalyzerDbRemove.AutoSize = true;
+            this.optAnalyzerDbRemove.Enabled = false;
+            this.optAnalyzerDbRemove.Location = new System.Drawing.Point(15, 504);
+            this.optAnalyzerDbRemove.Name = "optAnalyzerDbRemove";
+            this.optAnalyzerDbRemove.Size = new System.Drawing.Size(405, 17);
+            this.optAnalyzerDbRemove.TabIndex = 17;
+            this.optAnalyzerDbRemove.Text = "Remove all but the latest analyzer.db files in your DSM installation, namely keep" +
+    ": ";
+            this.optAnalyzerDbRemove.UseVisualStyleBackColor = true;
+            this.optAnalyzerDbRemove.CheckedChanged += new System.EventHandler(this.optAnalyzerDbRemove_CheckedChanged);
+            // 
+            // optAnalyzerDbKeep
+            // 
+            this.optAnalyzerDbKeep.AutoSize = true;
+            this.optAnalyzerDbKeep.Checked = true;
+            this.optAnalyzerDbKeep.Enabled = false;
+            this.optAnalyzerDbKeep.Location = new System.Drawing.Point(15, 481);
+            this.optAnalyzerDbKeep.Name = "optAnalyzerDbKeep";
+            this.optAnalyzerDbKeep.Size = new System.Drawing.Size(257, 17);
+            this.optAnalyzerDbKeep.TabIndex = 16;
+            this.optAnalyzerDbKeep.TabStop = true;
+            this.optAnalyzerDbKeep.Text = "Keep all analyzer.db files in your DSM installation.";
+            this.optAnalyzerDbKeep.UseVisualStyleBackColor = true;
+            // 
+            // chkKeep
+            // 
+            this.chkKeep.AutoSize = true;
+            this.chkKeep.Location = new System.Drawing.Point(15, 458);
+            this.chkKeep.Name = "chkKeep";
+            this.chkKeep.Size = new System.Drawing.Size(61, 17);
+            this.chkKeep.TabIndex = 19;
+            this.chkKeep.Text = "Custom";
+            this.chkKeep.UseVisualStyleBackColor = true;
+            this.chkKeep.CheckedChanged += new System.EventHandler(this.chkKeep_CheckedChanged);
+            // 
             // HostConfiguration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(486, 500);
+            this.ClientSize = new System.Drawing.Size(486, 589);
+            this.Controls.Add(this.chkKeep);
+            this.Controls.Add(this.txtKeep);
+            this.Controls.Add(this.optAnalyzerDbRemove);
+            this.Controls.Add(this.optAnalyzerDbKeep);
             this.Controls.Add(this.grpMethods);
             this.Controls.Add(this.lblPort);
             this.Controls.Add(this.txtPort);
@@ -332,5 +392,9 @@
         private System.Windows.Forms.Button btnKeyFileRemove;
         private System.Windows.Forms.Button btnKeyFileAdd;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.TextBox txtKeep;
+        private System.Windows.Forms.RadioButton optAnalyzerDbRemove;
+        private System.Windows.Forms.RadioButton optAnalyzerDbKeep;
+        private System.Windows.Forms.CheckBox chkKeep;
     }
 }

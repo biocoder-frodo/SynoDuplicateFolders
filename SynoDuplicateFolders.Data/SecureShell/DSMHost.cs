@@ -1,11 +1,55 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 using SynoDuplicateFolders.Configuration;
+using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
-    public sealed class DSMHost : ConfigurationElement, IElementProvider
+    public sealed class DSMHost : ConfigurationElement, IElementProvider, IKeepDSMFiles
     {
+
+        public bool Custom => KeepDsmFilesCustom;
+
+        public int KeepCount => KeepDsmCount;
+
+        public bool KeepAll => KeepAllDsmFiles;
+
+        [ConfigurationProperty("keepdsmfiles", IsRequired = false, DefaultValue = false)]
+        public bool KeepDsmFilesCustom
+        {
+            get
+            {
+                return (bool)this["keepdsmfiles"] ;
+            }
+            set
+            {
+                this["keepdsmfiles"] = value;
+            }
+        }
+        [ConfigurationProperty("keepallfiles", IsRequired = false, DefaultValue = true)]
+        public bool KeepAllDsmFiles
+        {
+            get
+            {
+                return (bool)this["keepallfiles"];
+            }
+            set
+            {
+                this["keepallfiles"] = value;
+            }
+        }
+        [ConfigurationProperty("keepdsmcount", IsRequired = false, DefaultValue = 1)]
+        public int KeepDsmCount
+        {
+            get
+            {
+                return (int)this["keepdsmcount"];
+            }
+            set
+            {
+                this["keepdsmcount"] = value;
+            }
+        }
         [ConfigurationProperty("host", IsRequired = true, IsKey = true)]
         public string Host
         {
@@ -55,7 +99,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
        
         public static string SynoReportHomeDefault(string userName)
         {
-            return string.Format("/volume1/homes/{0}/synoreport/", string.IsNullOrEmpty(userName) ? DefaultUserName : userName);
+            return string.Format("/volume1/homes/{0}/", string.IsNullOrEmpty(userName) ? DefaultUserName : userName);
         }
 
         [ConfigurationProperty("home", IsRequired = false)]

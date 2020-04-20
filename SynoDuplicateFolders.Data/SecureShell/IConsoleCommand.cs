@@ -15,8 +15,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         IDSMVersion GetVersionInfo(SshClient client);
         IDSMVersion GetVersionInfo();
 
-        List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, bool Disconnect = true);
-
+        List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, SynoReportViaSSH session, bool Disconnect = true);
         void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases);
     }
 }
