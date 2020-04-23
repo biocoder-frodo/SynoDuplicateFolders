@@ -34,7 +34,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
             int row = 0;
 
-            while (row < result2.Count())
+            while (row < result2.Count() && result2[row].Length > 0)
             {
                 string folder = "/" + result2[row].Substring(0, result2[row].Length - 1);
                 row++; row++;

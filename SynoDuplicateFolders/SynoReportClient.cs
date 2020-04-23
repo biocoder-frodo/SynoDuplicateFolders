@@ -15,6 +15,8 @@ using static SynoDuplicateFolders.Properties.Settings;
 using static System.Environment;
 using System.IO;
 
+using System.Collections.Generic;
+
 namespace SynoDuplicateFolders
 {
     public partial class SynoReportClient : Form
@@ -190,17 +192,17 @@ namespace SynoDuplicateFolders
 
                 if (Default.UseProxy && h.Proxy == null)
                 {
-                    connection = new SynoReportViaSSH(h, GetPassPhrase, new DefaultProxy());
+                    connection = new SynoReportViaSSH(h, GetPassPhrase, GetInteractiveMethod, new DefaultProxy());
                 }
                 else
                 {
                     if (h.Proxy != null)
                     {
-                        connection = new SynoReportViaSSH(h, GetPassPhrase, h.Proxy);
+                        connection = new SynoReportViaSSH(h, GetPassPhrase, GetInteractiveMethod, h.Proxy);
                     }
                     else
                     {
-                        connection = new SynoReportViaSSH(h, GetPassPhrase);
+                        connection = new SynoReportViaSSH(h, GetPassPhrase, GetInteractiveMethod);
                     }
                 }
 
@@ -284,7 +286,20 @@ namespace SynoDuplicateFolders
             }
             return result;
         }
+        private string GetInteractiveMethod(DSMKeyboardInteractiveEventArgs e)
+        {
+            List<string> banner = new List<string>();
+            banner.AddRange(e.Banner.Split('\n'));
+            banner.AddRange(e.Instruction.Split('\n'));
 
+            string result;
+            using (PassPhrase dialog = new PassPhrase(e.Username, banner.ToArray(), e.Id+": "+e.Request))
+            {
+                dialog.ShowDialog();
+                result = dialog.Password;
+            }
+            return result;
+        }
         private void Cache_StatusUpdate(object sender, SynoReportCacheDownloadEventArgs e)
         {
             Invoke(new Action<SynoReportCacheDownloadEventArgs>(ProgressUpdate), e);

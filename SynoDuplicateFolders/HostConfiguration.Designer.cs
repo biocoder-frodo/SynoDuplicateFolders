@@ -218,7 +218,6 @@
             // 
             // listView1
             // 
-            this.listView1.CheckBoxes = true;
             this.listView1.Enabled = false;
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(18, 149);
@@ -234,10 +233,9 @@
             this.chkKeyFiles.AutoSize = true;
             this.chkKeyFiles.Location = new System.Drawing.Point(18, 126);
             this.chkKeyFiles.Name = "chkKeyFiles";
-            this.chkKeyFiles.Size = new System.Drawing.Size(429, 17);
+            this.chkKeyFiles.Size = new System.Drawing.Size(104, 17);
             this.chkKeyFiles.TabIndex = 19;
-            this.chkKeyFiles.Text = "Private Key Files (Put a checkmark in front of the filename if a pass-phrase is r" +
-    "equired)";
+            this.chkKeyFiles.Text = "Private Key Files";
             this.chkKeyFiles.UseVisualStyleBackColor = true;
             this.chkKeyFiles.CheckedChanged += new System.EventHandler(this.chkKeyFiles_CheckedChanged);
             // 
@@ -250,6 +248,7 @@
             this.chkKeyBoardInteractive.TabIndex = 18;
             this.chkKeyBoardInteractive.Text = "Keyboard interactive";
             this.chkKeyBoardInteractive.UseVisualStyleBackColor = true;
+            this.chkKeyBoardInteractive.CheckedChanged += new System.EventHandler(this.chkKeyBoardInteractive_CheckedChanged);
             // 
             // chkPassword
             // 
@@ -275,6 +274,7 @@
             // chkAuthNone
             // 
             this.chkAuthNone.AutoSize = true;
+            this.chkAuthNone.Enabled = false;
             this.chkAuthNone.Location = new System.Drawing.Point(18, 31);
             this.chkAuthNone.Name = "chkAuthNone";
             this.chkAuthNone.Size = new System.Drawing.Size(52, 17);

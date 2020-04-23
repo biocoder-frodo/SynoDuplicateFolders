@@ -39,18 +39,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 this["method"] = value;
             }
         }
-        [ConfigurationProperty("user", IsRequired = true)]
-        public string UserName
-        {
-            get
-            {
-                return this["user"] as string;
-            }
-            set
-            {
-                this["user"] = value;
-            }
-        }
+
         [ConfigurationProperty("password", IsRequired = false)]
         internal string WrappedPassword
         {
@@ -68,16 +57,20 @@ namespace SynoDuplicateFolders.Data.SecureShell
             internal get { return wrapped.Password; }
             set { wrapped.Password = value; }
         }
-        internal AuthenticationMethod getAuthenticationMethod(bool storePassPhrases, Func<string,string> getPassPhrase, out bool canceled)
+        internal AuthenticationMethod getAuthenticationMethod(string userName,
+                                                                bool storePassPhrases,
+                                                                Func<string, string> getPassPhrase,
+                                                                Func<DSMKeyboardInteractiveEventArgs, string> getInteractiveMethod,
+                                                                out bool canceled)
         {
             canceled = false;
 
             switch (Method)
             {
                 case DSMAuthenticationMethod.KeyboardInteractive:
-                    return new KeyboardInteractiveAuthenticationMethod(UserName);
+                    return new KeyboardInteractiveAuthenticationMethod(userName);
                 case DSMAuthenticationMethod.Password:
-                    return new PasswordAuthenticationMethod(UserName, Password);
+                    return new PasswordAuthenticationMethod(userName, Password);
                 case DSMAuthenticationMethod.PrivateKeyFile:
                     int i = 0;
                     PrivateKeyFile[] keys = new PrivateKeyFile[AuthenticationKeys.Items.Count];
@@ -86,12 +79,12 @@ namespace SynoDuplicateFolders.Data.SecureShell
                         bool empty = false;
                         k.GetPassPhrase = getPassPhrase;
                         k.StorePassPhrases = storePassPhrases;
-                        keys[i++] = k.getKeyFile(out empty);
+                        keys[i++] = k.GetKeyFile(out empty);
                         if (empty) canceled = true;
                     }
-                    return new PrivateKeyAuthenticationMethod(UserName, keys);
+                    return new PrivateKeyAuthenticationMethod(userName, keys);
                 default:
-                    return new NoneAuthenticationMethod(UserName);
+                    return new NoneAuthenticationMethod(userName);
             }
         }
         [ConfigurationProperty("AuthenticationKeys")]

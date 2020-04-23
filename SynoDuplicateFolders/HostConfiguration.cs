@@ -55,7 +55,7 @@ namespace SynoDuplicateFolders
             chkUser.Checked = !txtUser.Text.Equals(DSMHost.DefaultUserName);
             txtSynoReportHome.Text = string.IsNullOrWhiteSpace(host.SynoReportHome) ? DSMHost.SynoReportHomeDefault(host.UserName) : host.SynoReportHome;
             chkSynoReportHome.Checked = !txtSynoReportHome.Text.Equals(DSMHost.SynoReportHomeDefault(host.UserName));
-            
+
             chkKeep.Checked = Host.KeepDsmFilesCustom;
 
             txtKeep.Text = Host.KeepDsmCount.ToString();
@@ -63,6 +63,39 @@ namespace SynoDuplicateFolders
             optAnalyzerDbRemove.Checked = !Host.KeepAllDsmFiles;
 
             chkKeep_CheckedChanged(null, null);
+
+            for (int i = 0; i < Host.AuthenticationSection.Count; i++)
+            {
+
+                var am = Host.AuthenticationSection[i];
+                switch (am.Method)
+                {
+                    case DSMAuthenticationMethod.PrivateKeyFile:
+                        {
+                            chkKeyFiles.Checked = true;
+                            for (int k = 0; k < am.AuthenticationKeys.Items.Count; k++)
+                            {
+                                var pkf = am.AuthenticationKeys.Items[k];
+                                listView1.Items.Add(pkf.FileName);
+                               
+                            }
+
+                        }
+                        break;
+
+                    case DSMAuthenticationMethod.KeyboardInteractive:
+                        chkKeyBoardInteractive.Checked = true;
+                        break;
+
+                    case DSMAuthenticationMethod.Password:
+                        chkPassword.Checked = true;
+                        txtPassword.Text = "";
+                        break;
+                        // if you press Ok with a saved password, you have just reset your password to 'blank', unless you typed a new one.
+                    default:
+                        break;
+                }
+            }
         }
         private void KeepDSMControlsUpdate()
         { }
@@ -88,7 +121,7 @@ namespace SynoDuplicateFolders
             else
             {
                 MessageBox.Show("Please enter a pathname with only letters and numbers.\r\nThe path must begin with \\volume? ...", "Absolute pathname");
-                return false; 
+                return false;
             }
         }
         private void btnOk_Click(object sender, EventArgs e)
@@ -126,29 +159,24 @@ namespace SynoDuplicateFolders
             if (Validate())
             {
                 method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.None, chkAuthNone.Checked);
-
+                
                 method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.KeyboardInteractive, chkKeyBoardInteractive.Checked);
-                if (method != null)
-                {
-                    method.UserName = Host.UserName;
-                }
 
                 method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.Password, chkPassword.Checked);
                 if (method != null)
                 {
-                    method.UserName = Host.UserName;
                     method.Password = txtPassword.Text;
                 }
 
                 method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.PrivateKeyFile, chkKeyFiles.Checked);
                 if (method != null)
                 {
-                    method.UserName = Host.UserName;
+                    method.AuthenticationKeys.Items.Clear();
+
                     foreach (ListViewItem k in listView1.Items)
                     {
                         var kf = new DSMAuthenticationKeyFile()
                         {
-                            UsePassphrase = k.Checked,
                             FileName = k.Text
                         };
                         method.AuthenticationKeys.Items.Add(kf);
@@ -163,11 +191,14 @@ namespace SynoDuplicateFolders
             Hide();
 
         }
-
+        private void chkKeyBoardInteractive_CheckedChanged(object sender, EventArgs e)
+        {
+            ;
+        }
         private void chkKeep_CheckedChanged(object sender, EventArgs e)
         {
             bool custom = chkKeep.CheckState != CheckState.Unchecked;
-            
+
             optAnalyzerDbKeep.Enabled = custom;
             optAnalyzerDbRemove.Enabled = custom;
             txtKeep.Enabled = custom;
@@ -210,7 +241,7 @@ namespace SynoDuplicateFolders
         {
 
             e.Cancel = !NAME_REGEX.IsMatch((sender as TextBox).Text);
-            
+
             if (string.IsNullOrWhiteSpace((sender as TextBox).Text) == true)
             {
                 e.Cancel = false;
@@ -244,7 +275,7 @@ namespace SynoDuplicateFolders
             e.Cancel = !ValidateHomePath();
             if (!e.Cancel && (sender as TextBox).Text.Equals(DSMHost.SynoReportHomeDefault(txtUser.Text)))
             {
-                if (chkSynoReportHome.Checked)    
+                if (chkSynoReportHome.Checked)
                     chkSynoReportHome.Checked = false;
             }
         }
@@ -314,14 +345,14 @@ namespace SynoDuplicateFolders
         private bool _allowedKeyPress;
 
         private void txtHost_KeyPress(object sender, KeyPressEventArgs e)
-        { 
+        {
             _allowedKeyPress = true;
 
             if (e.KeyChar == '.' || e.KeyChar == ':')
             {
                 _allowedKeyPress = false;
                 if (txtHost.Text.EndsWith(e.KeyChar.ToString()) == false)
-                _allowedKeyPress = true;
+                    _allowedKeyPress = true;
             }
             if (!_allowedKeyPress)
                 e.Handled = true;

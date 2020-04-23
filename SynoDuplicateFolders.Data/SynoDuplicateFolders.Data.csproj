@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="ComponentModel\SortableBindingList.cs" />
     <Compile Include="PieChartDataPoint.cs" />
+    <Compile Include="SecureShell\DSMKeyboardInteractiveEventArgs.cs" />
     <Compile Include="SecureShell\DSMProxy.cs" />
     <Compile Include="SecureShell\BConsoleCommand.cs" />
     <Compile Include="SecureShell\BDSMVersion.cs" />

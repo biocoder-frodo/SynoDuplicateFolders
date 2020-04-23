@@ -10,9 +10,22 @@ using System.Windows.Forms;
 
 namespace SynoDuplicateFolders
 {
-    internal partial class PassPhrase : Form
+    public partial class PassPhrase : Form
     {
-        public PassPhrase(string fileName)
+        internal PassPhrase(string user, string[] banner, string request)
+        {
+            int count = 0;
+            InitializeComponent();
+            this.Text = "Keyboard-Interactive Login for user "+user;
+            label1.Text = request;
+            foreach (string line in banner)
+            {
+                count += line.Trim().Length;
+                listBox1.Items.Add(line);
+            }
+            if(count>0)listBox1.Visible = true;
+        }
+        internal PassPhrase(string fileName)
         {
             InitializeComponent();
             label1.Text = string.Format("Please enter the pass-phrase for keyfile '{0}'", fileName);
@@ -30,5 +43,9 @@ namespace SynoDuplicateFolders
             Hide();
         }
 
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) Button1_Click(null, null);
+        }
     }
 }

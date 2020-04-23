@@ -3,6 +3,7 @@ using System.Configuration;
 using SynoDuplicateFolders.Configuration;
 using SynoDuplicateFolders.Extensions;
 using Renci.SshNet;
+using Renci.SshNet.Common;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
@@ -28,18 +29,6 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 this["filename"] = value;
             }
         }
-        [ConfigurationProperty("usePassPhrase", IsRequired = false, DefaultValue = false)]
-        public bool UsePassphrase
-        {
-            get
-            {
-                return (bool)this["usePassPhrase"];
-            }
-            set
-            {
-                this["usePassPhrase"] = value;
-            }
-        }
 
         [ConfigurationProperty("passPhrase", IsRequired = false)]
         internal string WrappedPassPhrase
@@ -59,32 +48,46 @@ namespace SynoDuplicateFolders.Data.SecureShell
             set { wrapped.Password = value; }
         }
         public bool StorePassPhrases { get; set; }
-        public Func<string,string> GetPassPhrase { get; set; }
-        internal PrivateKeyFile getKeyFile(out bool canceled)
+        public Func<string, string> GetPassPhrase { get; set; }
+        internal PrivateKeyFile GetKeyFile(out bool canceled)
         {
             canceled = false;
-            if (UsePassphrase && GetPassPhrase != null)
-            {
-                string pass = GetPassPhrase(FileName);
-                canceled = string.IsNullOrEmpty(pass);
-
-                if (StorePassPhrases)
-                {
-                    if (WrappedPassPhrase.Length == 0)
-                    {
-                        PassPhrase = pass;
-                    }
-                    return new PrivateKeyFile(FileName, PassPhrase);
-                }
-                else
-                {
-                    return new PrivateKeyFile(FileName, pass);
-                }
-            }
-            else
+            try
             {
                 return new PrivateKeyFile(FileName);
             }
+            catch (SshPassPhraseNullOrEmptyException)
+            {
+                if (StorePassPhrases && WrappedPassPhrase.Length > 0)
+                {
+                    return new PrivateKeyFile(FileName, PassPhrase);
+                }
+
+                string pass = GetPassPhrase(FileName);
+                canceled = string.IsNullOrEmpty(pass);
+                if (canceled == false)
+                {
+                    if (StorePassPhrases)
+                    {
+                        if (WrappedPassPhrase.Length == 0)
+                        {
+                            PassPhrase = pass;
+                        }
+                        return new PrivateKeyFile(FileName, PassPhrase);
+                    }
+                    else
+                    {
+                        return new PrivateKeyFile(FileName, pass);
+                    }
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
+                canceled = true;
+            }
+            return null;
         }
         object IElementProvider.GetElementKey()
         {

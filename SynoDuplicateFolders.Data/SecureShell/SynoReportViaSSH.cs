@@ -7,14 +7,16 @@ using System.Linq;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
-    public sealed class SynoReportViaSSH : BSynoReportCache
+    public sealed class SynoReportViaSSH : BSynoReportCache, IDisposable
     {
         private readonly DSMHost _host;
         private readonly ConnectionInfo _ci;
 
         private IDSMVersion _version = null;
+        private Func<DSMKeyboardInteractiveEventArgs, string> _interactiveMethod = null;
+        private AuthenticationBannerEventArgs _banner;
 
-        public SynoReportViaSSH(DSMHost host, Func<string, string> getPassPhraseMethod, IProxySettings proxy = null)
+        public SynoReportViaSSH(DSMHost host, Func<string, string> getPassPhraseMethod, Func<DSMKeyboardInteractiveEventArgs, string> getInteractiveMethod, IProxySettings proxy = null)
         {
             bool canceled = false;
 
@@ -22,12 +24,14 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
             _host = host ?? throw new ArgumentNullException(nameof(host));
             if (getPassPhraseMethod == null) throw new ArgumentNullException(nameof(getPassPhraseMethod));
+            if (getInteractiveMethod == null) throw new ArgumentNullException(nameof(getInteractiveMethod));
+            _interactiveMethod = getInteractiveMethod;
 
             int i = 0;
             AuthenticationMethod[] methods = new AuthenticationMethod[host.AuthenticationSection.Count];
             foreach (var m in host.AuthenticationMethods)
             {
-                methods[i++] = m.getAuthenticationMethod(host.StorePassPhrases, getPassPhraseMethod, out canceled);
+                methods[i++] = m.getAuthenticationMethod(host.UserName, host.StorePassPhrases, getPassPhraseMethod, getInteractiveMethod, out canceled);
             }
             if (!canceled)
             {
@@ -44,6 +48,17 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 {
                     _ci = new ConnectionInfo(host.Host, host.Port, host.UserName, methods);
                 }
+
+                _ci.AuthenticationBanner += AuthorizationBannerAction;
+
+                foreach (var am in _ci.AuthenticationMethods)
+                {
+                    KeyboardInteractiveAuthenticationMethod kb = am as KeyboardInteractiveAuthenticationMethod;
+                    if (kb != null)
+                    {
+                        kb.AuthenticationPrompt += AuthenticationPromptAction;
+                    }
+                }
             }
         }
 
@@ -55,7 +70,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
             {
                 foreach (DSMAuthentication a in _host.AuthenticationMethods)
                 {
-                    if (a.Method == DSMAuthenticationMethod.Password && _ci.Username.Equals(a.UserName))
+                    if (a.Method == DSMAuthenticationMethod.Password)
                     {
                         return a.Password;
                     }
@@ -154,7 +169,19 @@ namespace SynoDuplicateFolders.Data.SecureShell
             }
 
         }
+        public void AuthorizationBannerAction(object sender, AuthenticationBannerEventArgs e)
+        {
+            _banner = e;
+        }
+        public void AuthenticationPromptAction(object sender, AuthenticationPromptEventArgs e)
+        {
+            Console.WriteLine("AuthenticationPromptAction");
 
+            foreach (var p in e.Prompts)
+            {
+                p.Response = _interactiveMethod(new DSMKeyboardInteractiveEventArgs(_banner, e, p));
+            }
+        }
         public override void DownloadCSVFiles()
         {
             try
@@ -166,22 +193,6 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
                 using (SshClient sc = new SshClient(_ci))
                 {
-                    //_ci.AuthenticationBanner += delegate (object sender, AuthenticationBannerEventArgs e)
-                    //  {
-                    //      Console.WriteLine(e.BannerMessage);
-                    //      Console.WriteLine(e.Username);
-                    //  };
-                    //var kb = _ci.AuthenticationMethods[0] as KeyboardInteractiveAuthenticationMethod;
-                    //if (kb!=null)kb.AuthenticationPrompt += delegate(object sender, AuthenticationPromptEventArgs e)
-                    //{
-                    //    Console.WriteLine(e.Instruction);
-                    //    foreach (var p in e.Prompts)
-                    //    {
-                    //        Console.WriteLine(p.Request);
-                    //        p.Response ="1";
-
-                    //    }
-                    //};                 
                     RaiseDownloadEvent(CacheStatus.FetchingDirectoryInfo);
 
                     sc.Connect();
@@ -279,6 +290,51 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 RaiseDownloadEvent(CacheStatus.Idle);
             }
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _ci.AuthenticationBanner -= AuthorizationBannerAction;
+
+                    foreach (var am in _ci.AuthenticationMethods)
+                    {
+                        KeyboardInteractiveAuthenticationMethod kb = am as KeyboardInteractiveAuthenticationMethod;
+                        if (kb != null)
+                        {
+                            kb.AuthenticationPrompt -= AuthenticationPromptAction;
+                        }
+                    }
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~SynoReportViaSSH()
+        // {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
     }
     [Serializable]
     public class SynoReportViaSSHException : Exception

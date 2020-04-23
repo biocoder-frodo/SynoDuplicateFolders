@@ -48,6 +48,8 @@
             this.taggedColorBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabpageSecurity = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.optUseStoredPassPhrases = new System.Windows.Forms.RadioButton();
+            this.optPassPhraseInteractive = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.optInteractiveSudo = new System.Windows.Forms.RadioButton();
             this.optSudo = new System.Windows.Forms.RadioButton();
@@ -76,8 +78,6 @@
             this.txtDiffTool = new System.Windows.Forms.TextBox();
             this.btnApply = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.optPassPhraseInteractive = new System.Windows.Forms.RadioButton();
-            this.optUseStoredPassPhrases = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabConfig.SuspendLayout();
             this.tabpageServers.SuspendLayout();
@@ -289,6 +289,28 @@
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Keyfile pass phrases";
+            // 
+            // optUseStoredPassPhrases
+            // 
+            this.optUseStoredPassPhrases.AutoSize = true;
+            this.optUseStoredPassPhrases.Location = new System.Drawing.Point(16, 42);
+            this.optUseStoredPassPhrases.Name = "optUseStoredPassPhrases";
+            this.optUseStoredPassPhrases.Size = new System.Drawing.Size(136, 17);
+            this.optUseStoredPassPhrases.TabIndex = 1;
+            this.optUseStoredPassPhrases.Text = "Use stored pass phrase";
+            this.optUseStoredPassPhrases.UseVisualStyleBackColor = true;
+            // 
+            // optPassPhraseInteractive
+            // 
+            this.optPassPhraseInteractive.AutoSize = true;
+            this.optPassPhraseInteractive.Checked = true;
+            this.optPassPhraseInteractive.Location = new System.Drawing.Point(16, 19);
+            this.optPassPhraseInteractive.Name = "optPassPhraseInteractive";
+            this.optPassPhraseInteractive.Size = new System.Drawing.Size(162, 17);
+            this.optPassPhraseInteractive.TabIndex = 0;
+            this.optPassPhraseInteractive.TabStop = true;
+            this.optPassPhraseInteractive.Text = "Ask pass phrase interactively";
+            this.optPassPhraseInteractive.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -569,30 +591,6 @@
             this.btnApply.Text = "Apply";
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
-            // optPassPhraseInteractive
-            // 
-            this.optPassPhraseInteractive.AutoSize = true;
-            this.optPassPhraseInteractive.Checked = true;
-            this.optPassPhraseInteractive.Enabled = false;
-            this.optPassPhraseInteractive.Location = new System.Drawing.Point(16, 19);
-            this.optPassPhraseInteractive.Name = "optPassPhraseInteractive";
-            this.optPassPhraseInteractive.Size = new System.Drawing.Size(162, 17);
-            this.optPassPhraseInteractive.TabIndex = 0;
-            this.optPassPhraseInteractive.TabStop = true;
-            this.optPassPhraseInteractive.Text = "Ask pass phrase interactively";
-            this.optPassPhraseInteractive.UseVisualStyleBackColor = true;
-            // 
-            // optUseStoredPassPhrases
-            // 
-            this.optUseStoredPassPhrases.AutoSize = true;
-            this.optUseStoredPassPhrases.Enabled = false;
-            this.optUseStoredPassPhrases.Location = new System.Drawing.Point(16, 42);
-            this.optUseStoredPassPhrases.Name = "optUseStoredPassPhrases";
-            this.optUseStoredPassPhrases.Size = new System.Drawing.Size(136, 17);
-            this.optUseStoredPassPhrases.TabIndex = 1;
-            this.optUseStoredPassPhrases.Text = "Use stored pass phrase";
-            this.optUseStoredPassPhrases.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
