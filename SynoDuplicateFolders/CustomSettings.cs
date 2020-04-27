@@ -4,6 +4,7 @@ using SynoDuplicateFolders.Configuration;
 using System.Collections.Generic;
 using SynoDuplicateFolders.Controls;
 using SynoDuplicateFolders.Data.SecureShell;
+using System;
 
 namespace SynoDuplicateFolders.Properties
 {
@@ -11,7 +12,42 @@ namespace SynoDuplicateFolders.Properties
     {
         private static readonly List<ITaggedColor> _pallete = new List<ITaggedColor>();
         private readonly List<ITaggedColor> _list = new List<ITaggedColor>();
+        private static CustomSettings _default_instance = null;
+        private static Func<CustomSettings> _load_method = null;
+        private readonly static object _thread = new object();
+        private static int _save_count = 0;
+        public static void Initialize(Func<CustomSettings> method)
+        {
+            lock (_thread)
+            {
+                _load_method = method;
+                _default_instance = _load_method();
+            }
+        }
+        public static CustomSettings Profile
+        {
+            get { return _default_instance; }
+        }
+        public void Save()
+        {   
+            lock (_thread)
+            {
+                ++_save_count;
+                _default_instance.CurrentConfiguration.Save();
+                Reload();
+                Settings.Default.Reload();
+            }
+        }
+        public void Reload()
+        {
+            lock (_thread)
+            {
+                ConfigurationManager.RefreshSection(this.SectionInformation.Name);
 
+                _default_instance = null;
+                _default_instance = _load_method();
+            }
+        }
         public CustomSettings() : base()
         {
             lock (_pallete)

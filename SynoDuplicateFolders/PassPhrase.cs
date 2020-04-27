@@ -24,11 +24,13 @@ namespace SynoDuplicateFolders
                 listBox1.Items.Add(line);
             }
             if(count>0)listBox1.Visible = true;
+            textBox1.Focus();
         }
         internal PassPhrase(string fileName)
         {
             InitializeComponent();
             label1.Text = string.Format("Please enter the pass-phrase for keyfile '{0}'", fileName);
+            textBox1.Focus();
         }
         internal string Password { get { return textBox1.Text; } }
 

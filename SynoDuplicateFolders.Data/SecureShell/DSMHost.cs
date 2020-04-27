@@ -2,12 +2,50 @@
 using System.Configuration;
 using SynoDuplicateFolders.Configuration;
 using SynoDuplicateFolders.Data.Core;
+using System.Text;
+using System;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
     public sealed class DSMHost : ConfigurationElement, IElementProvider, IKeepDSMFiles
     {
 
+
+        public byte[] FingerPrint
+        {
+            get
+            {
+                try
+                {
+                    return Convert.FromBase64String(Fp);
+                }
+                catch (FormatException)
+                {
+                    return new byte[] { };
+                }
+                catch (ArgumentNullException)
+                {
+                    return new byte[] { };
+                }
+            }
+            set
+            {
+                Fp = Convert.ToBase64String(value); 
+            }
+        }
+
+        [ConfigurationProperty("fingerprint", IsRequired = false, DefaultValue ="")]
+        private string Fp
+        {
+            get
+            {
+                return this["fingerprint"] as string;
+            }
+            set
+            {
+                this["fingerprint"] = value;
+            }
+        }
         public bool Custom => KeepDsmFilesCustom;
 
         public int KeepCount => KeepDsmCount;
@@ -19,7 +57,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         {
             get
             {
-                return (bool)this["keepdsmfiles"] ;
+                return (bool)this["keepdsmfiles"];
             }
             set
             {
@@ -96,7 +134,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 return "admin";
             }
         }
-       
+
         public static string SynoReportHomeDefault(string userName)
         {
             return string.Format("/volume1/homes/{0}/", string.IsNullOrEmpty(userName) ? DefaultUserName : userName);
@@ -114,7 +152,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 this["home"] = value;
             }
         }
-              
+
         [ConfigurationProperty("AuthenticationMethods")]
         public BasicConfigurationElementMap<DSMAuthentication> AuthenticationSection
         {
@@ -136,12 +174,12 @@ namespace SynoDuplicateFolders.Data.SecureShell
         public DSMAuthentication GetAuthenticationMethod(DSMAuthenticationMethod method)
         {
             return AuthenticationSection.TryGet(method);
-        }        
+        }
 
         public DSMAuthentication GetOrAddAuthenticationMethod(DSMAuthenticationMethod method)
         {
             DSMAuthentication am = AuthenticationSection.TryGet(method);
-            if (am==null)
+            if (am == null)
             {
                 am = new DSMAuthentication(method);
                 AuthenticationSection.Add(am);
@@ -156,7 +194,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         public void RemoveAuthenticationMethod(DSMAuthenticationMethod method)
         {
             DSMAuthentication am = AuthenticationSection.TryGet(method);
-            if (am!=null)
+            if (am != null)
             {
                 AuthenticationSection.Remove(am);
             }

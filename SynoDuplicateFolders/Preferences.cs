@@ -8,11 +8,11 @@ using SynoDuplicateFolders.Extensions;
 using SynoDuplicateFolders.Data.SecureShell;
 using static System.Environment;
 using static SynoDuplicateFolders.Properties.Settings;
+using static SynoDuplicateFolders.Properties.CustomSettings;
 namespace SynoDuplicateFolders
 {
     public partial class Preferences : Form
     {
-        private readonly CustomSettings _config;
         private readonly DefaultProxy _proxy = new DefaultProxy();
 
         private bool dirty_custom = false;
@@ -38,13 +38,10 @@ namespace SynoDuplicateFolders
 
         int keepCount = 1;
 
-        internal Preferences(CustomSettings config)
+        internal Preferences()
         {
             InitializeComponent();
-
-            _config = config;
-
-            DataToControls(_config);
+            DataToControls(true);
         }
 
 
@@ -88,27 +85,32 @@ namespace SynoDuplicateFolders
                 _proxy.Password = proxy_password;
                 _proxy.Port = proxy_port;
                 Default.Save();
+                Default.Reload();
+                Profile.Reload();
             }
             if (dirty_custom)
             {
-                _config.CurrentConfiguration.Save();
+                Profile.Save();
+                Profile.Reload();
+                Default.Reload();
                 dirty_custom = false;
             }
         }
         #region Data exchange on controls
 
-        private void DataToControls(CustomSettings config = null)
+        private void DataToControls(bool updateHostList)
         {
-            if (config != null) //only done once
+            if (updateHostList) //only done once
             {
-                foreach (DSMHost h in config.DSMHosts.Items)
+                comboBox1.Items.Clear();
+                foreach (DSMHost h in Profile.DSMHosts.Items)
                     comboBox1.Items.Add(h.Host);
-                dataGridView1.DataSource = config.List;
+                dataGridView1.DataSource = Profile.List;
             }
 
             if (!string.IsNullOrEmpty(Default.AutoRefreshServer))
             {
-                if (_config.DSMHosts.Items.ContainsKey(Default.AutoRefreshServer))
+                if (Profile.DSMHosts.Items.ContainsKey(Default.AutoRefreshServer))
                 {
                     checkBox1.CheckState = CheckState.Checked;
                     comboBox1.Enabled = true;

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
@@ -16,6 +17,11 @@ namespace SynoDuplicateFolders.Data.SecureShell
         private Func<DSMKeyboardInteractiveEventArgs, string> _interactiveMethod = null;
         private AuthenticationBannerEventArgs _banner;
 
+        public event EventHandler HostKeyChange;
+        public void OnHostKeyChange(object sender, EventArgs e)
+        {
+            HostKeyChange?.Invoke(sender, e);
+        }
         public SynoReportViaSSH(DSMHost host, Func<string, string> getPassPhraseMethod, Func<DSMKeyboardInteractiveEventArgs, string> getInteractiveMethod, IProxySettings proxy = null)
         {
             bool canceled = false;
@@ -121,10 +127,49 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 {
                     using (SshClient sc = new SshClient(_ci))
                     {
+                        sc.HostKeyReceived += client_HostKeyReceived;
                         GetConsole(sc);
+                        sc.HostKeyReceived -= client_HostKeyReceived;
                     }
                 }
                 return _version.Version;
+            }
+        }
+
+        private void client_HostKeyReceived(object sender, HostKeyEventArgs e)
+        {
+            DialogResult trust = DialogResult.No;
+
+            if (_host.FingerPrint.Length.Equals(0) || !_host.FingerPrint.SequenceEqual(e.FingerPrint))
+            {
+                if (_host.FingerPrint.Length.Equals(0))
+                {
+                    trust = MessageBox.Show(
+                        string.Format("Do you trust the connection with host:\r\n{0}({1})", _ci.Host, _ci.ServerVersion)
+                        , "New host key", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                }
+                else
+                {
+                    if (_host.FingerPrint.SequenceEqual(e.FingerPrint))
+                    {
+                        trust = DialogResult.Yes;
+                    }
+                    else
+                    {
+                        trust = MessageBox.Show(
+                            string.Format("Do you trust the connection with host:\r\n{0}({1})", _ci.Host, _ci.ServerVersion)
+                            , "The host key has changed", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                    }
+                }
+                if (trust == DialogResult.Yes)
+                {
+                    _host.FingerPrint = e.FingerPrint;
+                    OnHostKeyChange(this, new EventArgs());
+                }
+                else
+                {
+                    e.CanTrust = false;
+                }
             }
         }
 
@@ -193,6 +238,8 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
                 using (SshClient sc = new SshClient(_ci))
                 {
+                    sc.HostKeyReceived += client_HostKeyReceived;
+
                     RaiseDownloadEvent(CacheStatus.FetchingDirectoryInfo);
 
                     sc.Connect();
@@ -229,9 +276,11 @@ namespace SynoDuplicateFolders.Data.SecureShell
                             }
                         }
                     }
+                    sc.HostKeyReceived -= client_HostKeyReceived;
                 }
                 using (ScpClient cp = new ScpClient(_ci))
                 {
+                    cp.HostKeyReceived += client_HostKeyReceived;
                     cp.Connect();
 
                     RaiseDownloadEvent(CacheStatus.Downloading, _files.Count, 0);
@@ -260,7 +309,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                     }
 
                     cp.Disconnect();
-
+                    cp.HostKeyReceived -= client_HostKeyReceived;
                 }
 
 
@@ -312,27 +361,14 @@ namespace SynoDuplicateFolders.Data.SecureShell
                     }
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
                 disposedValue = true;
             }
         }
 
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~SynoReportViaSSH()
-        // {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
 
-        // This code added to correctly implement the disposable pattern.
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
         }
         #endregion
     }

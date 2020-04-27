@@ -22,6 +22,7 @@ namespace SynoDuplicateFolders.Configuration
                 //config.Save();
                 //cs.SectionInformation.ProtectSection("RsaProtectedConfigurationProvider");
                 config.Save();
+                ConfigurationManager.RefreshSection(cs.SectionInformation.Name);
             };
 
             return config.Sections.OfType<T>().First();

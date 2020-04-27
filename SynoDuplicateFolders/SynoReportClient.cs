@@ -12,6 +12,7 @@ using SynoDuplicateFolders.Controls;
 
 using static SynoDuplicateFolders.Configuration.UserSectionHandler;
 using static SynoDuplicateFolders.Properties.Settings;
+using static SynoDuplicateFolders.Properties.CustomSettings;
 using static System.Environment;
 using System.IO;
 
@@ -25,7 +26,7 @@ namespace SynoDuplicateFolders
         private event Action DuplicatesAnalysisCompleted;
 
         private ISynoReportCache cache = null;
-        private CustomSettings config = null;
+        //private CustomSettings config = null;
         private SynoReportDuplicateCandidates dupes = null;
 
         private bool _PassPhraseUpdate = false;
@@ -141,19 +142,19 @@ namespace SynoDuplicateFolders
                 WrappedPassword<DSMAuthenticationKeyFile>.SetEntropy(entropy);
                 WrappedPassword<DefaultProxy>.SetEntropy(entropy);
 
-                config = GetSection<CustomSettings>();
+                CustomSettings.Initialize(GetSection<CustomSettings>);
 
                 PopulateServerTree();
 
-                volumeHistoricChart1.Configuration = config;
-                chartGrid1.Configuration = config;
+                volumeHistoricChart1.Configuration = Profile;
+                chartGrid1.Configuration = Profile;
 
                 duplicateCandidatesView1.MaximumComparable = Default.MaximumComparable;
 
                 if (string.IsNullOrEmpty(Default.AutoRefreshServer) == false)
                 {
                     string tag = Default.AutoRefreshServer;
-                    if (config.DSMHosts.Items.ContainsKey(tag))
+                    if (Profile.DSMHosts.Items.ContainsKey(tag))
                     {
                         Task.Factory.StartNew(() => SynoReportClient_CacheUpdate(tag));
                     }
@@ -184,7 +185,7 @@ namespace SynoDuplicateFolders
             {
                 Invoke(new Action(ProgressUpdateProcessing));
 
-                DSMHost h = config.DSMHosts.Items.TryGet(host);
+                DSMHost h = Profile.DSMHosts.Items.TryGet(host);
 
                 h.StorePassPhrases = Default.StorePassPhrases;
 
@@ -205,7 +206,7 @@ namespace SynoDuplicateFolders
                         connection = new SynoReportViaSSH(h, GetPassPhrase, GetInteractiveMethod);
                     }
                 }
-
+                connection.HostKeyChange += Connection_HostKeyChange;
                 connection.RmExecutionMode = Default.RmExecutionMode;
 
                 cache = connection;
@@ -248,7 +249,7 @@ namespace SynoDuplicateFolders
 
                 if (_PassPhraseUpdate)
                 {
-                    config.CurrentConfiguration.Save();
+                    Profile.Save();
                 }
 
                 if (cache.GetReports(SynoReportType.DuplicateCandidates).Count > 0)
@@ -275,6 +276,12 @@ namespace SynoDuplicateFolders
                 Invoke(new Action(ProgressUpdateFailed));
             }
         }
+
+        private void Connection_HostKeyChange(object sender, EventArgs e)
+        {
+            Profile.Save();
+        }
+
         private string GetPassPhrase(string fileName)
         {
             string result;
@@ -312,7 +319,7 @@ namespace SynoDuplicateFolders
 
         private void preferences_Click(object sender, EventArgs e)
         {
-            using (var p = new Preferences(config))
+            using (var p = new Preferences())
             {
                 p.ShowDialog();
             }
@@ -371,20 +378,21 @@ namespace SynoDuplicateFolders
 
                     == DialogResult.Yes)
                 {
-                    config.DSMHosts.Items.Remove(tag);
-                    config.CurrentConfiguration.Save();
+                    Profile.DSMHosts.Items.Remove(tag);
+                    Profile.Save();
                     PopulateServerTree();
                 }
 
             }
             else if (e.ClickedItem == propertiesToolStripMenuItem)
             {
-                using (var srv = new HostConfiguration(config.DSMHosts.Items.TryGet(tag)))
+                using (var srv = new HostConfiguration(Profile.DSMHosts.Items.TryGet(tag)))
                 {
                     srv.ShowDialog();
                     if (srv.Canceled == false)
                     {
-                        config.CurrentConfiguration.Save();
+                        Profile.Save();
+                        
                     }
                 }
             }
@@ -397,10 +405,10 @@ namespace SynoDuplicateFolders
                 srv.ShowDialog();
                 if (srv.Canceled == false)
                 {
-                    if (config.DSMHosts.Items.ContainsKey(srv.Host.Host) == false)
+                    if (Profile.DSMHosts.Items.ContainsKey(srv.Host.Host) == false)
                     {
-                        config.DSMHosts.Items.Add(srv.Host);
-                        config.CurrentConfiguration.Save();
+                        Profile.DSMHosts.Items.Add(srv.Host);
+                        Profile.Save();
                         PopulateServerTree();
                     }
                     else
@@ -419,7 +427,7 @@ namespace SynoDuplicateFolders
             treeView1.Nodes.Add("NAS");
             treeView1.Nodes[0].ContextMenuStrip = contextMenuStrip1;
 
-            foreach (DSMHost h in config.DSMHosts.Items)
+            foreach (DSMHost h in Profile.DSMHosts.Items)
             {
                 var node = treeView1.Nodes[0].Nodes.Add(h.Host, h.Host);
                 node.ContextMenuStrip = contextMenuStrip2;

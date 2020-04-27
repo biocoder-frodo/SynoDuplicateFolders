@@ -83,7 +83,7 @@
             this.lblHost.Location = new System.Drawing.Point(12, 9);
             this.lblHost.Name = "lblHost";
             this.lblHost.Size = new System.Drawing.Size(29, 13);
-            this.lblHost.TabIndex = 2;
+            this.lblHost.TabIndex = 0;
             this.lblHost.Text = "Host";
             // 
             // lblUser
@@ -172,7 +172,7 @@
             this.txtPort.MaxLength = 12;
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(72, 20);
-            this.txtPort.TabIndex = 12;
+            this.txtPort.TabIndex = 1;
             this.txtPort.TabStop = false;
             this.txtPort.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPort_KeyDown);
             this.txtPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPort_KeyPress);
@@ -200,7 +200,7 @@
             this.btnKeyFileRemove.Location = new System.Drawing.Point(324, 178);
             this.btnKeyFileRemove.Name = "btnKeyFileRemove";
             this.btnKeyFileRemove.Size = new System.Drawing.Size(75, 23);
-            this.btnKeyFileRemove.TabIndex = 22;
+            this.btnKeyFileRemove.TabIndex = 12;
             this.btnKeyFileRemove.Text = "Remove";
             this.btnKeyFileRemove.UseVisualStyleBackColor = true;
             this.btnKeyFileRemove.Click += new System.EventHandler(this.btnKeyFileRemove_Click);
@@ -211,7 +211,7 @@
             this.btnKeyFileAdd.Location = new System.Drawing.Point(324, 149);
             this.btnKeyFileAdd.Name = "btnKeyFileAdd";
             this.btnKeyFileAdd.Size = new System.Drawing.Size(75, 23);
-            this.btnKeyFileAdd.TabIndex = 21;
+            this.btnKeyFileAdd.TabIndex = 11;
             this.btnKeyFileAdd.Text = "Add";
             this.btnKeyFileAdd.UseVisualStyleBackColor = true;
             this.btnKeyFileAdd.Click += new System.EventHandler(this.btnKeyFileAdd_Click);
@@ -234,7 +234,7 @@
             this.chkKeyFiles.Location = new System.Drawing.Point(18, 126);
             this.chkKeyFiles.Name = "chkKeyFiles";
             this.chkKeyFiles.Size = new System.Drawing.Size(104, 17);
-            this.chkKeyFiles.TabIndex = 19;
+            this.chkKeyFiles.TabIndex = 10;
             this.chkKeyFiles.Text = "Private Key Files";
             this.chkKeyFiles.UseVisualStyleBackColor = true;
             this.chkKeyFiles.CheckedChanged += new System.EventHandler(this.chkKeyFiles_CheckedChanged);
@@ -245,7 +245,7 @@
             this.chkKeyBoardInteractive.Location = new System.Drawing.Point(18, 54);
             this.chkKeyBoardInteractive.Name = "chkKeyBoardInteractive";
             this.chkKeyBoardInteractive.Size = new System.Drawing.Size(123, 17);
-            this.chkKeyBoardInteractive.TabIndex = 18;
+            this.chkKeyBoardInteractive.TabIndex = 7;
             this.chkKeyBoardInteractive.Text = "Keyboard interactive";
             this.chkKeyBoardInteractive.UseVisualStyleBackColor = true;
             this.chkKeyBoardInteractive.CheckedChanged += new System.EventHandler(this.chkKeyBoardInteractive_CheckedChanged);
@@ -256,7 +256,7 @@
             this.chkPassword.Location = new System.Drawing.Point(18, 77);
             this.chkPassword.Name = "chkPassword";
             this.chkPassword.Size = new System.Drawing.Size(72, 17);
-            this.chkPassword.TabIndex = 17;
+            this.chkPassword.TabIndex = 8;
             this.chkPassword.Text = "Password";
             this.chkPassword.UseVisualStyleBackColor = true;
             this.chkPassword.CheckedChanged += new System.EventHandler(this.chkPassword_CheckedChanged);
@@ -268,7 +268,7 @@
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(263, 20);
-            this.txtPassword.TabIndex = 16;
+            this.txtPassword.TabIndex = 9;
             this.txtPassword.UseSystemPasswordChar = true;
             // 
             // chkAuthNone
@@ -278,7 +278,7 @@
             this.chkAuthNone.Location = new System.Drawing.Point(18, 31);
             this.chkAuthNone.Name = "chkAuthNone";
             this.chkAuthNone.Size = new System.Drawing.Size(52, 17);
-            this.chkAuthNone.TabIndex = 15;
+            this.chkAuthNone.TabIndex = 6;
             this.chkAuthNone.Text = "None";
             this.chkAuthNone.UseVisualStyleBackColor = true;
             // 
@@ -292,7 +292,7 @@
             this.txtKeep.Location = new System.Drawing.Point(426, 501);
             this.txtKeep.Name = "txtKeep";
             this.txtKeep.Size = new System.Drawing.Size(41, 20);
-            this.txtKeep.TabIndex = 18;
+            this.txtKeep.TabIndex = 16;
             this.txtKeep.Validating += new System.ComponentModel.CancelEventHandler(this.txtKeep_Validating);
             // 
             // optAnalyzerDbRemove
@@ -302,7 +302,7 @@
             this.optAnalyzerDbRemove.Location = new System.Drawing.Point(15, 504);
             this.optAnalyzerDbRemove.Name = "optAnalyzerDbRemove";
             this.optAnalyzerDbRemove.Size = new System.Drawing.Size(405, 17);
-            this.optAnalyzerDbRemove.TabIndex = 17;
+            this.optAnalyzerDbRemove.TabIndex = 15;
             this.optAnalyzerDbRemove.Text = "Remove all but the latest analyzer.db files in your DSM installation, namely keep" +
     ": ";
             this.optAnalyzerDbRemove.UseVisualStyleBackColor = true;
@@ -316,7 +316,7 @@
             this.optAnalyzerDbKeep.Location = new System.Drawing.Point(15, 481);
             this.optAnalyzerDbKeep.Name = "optAnalyzerDbKeep";
             this.optAnalyzerDbKeep.Size = new System.Drawing.Size(257, 17);
-            this.optAnalyzerDbKeep.TabIndex = 16;
+            this.optAnalyzerDbKeep.TabIndex = 14;
             this.optAnalyzerDbKeep.TabStop = true;
             this.optAnalyzerDbKeep.Text = "Keep all analyzer.db files in your DSM installation.";
             this.optAnalyzerDbKeep.UseVisualStyleBackColor = true;
@@ -327,7 +327,7 @@
             this.chkKeep.Location = new System.Drawing.Point(15, 458);
             this.chkKeep.Name = "chkKeep";
             this.chkKeep.Size = new System.Drawing.Size(61, 17);
-            this.chkKeep.TabIndex = 19;
+            this.chkKeep.TabIndex = 13;
             this.chkKeep.Text = "Custom";
             this.chkKeep.UseVisualStyleBackColor = true;
             this.chkKeep.CheckedChanged += new System.EventHandler(this.chkKeep_CheckedChanged);
