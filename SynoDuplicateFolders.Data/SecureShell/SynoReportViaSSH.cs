@@ -1,10 +1,12 @@
 ﻿using Renci.SshNet;
 using Renci.SshNet.Common;
 using System;
+using System.Net;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using SynoDuplicateFolders.Extensions;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
@@ -136,41 +138,68 @@ namespace SynoDuplicateFolders.Data.SecureShell
             }
         }
 
-        private void client_HostKeyReceived(object sender, HostKeyEventArgs e)
+        private string KeyFingerPrint(HostKeyEventArgs e)
         {
-            DialogResult trust = DialogResult.No;
-
-            if (_host.FingerPrint.Length.Equals(0) || !_host.FingerPrint.SequenceEqual(e.FingerPrint))
+            return e.HostKeyName + " " + e.KeyLength + " " + e.FingerPrint.ToString(':').ToLower();
+        }
+        private string GetHostAddress(string nameOrAddress, out bool success)
+        {
+            success = false;
+            string address = string.Empty ;
+            try
             {
-                if (_host.FingerPrint.Length.Equals(0))
+                var iplist = Dns.GetHostAddresses(nameOrAddress);
+                
+                foreach (var ip in iplist)
                 {
-                    trust = MessageBox.Show(
-                        string.Format("Do you trust the connection with host:\r\n{0}({1})", _ci.Host, _ci.ServerVersion)
-                        , "New host key", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-                }
-                else
-                {
-                    if (_host.FingerPrint.SequenceEqual(e.FingerPrint))
+                    if (string.IsNullOrEmpty(address))
                     {
-                        trust = DialogResult.Yes;
+                        address = ip.ToString();
                     }
                     else
                     {
-                        trust = MessageBox.Show(
-                            string.Format("Do you trust the connection with host:\r\n{0}({1})", _ci.Host, _ci.ServerVersion)
-                            , "The host key has changed", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                        address += ";" + ip.ToString();
                     }
+                }
+                success = true;
+             
+            }
+            catch (Exception)
+            {
+                address = "0.0.0.0";
+            }
+            return address;
+        }
+        private void client_HostKeyReceived(object sender, HostKeyEventArgs e)
+        {
+            bool nslookup;
+            DialogResult trust = DialogResult.No; e.CanTrust = false;
+
+            if (_host.FingerPrint.Length.Equals(0) || !_host.FingerPrint.SequenceEqual(e.FingerPrint))
+            {
+
+                if (_host.FingerPrint.Length.Equals(0))
+                {
+                    trust = MessageBox.Show(
+                        string.Format("Do you trust the new connection with host {0}[{1}]\r\n\r\nKey fingerprint: {2}\r\n\r\nServer version: {3}",
+                        _ci.Host, GetHostAddress(_host.Host, out nslookup), KeyFingerPrint(e), _ci.ServerVersion)
+                        , "New host key for "+_host.Host, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+                }
+                else
+                {
+                    trust = MessageBox.Show(
+                        string.Format("Do you trust the changed connection with host {0}[{1}]\r\n\r\nKey fingerprint: {2}\r\n\r\nServer version: {3}",
+                        _ci.Host, GetHostAddress(_host.Host, out nslookup), KeyFingerPrint(e), _ci.ServerVersion)
+                        , "The host key has changed for " + _host.Host, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+
                 }
                 if (trust == DialogResult.Yes)
                 {
                     _host.FingerPrint = e.FingerPrint;
                     OnHostKeyChange(this, new EventArgs());
                 }
-                else
-                {
-                    e.CanTrust = false;
-                }
             }
+            e.CanTrust = trust.Equals(DialogResult.Yes);
         }
 
         private IConsoleCommand GetConsole(SshClient client)

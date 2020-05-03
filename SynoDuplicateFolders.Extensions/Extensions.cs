@@ -9,6 +9,11 @@ namespace SynoDuplicateFolders.Extensions
 {
     public static partial class Extensions
     {
+        public static string ToString(this byte[] array, char separator = ':')
+        {
+            return separator.Equals('-') ? BitConverter.ToString(array)
+                                        : BitConverter.ToString(array).Replace('-', separator);
+        }
         public static KnownColor ToClosestKnownColor(this Color value)
         {
             double distance;
