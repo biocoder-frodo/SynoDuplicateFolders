@@ -173,7 +173,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         private void client_HostKeyReceived(object sender, HostKeyEventArgs e)
         {
             bool nslookup;
-            DialogResult trust = DialogResult.No; e.CanTrust = false;
+            DialogResult trust = DialogResult.Yes; e.CanTrust = false; //we clicked yes if the fingerprint matches
 
             if (_host.FingerPrint.Length.Equals(0) || !_host.FingerPrint.SequenceEqual(e.FingerPrint))
             {
