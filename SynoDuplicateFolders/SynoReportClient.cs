@@ -222,7 +222,14 @@ namespace SynoDuplicateFolders
                 var k = h as IKeepDSMFiles;
                 if (k.Custom)
                 {
-                    cache.KeepAnalyzerDbCount = k.KeepCount;
+                    if (k.KeepAll == true)
+                    {
+                        cache.KeepAnalyzerDbCount = -1;
+                    }
+                    else
+                    {
+                        cache.KeepAnalyzerDbCount = k.KeepCount;
+                    }
                 }
                 else
                 {
