@@ -13,12 +13,14 @@ namespace SynoDuplicateFolders.Controls
     {
         private IVolumePieChart _src = null;
         private bool _first = true;
-        private readonly List<Chart> _charts = new List<Chart>();
+        private readonly ChartControls _charts;
         private IChartConfiguration _legends = null;
         private bool _percentage_free_only = false;
         public ChartGrid()
         {
             InitializeComponent();
+            _charts = new ChartControls(chart_MouseClick, C_GetToolTipText);
+
         }
         public IChartConfiguration Configuration
         {
@@ -43,28 +45,43 @@ namespace SynoDuplicateFolders.Controls
             set
             {
                 _src = value;
+#if DEBUG
+                System.Diagnostics.Debug.WriteLineIf(_src == null, "IVolumePieChart DataSource reset");
+#endif
                 if (_src != null)
                 {
 
                     if (_charts.Count != _src.Series.Count || _first == true)
                     {
                         _first = false;
-                        //SizePanel(flowLayoutPanel1, _src.Count);
-                        flowLayoutPanel1.Controls.Clear();
-                        foreach (Chart c in _charts)
-                        {
-                            c.MouseClick -= new MouseEventHandler(chart_MouseClick);
-                            c.GetToolTipText -= C_GetToolTipText;
-                        }
+
+
+
+                        tableLayoutPanel1.Controls.Clear();
+                        //flowLayoutPanel1.Controls.Clear();
+
                         _charts.Clear();
-                        for (int r = 0; r < _src.Series.Count; r++)
+                        for (int z = 0; z < _src.Series.Count; z++)
                         {
                             _charts.Add(NewChart());
-                            //_charts[r].Invalidate();
-                            flowLayoutPanel1.Controls.Add(_charts[r]);
-                            //flowLayoutPanel1.Controls.Add(new Button());
+                        }
+                        var layout = DetermineLayout();
+
+                        tableLayoutPanel1.ColumnCount = layout.Columns;
+                        tableLayoutPanel1.RowCount = layout.Rows;
+                        int r = 0; int c = 0;
+                        for (int z = 0; z < _src.Series.Count; z++)
+                        {
+                            //flowLayoutPanel1.Controls.Add(_charts[r]);
+                            tableLayoutPanel1.Controls.Add(_charts[z], c++, r);
+                            if (c == layout.Columns)
+                            {
+                                c = 0;
+                                r++;
+                            }
 
                         }
+                        flowLayoutPanel1_SizeChanged(null, null);
                     }
 
                     _src.PercentageFreeOnly = _percentage_free_only;
@@ -95,7 +112,7 @@ namespace SynoDuplicateFolders.Controls
             foreach (PieChartDataPoint dp in _src[index])
             {
                 dpc[dpc.AddXY(dp.SliceName, dp.Value)].LegendText = dp.SliceName;
-                
+
                 if (_legends.ContainsKey(dp.SliceName))
                 {
                     dpc[dpc.Count - 1].Color = _legends[dp.SliceName].Color;
@@ -116,8 +133,7 @@ namespace SynoDuplicateFolders.Controls
             c.Series.Add(new Series());
             c.Height = 300;
             c.Width = 300;
-            c.MouseClick += new MouseEventHandler(chart_MouseClick);
-            c.GetToolTipText += C_GetToolTipText;
+
             return c;
         }
 
@@ -129,22 +145,24 @@ namespace SynoDuplicateFolders.Controls
                 HitTestResult h = e.HitTestResult;
                 Series hovered = h.Series;
                 DataPoint dp = hovered.Points[h.PointIndex];
+                if (_src != null)
+                {
+                    double size = _src.TotalSize(hovered.Name) / 100.0;
 
-                double size = _src.TotalSize(hovered.Name)/100.0;
-              
-                if (dp.LegendText.Equals("Free")|| dp.LegendText.Equals("Used"))
-                {
-                    text = string.Format("{0}: {2} ({1:0.0}%)",
-                        hovered.Name +" "+ dp.LegendText,
-                        dp.YValues[0],
-                        ((long)(size * dp.YValues[0])).ToFileSizeString());
-                }
-                else
-                {
-                    text = string.Format("{0}: {2} ({1:0.0}%)",
-                        hovered.Name +"/"+ dp.LegendText,
-                        dp.YValues[0],
-                        ((long)(size * dp.YValues[0])).ToFileSizeString());
+                    if (dp.LegendText.Equals("Free") || dp.LegendText.Equals("Used"))
+                    {
+                        text = string.Format("{0}: {2} ({1:0.0}%)",
+                            hovered.Name + " " + dp.LegendText,
+                            dp.YValues[0],
+                            ((long)(size * dp.YValues[0])).ToFileSizeString());
+                    }
+                    else
+                    {
+                        text = string.Format("{0}: {2} ({1:0.0}%)",
+                            hovered.Name + "/" + dp.LegendText,
+                            dp.YValues[0],
+                            ((long)(size * dp.YValues[0])).ToFileSizeString());
+                    }
                 }
             }
             if (!e.Text.Equals(text)) e.Text = text;
@@ -156,19 +174,74 @@ namespace SynoDuplicateFolders.Controls
             DataSource = _src;
 
         }
+        private RectangleLayout DetermineLayout()
+        {
+            //  int onesquare = (int)Math.Ceiling(Math.Sqrt(count));
+            // System.Diagnostics.Debug.WriteLine($"one square with {count}: {onesquare}x{onesquare}");
+
+            var h = Convert.ToDouble(Height);
+            var w = Convert.ToDouble(Width);
+            int count = _src.Series.Count;
+
+            double target_ratio = w / h;
+
+            double pickme = double.MaxValue;
+            RectangleLayout view = null;
+            foreach (var layout in RectangleLayout.Layouts(count))
+            {
+                double ratio_match = 1.0 + Math.Abs(Math.Log10(target_ratio / layout.AspectRatio));
+                double weighingfactor = layout.FillWeight * ratio_match;
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine($"rows: {layout.Rows} columns: {layout.Columns} rank: {layout.Rank}  weighingfactor: {weighingfactor}");
+#endif
+                if (weighingfactor < pickme)
+                {
+                    pickme = weighingfactor;
+                    view = layout;
+                }
+            }
+            return view;
+        }
+
         private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
         {
             if (_src != null)
             {
-                var a = flowLayoutPanel1.Height;
-                var b = flowLayoutPanel1.Width;
+                var layout = DetermineLayout();
 
-                for (int r = 0; r < _src.Series.Count; r++)
+                if (tableLayoutPanel1.ColumnCount != layout.Columns
+                    || tableLayoutPanel1.RowCount != layout.Rows)
                 {
-                    _charts[r].Width = b / 2;
-                    _charts[r].Height = b / 2;
+                    tableLayoutPanel1.Controls.Clear();
+                    tableLayoutPanel1.ColumnCount = layout.Columns;
+                    tableLayoutPanel1.RowCount = layout.Rows;
+                    int r = 0; int c = 0;
+                    for (int z = 0; z < _src.Series.Count; z++)
+                    {
+                        //flowLayoutPanel1.Controls.Add(_charts[r]);
+                        tableLayoutPanel1.Controls.Add(_charts[z], c++, r);
+                        if (c == layout.Columns)
+                        {
+                            c = 0;
+                            r++;
+                        }
+
+                    }
+                }
+
+                //var p = Math.Sqrt(Height * Width / Convert.ToDouble(_src.Series.Count));
+                //if (Width / Convert.ToDouble(_src.Series.Count) < p)
+                //{
+                //    p = Width / Convert.ToDouble(_src.Series.Count);
+                //}
+                for (int z = 0; z < _src.Series.Count; z++)
+                {
+                    _charts[z].Width = (int)(Width / Convert.ToDouble(layout.Columns));
+                    _charts[z].Height = (int)(Height / Convert.ToDouble(layout.Rows));
+
                 }
             }
         }
+
     }
 }

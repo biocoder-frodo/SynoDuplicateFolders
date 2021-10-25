@@ -54,9 +54,12 @@
     <Compile Include="ChartGrid.Designer.cs">
       <DependentUpon>ChartGrid.cs</DependentUpon>
     </Compile>
+    <Compile Include="ChartControls.cs" />
+    <Compile Include="IRectangleLayout.cs" />
     <Compile Include="ItemStatusUpdateEventArgs.cs" />
     <Compile Include="ItemOpenedEventArgs.cs" />
     <Compile Include="ItemsComparedEventArgs.cs" />
+    <Compile Include="RectangleLayout.cs" />
     <Compile Include="SortOrderManager.cs" />
     <Compile Include="DuplicateCandidatesView.cs">
       <SubType>UserControl</SubType>
