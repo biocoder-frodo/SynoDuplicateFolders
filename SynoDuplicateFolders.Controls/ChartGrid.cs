@@ -81,7 +81,7 @@ namespace SynoDuplicateFolders.Controls
                             }
 
                         }
-                        flowLayoutPanel1_SizeChanged(null, null);
+                        tableLayoutPanel1_SizeChanged(null, null);
                     }
 
                     _src.PercentageFreeOnly = _percentage_free_only;
@@ -192,7 +192,7 @@ namespace SynoDuplicateFolders.Controls
                 double ratio_match = 1.0 + Math.Abs(Math.Log10(target_ratio / layout.AspectRatio));
                 double weighingfactor = layout.FillWeight * ratio_match;
 #if DEBUG
-                System.Diagnostics.Debug.WriteLine($"rows: {layout.Rows} columns: {layout.Columns} rank: {layout.Rank}  weighingfactor: {weighingfactor}");
+                //                System.Diagnostics.Debug.WriteLine($"rows: {layout.Rows} columns: {layout.Columns} rank: {layout.Rank}  weighingfactor: {weighingfactor}");
 #endif
                 if (weighingfactor < pickme)
                 {
@@ -200,10 +200,15 @@ namespace SynoDuplicateFolders.Controls
                     view = layout;
                 }
             }
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine($"layout: {view.Rows} x {view.Columns}");
+#endif
             return view;
         }
 
-        private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
+
+
+        private void tableLayoutPanel1_SizeChanged(object sender, EventArgs e)
         {
             if (_src != null)
             {
@@ -236,12 +241,11 @@ namespace SynoDuplicateFolders.Controls
                 //}
                 for (int z = 0; z < _src.Series.Count; z++)
                 {
-                    _charts[z].Width = (int)(Width / Convert.ToDouble(layout.Columns));
-                    _charts[z].Height = (int)(Height / Convert.ToDouble(layout.Rows));
+                    _charts[z].Width = (int)(0.95 * Width / Convert.ToDouble(layout.Columns));
+                    _charts[z].Height = (int)(0.95 * Height / Convert.ToDouble(layout.Rows));
 
                 }
             }
         }
-
     }
 }
