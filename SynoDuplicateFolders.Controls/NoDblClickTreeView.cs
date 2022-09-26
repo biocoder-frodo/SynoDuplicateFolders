@@ -1,6 +1,5 @@
 ﻿namespace System.Windows.Forms
 {
-
     public class NoDblClickTreeView : TreeView
     {
         protected override void WndProc(ref Message m)

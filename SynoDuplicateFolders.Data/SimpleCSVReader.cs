@@ -86,22 +86,4 @@ namespace SynoDuplicateFolders.Data
         }
         public Dictionary<string, int> Columns { get { return _map; } }
     }
-
-    public enum SimpleCSVReaderReplaceMode
-    {
-        Equals,
-        Contains
-    }
-    public class SimpleCSVReaderColumnNameReplacer
-    {
-        public readonly string Match;
-        public readonly string ReplaceBy;
-        public readonly SimpleCSVReaderReplaceMode Comparison;
-        public SimpleCSVReaderColumnNameReplacer(SimpleCSVReaderReplaceMode comparison, string match, string replaceby)
-        {
-            Match = match;
-            Comparison = comparison;
-            ReplaceBy = replaceby;
-        }
-    }
 }

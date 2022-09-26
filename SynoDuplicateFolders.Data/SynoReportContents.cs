@@ -7,12 +7,6 @@ using System.Threading.Tasks;
 
 namespace SynoDuplicateFolders.Data
 {
-    public class SynoReportContentTimeLine : BSynoReportTimeLine
-    {
-        public SynoReportContentTimeLine()
-            : base()
-        { }
-    }
     public class SynoReportContents : BSynoCSVReport
     {
         public string Contents;

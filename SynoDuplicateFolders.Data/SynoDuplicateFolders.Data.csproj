@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SynoDuplicateFolders.Data</RootNamespace>
     <AssemblyName>SynoDuplicateFolders.Data</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,9 +35,6 @@
     <SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Renci.SshNet, Version=2020.0.1.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
-      <HintPath>..\packages\SSH.NET.2020.0.1\lib\net40\Renci.SshNet.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -52,7 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CachedReportFilesDictionary.cs" />
     <Compile Include="ComponentModel\SortableBindingList.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="PieChartDataPoint.cs" />
     <Compile Include="SecureShell\DSMKeyboardInteractiveEventArgs.cs" />
     <Compile Include="SecureShell\DSMProxy.cs" />
@@ -77,6 +77,10 @@
     <Compile Include="ICachedReportFile.cs" />
     <Compile Include="SecureShell\IConsoleCommand.cs" />
     <Compile Include="SecureShell\IDSMVersion.cs" />
+    <Compile Include="SimpleCSVReaderColumnNameReplacer.cs" />
+    <Compile Include="SynoReportContentTimeLine.cs" />
+    <Compile Include="SynoReportSharesValues.cs" />
+    <Compile Include="SynoReportVolumeUsageValues.cs" />
     <Compile Include="TimeLineDataPoint.cs" />
     <Compile Include="ISynoReportCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -112,7 +116,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <PackageReference Include="SSH.NET">
+      <Version>2020.0.2</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -17,15 +17,4 @@ namespace SynoDuplicateFolders.Controls
         List<ITaggedColor> Pallete { get; }
         List<ITaggedColor> List { get; }
     }
-    public interface ITaggedColor
-    {
-        string Key { get; set; }
-        string ColorName { get; set; }
-    }
-    public interface IChartLegend : ITaggedColor
-    {
-        Color DefaultColor { get; }
-        Color Color { get; set; }
-    }
-
 }

@@ -273,17 +273,4 @@ namespace SynoDuplicateFolders.Data
             DownloadUpdate?.Invoke(this, new SynoReportCacheDownloadEventArgs(CacheStatus.Idle));
         }
     }
-
-    internal class CachedReportFilesDictionary : Dictionary<string, ICachedReportFile>
-    {
-        private new void Add(string key, ICachedReportFile item)
-        {
-            throw new NotSupportedException();
-        }
-        public void Add(ICachedReportFile item)
-        {
-            base.Add(item.LocalFile.FullName, item);
-        }
-
-    }
 }

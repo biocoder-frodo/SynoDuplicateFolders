@@ -89,7 +89,6 @@ namespace SynoDuplicateFolders.Data
             return _volumes.Size[volume];
         }
     }
-
 }
     
 
