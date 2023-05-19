@@ -10,7 +10,6 @@ namespace SynoDuplicateFolders.Properties
 {
     internal class CustomSettings : ConfigurationSection, IChartConfiguration
     {
-        private static readonly List<ITaggedColor> _pallete = new List<ITaggedColor>();
         private readonly List<ITaggedColor> _list = new List<ITaggedColor>();
         private static CustomSettings _default_instance = null;
         private static Func<CustomSettings> _load_method = null;
@@ -50,16 +49,6 @@ namespace SynoDuplicateFolders.Properties
         }
         public CustomSettings() : base()
         {
-            lock (_pallete)
-            {
-                if (_pallete.Count == 0)
-                {
-                    for (KnownColor k = KnownColor.AliceBlue; k < KnownColor.YellowGreen; k++)
-                    {
-                        _pallete.Add(new ChartLegend(k));
-                    }
-                }
-            }
         }
 
         [ConfigurationProperty("DSMHosts")]
@@ -98,14 +87,6 @@ namespace SynoDuplicateFolders.Properties
                     _list.Add(l);
                 }
                 return _list;
-            }
-        }
-
-        public List<ITaggedColor> Pallete
-        {
-            get
-            {
-                return _pallete;
             }
         }
 
