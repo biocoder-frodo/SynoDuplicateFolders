@@ -10,7 +10,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ColumnWidthAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IDuplicateFileInfoExclusion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IHostSpecificSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IKeepDSMFiles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ISpecificSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISynoChartData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISynoCSVReport.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISynoCSVReportPair.cs" />
