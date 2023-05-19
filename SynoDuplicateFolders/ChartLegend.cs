@@ -4,85 +4,104 @@ using SynoDuplicateFolders.Controls;
 using SynoDuplicateFolders.Extensions;
 using System.Drawing;
 using System.Linq;
+using System;
 
 namespace SynoDuplicateFolders.Properties
 {
     internal class ChartLegend : ConfigurationElement, IElementProvider, IChartLegend
     {
+        private static readonly string _defaultColorName = (string)typeof(ChartLegend).GetProperty("ColorName").CustomAttributes.First().NamedArguments.Single(a => a.MemberName.Equals("DefaultValue")).TypedValue.Value;
+        private static readonly Color _defaultColor = Color.FromName(_defaultColorName);
+        private string _dcn = null;
+        private Color _dc = _defaultColor;
+        private Color _color;
+        private bool _sync = true;
         public ChartLegend() : base()
         {
+            _color = ColorTranslator.FromHtml((string)this["Color"]);
         }
         public ChartLegend(KnownColor k) : this()
         {
-            ColorName = k.ToString();
+            Color = Color.FromKnownColor(k);
         }
-        public ChartLegend(string key, KnownColor k) : this()
+        public ChartLegend(string key, KnownColor k) : this(k)
         {
             Key = key;
-            ColorName = k.ToString();
         }
-        public ChartLegend(string key, Color k, bool forceKnownColor=false) : this()
+        public ChartLegend(string key, Color k, bool forceKnownColor = false) : this()
         {
             Key = key;
-            if (forceKnownColor)
-            {
-                ColorName = k.ToClosestKnownColor().ToString();
-            }
-            else
-            {
-                ColorName = k.ToArgb().ToString();
-            }
+            ColorName = forceKnownColor ? k.ToClosestKnownColor().ToString() : ColorTranslator.ToHtml(k);
         }
 
         [ConfigurationProperty("Key", IsRequired = true, IsKey = true)]
         public string Key
         {
-            get
-            {
-                return (string)this["Key"];
-            }
-            set
-            {
-                this["Key"] = value;
-            }
+            get => (string)this["Key"];
+
+            set => this["Key"] = value;
         }
 
-        public Color DefaultColor
-        {
-            get
-            {
-                return Color.FromName(DefaultColorName); 
-            }
-        }
         [ConfigurationProperty("Color", IsRequired = false, DefaultValue = "Black")]
         public string ColorName
         {
-            get
-            {
+            get => (string)this["Color"] ?? DefaultColorName;
 
-                return (string)this["Color"] ?? DefaultColorName;
-            }
             set
             {
                 this["Color"] = value;
+                try
+                {
+                    if (ColorTranslator.ToHtml(ColorTranslator.FromHtml(value)) != value)
+                    {
+                        this["Color"] = DefaultColorName;
+                    }
+                }
+                catch (Exception)
+                {
+                    this["Color"] = DefaultColorName;
+                }
+                _color = ColorTranslator.FromHtml((string)this["Color"]);
             }
         }
         public Color Color
         {
-            get
-            {
-                KnownColor k = default(KnownColor);
-                if (System.Enum.TryParse(ColorName, out k))
+            get {
+                if (_sync)
                 {
-                    return Color.FromKnownColor(k);
+                    _color = ColorTranslator.FromHtml(ColorName);
+                    _sync = false;
+                }
+                return _color; 
+            }
+
+            set
+            {
+                if (_color != value)
+                {
+                    _color = value;
+                    ColorName = ColorTranslator.ToHtml(_color);
+                }
+            }
+        }
+        public string DefaultColorName
+        {
+            get { return _dcn == null ? _defaultColorName : _dcn; }
+            set
+            {
+                if (Enum.TryParse(value, out KnownColor k))
+                {
+                    _dc = Color.FromKnownColor(k);
+                    _dcn = value;
                 }
                 else
                 {
-                    return DefaultColor;
+                    _dc = _defaultColor;
+                    _dcn = _defaultColorName;
                 }
             }
-            set { ColorName = value.ToArgb().ToString(); }
         }
+        public Color DefaultColor => _dc;
 
         object IElementProvider.GetElementKey()
         {
@@ -93,28 +112,5 @@ namespace SynoDuplicateFolders.Properties
         {
             return "ChartLegend";
         }
-        private string DefaultColorName
-        {
-            get
-            {
-                //var test = GetType().GetProperties();//.GetMember("ColorName", System.Reflection.MemberTypes.Property,System.Reflection.BindingFlags.GetProperty);
-                return (string)GetType().GetProperty("ColorName").CustomAttributes.First().NamedArguments.Single(a => a.MemberName.Equals("DefaultValue")).TypedValue.Value;
-            }
-        }
-
-        public string Name
-        {
-            get
-            {
-                return ColorName; 
-            }
-
-            set
-            {
-                ColorName = value;
-            }
-        }
     }
-
-
 }

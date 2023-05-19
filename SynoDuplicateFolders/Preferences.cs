@@ -243,7 +243,7 @@ namespace SynoDuplicateFolders
                 colorDialog1.AnyColor = false;
                 if (colorDialog1.ShowDialog() == DialogResult.OK)
                 {
-                    d.ColorName = colorDialog1.Color.ToClosestKnownColor().ToString();
+                    d.Color = colorDialog1.Color;
                     dirty_custom = true;
                 }
             }
@@ -254,11 +254,10 @@ namespace SynoDuplicateFolders
             var r = ((DataGridView)sender).Rows[e.RowIndex];
             var d = r.DataBoundItem as ITaggedColor;
             var c = r.Cells["colorDataGridViewTextBoxColumn"];
-            var k = Color.FromName(d.ColorName);
 
-            c.Style.BackColor = k;
-            c.Style.SelectionBackColor = k;
-            c.Style.SelectionForeColor = k;
+            c.Style.BackColor = d.Color;
+            c.Style.SelectionBackColor = d.Color;
+            c.Style.SelectionForeColor = d.Color;
         }
 
         private void optProxy_CheckedChanged(object sender, EventArgs e)

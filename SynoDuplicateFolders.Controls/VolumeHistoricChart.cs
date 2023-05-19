@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Linq;
 using SynoDuplicateFolders.Data.Core;
+using System.Drawing;
 
 namespace SynoDuplicateFolders.Controls
 {
@@ -25,8 +26,7 @@ namespace SynoDuplicateFolders.Controls
         private List<string> _displaying_traces = null;
 
         private IChartConfiguration _legends = null;
-        private bool invalidated = false;
-        private readonly List<string> unknown_traces = new List<string>();
+        private LegendConfiguration _legendConfiguration = null;
 
         private FileSizeFormatSize shares_range = FileSizeFormatSize.PB;
 
@@ -54,8 +54,15 @@ namespace SynoDuplicateFolders.Controls
 
         public IChartConfiguration Configuration
         {
-            get { return _legends; }
-            set { _legends = value; }
+            get
+            {
+                return _legends;
+            }
+            set
+            {
+                _legends = value;
+                _legendConfiguration = new LegendConfiguration(value);
+            }
         }
 
         public vhcViewMode View
@@ -100,67 +107,58 @@ namespace SynoDuplicateFolders.Controls
                     if (data != null)
                     {
                         chart1.Series.Clear();
-                        unknown_traces.Clear();
+
+                        _legendConfiguration.ResetUnknownTraces();
 
                         long peak = 0;
 
                         _displaying_traces = data.ActiveSeries;
                         if (_viewtype == SynoReportType.VolumeUsage)
                         {
-                            _displaying_traces = _displaying_traces.Where(s => s.Contains("Total")==(_view == vhcViewMode.VolumeTotals)).ToList();
+                            _displaying_traces = _displaying_traces.Where(s => s.Contains("Total") == (_view == vhcViewMode.VolumeTotals)).ToList();
                         }
 
                         foreach (string s in _displaying_traces)
                         {
 
-                                Series series1 = new Series()
-                                {
-                                    Name = s,
-                                    IsVisibleInLegend = true,
-                                    IsXValueIndexed = false,
-                                    ChartType = SeriesChartType.StepLine
-                                };
+                            Series series1 = new Series()
+                            {
+                                Name = s,
+                                IsVisibleInLegend = true,
+                                IsXValueIndexed = false,
+                                ChartType = SeriesChartType.StepLine
+                            };
 
-                                Console.Write("trace " + s + ": ");
-                                if (_legends.ContainsKey(s))
-                                {
-                                    Console.WriteLine(" picking dictionary color");
-                                    series1.Color = _legends[s].Color;
-                                }
-                                else
-                                {
-                                    unknown_traces.Add(s);
-                                    Console.WriteLine(" picking default color");
-                                }
+                            _ =_legendConfiguration.TryPickColor(s, series1);
 
-                                chart1.Series.Add(series1);
+                            chart1.Series.Add(series1);
 
 
-                                series1.Points.Clear();
-                                if (_viewtype == SynoReportType.ShareList)
-                                {
+                            series1.Points.Clear();
+                            if (_viewtype == SynoReportType.ShareList)
+                            {
 
-                                    foreach (IXYDataPoint dp in data[s])
-                                    {
-                                        if (peak < (long)dp.Y) peak = (long)dp.Y;
-                                        series1.Points.AddXY(dp.X, dp.Y);
-                                    }
-                                }
-                                else
+                                foreach (IXYDataPoint dp in data[s])
                                 {
-                                    foreach (IXYDataPoint dp in data[s])
-                                    {
-                                        if (_viewtype == SynoReportType.VolumeUsage && s.Contains("Total"))
-                                        {
-                                            if (peak < (long)dp.Y) peak = (long)dp.Y;
-                                        }
-                                        series1.Points.AddXY(dp.X, dp.Y);
-                                    }
+                                    if (peak < (long)dp.Y) peak = (long)dp.Y;
+                                    series1.Points.AddXY(dp.X, dp.Y);
                                 }
                             }
+                            else
+                            {
+                                foreach (IXYDataPoint dp in data[s])
+                                {
+                                    if (_viewtype == SynoReportType.VolumeUsage && s.Contains("Total"))
+                                    {
+                                        if (peak < (long)dp.Y) peak = (long)dp.Y;
+                                    }
+                                    series1.Points.AddXY(dp.X, dp.Y);
+                                }
+                            }
+                        }
                         shares_range = peak.GetFileSizeRange();
 
-                        invalidated = true;
+                        _legendConfiguration.Invalidate();
 
                         chart1.Invalidate();
                         chart1.Visible = true;
@@ -194,7 +192,7 @@ namespace SynoDuplicateFolders.Controls
                     break;
                 case ChartElementType.PlottingArea:
                     int v = Enum.GetValues(typeof(vhcViewMode)).Length;
-                    View = (vhcViewMode)(((int)_view + 1) %  v) ;
+                    View = (vhcViewMode)(((int)_view + 1) % v);
                     break;
                 default:
                     break;
@@ -204,24 +202,12 @@ namespace SynoDuplicateFolders.Controls
 
         private void chart1_PostPaint(object sender, ChartPaintEventArgs e)
         {
-            if (invalidated && unknown_traces.Count > 0)
-            {
-
-                int index = 0;
-                for (index = 0; index < _displaying_traces.Count; index++)
-                {
-                    if (unknown_traces.Contains(data.Series[index]))
-                    {
-                        _legends.Add(data.Series[index], chart1.Series[index].Color, true);
-                    }                    
-                }
-            }
-            invalidated = false;
+            _legendConfiguration.AddNewTraces(_displaying_traces.Count, (idx) => data.Series[idx], (idx) => chart1.Series[idx].Color);
         }
 
         private void chart1_GetToolTipText(object sender, ToolTipEventArgs e)
         {
-            string text =string.Empty;
+            string text = string.Empty;
             HitTestResult h = e.HitTestResult;
 
             if (h.ChartElementType == ChartElementType.DataPoint)

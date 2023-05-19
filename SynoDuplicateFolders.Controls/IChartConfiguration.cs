@@ -14,7 +14,6 @@ namespace SynoDuplicateFolders.Controls
         IChartLegend Add(string key, Color k, bool forceKnownColor= false);
         IChartLegend Add(string key, KnownColor k);
 
-        List<ITaggedColor> Pallete { get; }
         List<ITaggedColor> List { get; }
     }
 }

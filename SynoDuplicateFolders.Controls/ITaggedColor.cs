@@ -1,9 +1,10 @@
-﻿namespace SynoDuplicateFolders.Controls
+﻿using System.Drawing;
+
+namespace SynoDuplicateFolders.Controls
 {
     public interface ITaggedColor
     {
         string Key { get; set; }
-        string ColorName { get; set; }
+        Color Color { get; set; }
     }
-
 }

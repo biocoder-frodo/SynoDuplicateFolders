@@ -6,14 +6,17 @@ namespace SynoDuplicateFolders.Controls
     internal class ChartControls : GridControls<Chart>
     {
         private readonly EventHandler<ToolTipEventArgs> toolTipEvent;
-        public ChartControls(MouseEventHandler mouseEventHandler, EventHandler<ToolTipEventArgs> toolTipEventHandler)
+        private readonly EventHandler<ChartPaintEventArgs> postPaintEvent;
+        public ChartControls(MouseEventHandler mouseEventHandler, EventHandler<ToolTipEventArgs> toolTipEventHandler, EventHandler<ChartPaintEventArgs> postPaintEventHandler)
             :base(mouseEventHandler)
         {
             toolTipEvent = toolTipEventHandler;
+            postPaintEvent = postPaintEventHandler;
         }
         public new void Add(Chart chart)
         {            
             chart.GetToolTipText += toolTipEvent;
+            chart.PostPaint += postPaintEvent;
             base.Add(chart);
         }
         public new void Clear()
@@ -22,6 +25,7 @@ namespace SynoDuplicateFolders.Controls
             {
                 c.MouseClick -= mouseEvent;
                 c.GetToolTipText -= toolTipEvent;
+                c.PostPaint -= postPaintEvent;
             }
             base.Clear();
         }
