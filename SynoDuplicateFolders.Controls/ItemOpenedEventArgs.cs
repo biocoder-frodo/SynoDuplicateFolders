@@ -7,7 +7,7 @@ namespace SynoDuplicateFolders.Controls
         public readonly string Path;
         public readonly bool OpenLocation;
         public readonly bool IsFile;
-        internal ItemOpenedEventArgs(string path, bool openLocation, bool isFile)
+        public ItemOpenedEventArgs(string path, bool openLocation, bool isFile)
         {
             Path = path;
             OpenLocation = openLocation;
