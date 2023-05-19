@@ -27,7 +27,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         {
 
             List<ConsoleFileInfo> result = new List<ConsoleFileInfo>();
-            var cmd2 = client.RunCommand("cd "+ session.SynoReportHome+";ls -latR --time-style=full-iso synoreport");
+            var cmd2 = client.RunCommand("cd " + session.SynoReportHome + ";ls -latR --time-style=full-iso synoreport");
             string[] result2 = cmd2.Result.Split('\n');
 
             if (Disconnect == true) client.Disconnect();
@@ -73,47 +73,82 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
         }
 
-        public override void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases)
-        {            
-            string scriptName = "SynoDuplicateFoldersRemoveSADB.sh";
-            if (dsm_databases.Count > 0)
+        public void WriteFile(ConnectionInfo connectionInfo, string destinationPath, Action<StreamWriter> action)
+        {
+            using (var ms = new MemoryStream())
             {
-                string script = this.HomePath + scriptName;
-                MemoryStream ms = null;
-                //StreamWriter sw = null;
-
-                ms = new MemoryStream();
                 using (StreamWriter sw = new StreamWriter(ms))
                 {
-
-                    sw.Write("#!/bin/bash\n");
-                    foreach (var file in dsm_databases)
-                    {
-                        sw.Write(base.RemoveFileCommand(session, file));
-                        sw.Write("\n");
-                    }
+                    action(sw);
                     sw.Flush();
 
                     ms.Seek(0, SeekOrigin.Begin);
 
-                    using (ScpClient cp = new ScpClient(session.ConnectionInfo))
+                    using (ScpClient cp = new ScpClient(connectionInfo))
                     {
-                        //System.Windows.Forms.MessageBox.Show(script);
-                        cp.Connect();
-                        cp.Upload(ms, script);
-                        cp.Disconnect();
-                        ms = null;
-                    }
+                        UploadFile(cp, ms, destinationPath);
 
-                    using (SshClient scr = new SshClient(session.ConnectionInfo))
-                    {
-                        scr.Connect();
-                        RunCommand(session, "chmod +x " + script, session.RmExecutionMode, scr);
-                        RunCommand(session, "./" + scriptName, session.RmExecutionMode, scr);
-                        RunCommand(session, RemoveFileCommand(script), session.RmExecutionMode, scr);
-                        scr.Disconnect();
                     }
                 }
+            }
+        }
+        public void WriteFile(ScpClient scpClient, string destinationPath, Action<StreamWriter> action)
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (StreamWriter sw = new StreamWriter(ms))
+                {
+                    action(sw);
+                    sw.Flush();
+
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    UploadFile(scpClient, ms, destinationPath);
+                }
+            }
+        }
+        public void UploadFile(ScpClient scpClient, Stream stream, string destinationPath)
+        {
+            bool reOpen = scpClient.IsConnected == false;
+            scpClient.RemotePathTransformation = RemotePathTransformation.None;
+            if (reOpen) scpClient.Connect();
+            scpClient.Upload(stream, destinationPath);
+            if (reOpen) scpClient.Disconnect();
+        }
+
+        public override void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases)
+        {
+
+            string scriptName = "./SynoDuplicateFoldersRemoveSADB.sh";
+            if (dsm_databases.Count > 0)
+            {
+                string script = $"{this.HomePath}{scriptName}";
+
+                WriteFile(session.ConnectionInfo, script,
+                    (sw) =>
+                    {
+
+                        var folders = new Dictionary<string, ConsoleFileInfo>();
+                        sw.Write("#!/bin/bash\n");
+                        foreach (var file in dsm_databases)
+                        {
+                            if (folders.ContainsKey(file.Folder) == false)
+                            {
+                                folders.Add(file.Folder, file);
+                            }
+                            sw.Write(base.RemoveFileCommand(session, file));
+                            sw.Write("\n");
+                        }
+                    });
+
+                var runSession = new SudoSession(session.ConnectionInfo, () => session.Password);
+                runSession.Run(new List<string>()
+                    {
+                        $"chmod +x {script}",
+                        scriptName,
+                        RemoveFileCommand(script)
+                    });
+
             }
         }
     }

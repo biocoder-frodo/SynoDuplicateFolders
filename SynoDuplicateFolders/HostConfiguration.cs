@@ -4,6 +4,10 @@ using SynoDuplicateFolders.Extensions;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using static SynoDuplicateFolders.Properties.Settings;
+using SynoDuplicateFolders.Data.Core;
+using System.Linq;
+using System.Collections.Generic;
+using SynoDuplicateFolders.Controls;
 
 namespace SynoDuplicateFolders
 {
@@ -15,52 +19,49 @@ namespace SynoDuplicateFolders
         private static readonly Regex NAME_REGEX = new Regex(@"^[a-z][-a-z0-9]*");
 
         public readonly DSMHost Host;
-
+        private bool passwordDirty = false;
+        private bool initialization = true;
         public bool Canceled = false;
-        public HostConfiguration()
+
+        private DuplicateCandidatesExclusion<DSMHost> exclusion;
+
+        private void InitializeComponent(bool existing)
         {
-            InitializeComponent();
 
-            Host = new DSMHost();
+            txtPort.Text = (existing ? Host.Port : Host.ElementInformation.Properties["port"].DefaultValue).ToString();
 
-            txtSynoReportHome.Text = DSMHost.SynoReportHomeDefault(DSMHost.DefaultUserName);
-            txtUser.Text = DSMHost.DefaultUserName;
-            chkSynoReportHome.CheckState = CheckState.Unchecked;
-            chkUser.CheckState = CheckState.Unchecked;
-            txtPort.Text = Host.ElementInformation.Properties["port"].DefaultValue.ToString();
+            txtUser.Text = existing ? Host.UserName : DSMHost.DefaultUserName;
 
-            Host.KeepDsmFilesCustom = false;
+            txtSynoReportHome.Text = existing ? string.IsNullOrWhiteSpace(Host.SynoReportHome)
+                                                ? DSMHost.SynoReportHomeDefault(Host.UserName)
+                                                : Host.SynoReportHome
+                                              : DSMHost.SynoReportHomeDefault(DSMHost.DefaultUserName);
+
+            if (existing)
+            {
+                txtHost.Text = Host.Host;
+                chkUser.Checked = !txtUser.Text.Equals(DSMHost.DefaultUserName);
+                chkSynoReportHome.Checked = !txtSynoReportHome.Text.Equals(DSMHost.SynoReportHomeDefault(Host.UserName));               
+            }
+            else
+            {
+                chkUser.CheckState = CheckState.Unchecked;
+                chkSynoReportHome.CheckState = CheckState.Unchecked;
+            }
 
             chkKeep.Checked = Host.KeepDsmFilesCustom;
 
             txtKeep.Text = Host.KeepDsmCount.ToString();
             optAnalyzerDbKeep.Checked = Host.KeepAllDsmFiles;
             optAnalyzerDbRemove.Checked = !Host.KeepAllDsmFiles;
+            btnDupeRemoveAll.Enabled = false;
 
-            chkKeep_CheckedChanged(null, null);
-        }
+            if (exclusion != null)
+            {
+                btnDupeRemoveAll.Enabled = exclusion.Paths.Any();
+                exclusion.Paths.ToList().ForEach(file => lstIgnoreDupes.Items.Add(file));
 
-        public HostConfiguration(DSMHost host)
-        {
-            InitializeComponent();
-
-            Host = host;
-
-            txtPassword.Text = "";
-
-            txtHost.Text = Host.Host;
-            txtPort.Text = host.Port.ToString();
-
-            txtUser.Text = Host.UserName;
-            chkUser.Checked = !txtUser.Text.Equals(DSMHost.DefaultUserName);
-            txtSynoReportHome.Text = string.IsNullOrWhiteSpace(host.SynoReportHome) ? DSMHost.SynoReportHomeDefault(host.UserName) : host.SynoReportHome;
-            chkSynoReportHome.Checked = !txtSynoReportHome.Text.Equals(DSMHost.SynoReportHomeDefault(host.UserName));
-
-            chkKeep.Checked = Host.KeepDsmFilesCustom;
-
-            txtKeep.Text = Host.KeepDsmCount.ToString();
-            optAnalyzerDbKeep.Checked = Host.KeepAllDsmFiles;
-            optAnalyzerDbRemove.Checked = !Host.KeepAllDsmFiles;
+            }
 
             chkKeep_CheckedChanged(null, null);
 
@@ -77,9 +78,7 @@ namespace SynoDuplicateFolders
                             {
                                 var pkf = am.AuthenticationKeys.Items[k];
                                 listView1.Items.Add(pkf.FileName);
-                               
                             }
-
                         }
                         break;
 
@@ -89,16 +88,30 @@ namespace SynoDuplicateFolders
 
                     case DSMAuthenticationMethod.Password:
                         chkPassword.Checked = true;
-                        txtPassword.Text = "";
+                        txtPassword.Text = "thisisnotyourpassword";
                         break;
-                        // if you press Ok with a saved password, you have just reset your password to 'blank', unless you typed a new one.
+                    // if you press Ok with a saved password, you have just reset your password to 'blank', unless you typed a new one.
                     default:
                         break;
                 }
             }
+            initialization = false;
         }
-        private void KeepDSMControlsUpdate()
-        { }
+
+        public HostConfiguration(DSMHost host, DuplicateCandidatesExclusion<DSMHost> candidatesExclusion)
+        {
+            InitializeComponent();
+            Host = host;
+            exclusion = candidatesExclusion;
+            InitializeComponent(true);
+        }
+        public HostConfiguration()
+        {
+            InitializeComponent();
+            Host = new DSMHost();
+            exclusion = null;
+            InitializeComponent(false);
+        }
         private void HostConfiguration_Load(object sender, EventArgs e)
         {
             listView1.View = View.List;
@@ -107,6 +120,7 @@ namespace SynoDuplicateFolders
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Canceled = true;
+            //if (exclusion != null) exclusion.PropertyChanged -= Exclusion_PropertyChanged;
             Hide();
         }
 
@@ -146,6 +160,7 @@ namespace SynoDuplicateFolders
                 }
             }
 
+
             Host.KeepDsmFilesCustom = chkKeep.Checked;
             Host.KeepDsmCount = int.Parse(txtKeep.Text);
             Host.KeepAllDsmFiles = optAnalyzerDbKeep.Checked;
@@ -159,15 +174,17 @@ namespace SynoDuplicateFolders
             if (Validate())
             {
                 method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.None, chkAuthNone.Checked);
-                
+
                 method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.KeyboardInteractive, chkKeyBoardInteractive.Checked);
 
-                method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.Password, chkPassword.Checked);
-                if (method != null)
+                if (passwordDirty)
                 {
-                    method.Password = txtPassword.Text;
+                    method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.Password, chkPassword.Checked);
+                    if (method != null)
+                    {
+                        method.Password = txtPassword.Text;
+                    }
                 }
-
                 method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.PrivateKeyFile, chkKeyFiles.Checked);
                 if (method != null)
                 {
@@ -188,9 +205,12 @@ namespace SynoDuplicateFolders
                 ;
             }
 
+            //if (exclusion != null) exclusion.PropertyChanged -= Exclusion_PropertyChanged;
+
             Hide();
 
         }
+
         private void chkKeyBoardInteractive_CheckedChanged(object sender, EventArgs e)
         {
             ;
@@ -290,11 +310,13 @@ namespace SynoDuplicateFolders
                 txtPort.SelectionStart = txtPort.Text.Length;
                 txtPort.Focus();
             }
+            this.Text = string.IsNullOrWhiteSpace(txtHost.Text) ? "New host configuration" : $"Host configuration of {txtHost.Text}";
         }
 
         private void chkPassword_CheckedChanged(object sender, EventArgs e)
         {
             txtPassword.Enabled = ((CheckBox)sender).Checked;
+            passwordDirty = true;
         }
 
         private void chkKeyFiles_CheckedChanged(object sender, EventArgs e)
@@ -379,6 +401,37 @@ namespace SynoDuplicateFolders
             int value = 0;
             int.TryParse(txtKeep.Text, out value);
             e.Cancel = value < 1;
+        }
+
+        private void btnDupeRemove_Click(object sender, EventArgs e)
+        {
+            exclusion.RemoveExclusion(lstIgnoreDupes.SelectedItem as string);
+
+            lstIgnoreDupes.Items.RemoveAt(lstIgnoreDupes.SelectedIndex);
+            btnDupeRemove.Enabled = false;
+            if (lstIgnoreDupes.Items.Count == 0) btnDupeRemoveAll.Enabled = false;
+        }
+
+        private void btnDupeRemoveAll_Click(object sender, EventArgs e)
+        {
+            exclusion.RemoveAllExclusions();
+
+            lstIgnoreDupes.Items.Clear();
+            btnDupeRemoveAll.Enabled = false;
+        }
+
+        private void lstIgnoreDupes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btnDupeRemove.Enabled = true;
+        }
+
+        private void txtPassword_TextChanged(object sender, EventArgs e)
+        {
+
+            if (initialization == false)
+            {
+                passwordDirty = true;
+            }
         }
     }
 }

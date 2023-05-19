@@ -15,6 +15,7 @@ namespace SynoDuplicateFolders.Data
     public sealed class SynoReportDuplicateCandidates : BSynoCSVReport, ISynoReportBindingSource<IDuplicateFileInfo>, ISynoReportBindingSource<IDuplicatesHistogramValue>, IDisposable
     {
         private readonly DuplicatesAggregate<long, DuplicateFileInfo> _dupes = new DuplicatesAggregate<long, DuplicateFileInfo>();
+        private readonly DuplicatesAggregate<long, DuplicateFileInfo> _dupes_filtered = new DuplicatesAggregate<long, DuplicateFileInfo>();
 
         private readonly DuplicatesAggregate<string, long> _bypath = new DuplicatesAggregate<string, long>(true);
         private readonly DuplicatesAggregate<string, long> _byname = new DuplicatesAggregate<string, long>(true);
@@ -37,7 +38,7 @@ namespace SynoDuplicateFolders.Data
         private SortableListBindingSource<IDuplicateFileInfo> _files = null;
         private SortableListBindingSource<IDuplicatesHistogramValue> _histogram = null;
 
-        public DuplicatesAggregate<long, DuplicateFileInfo> DuplicatesByGroup { get { return _dupes; } }
+        public DuplicatesAggregate<long, DuplicateFileInfo> DuplicatesByGroup { get { return filtered ? _dupes_filtered : _dupes; } }
         public DuplicatesAggregate<string, long> DuplicatesGroupByName { get { return filtered ? _byname_filtered : _byname; } }
         public DuplicatesAggregate<string, long> DuplicatesGroupByPath { get { return filtered ? _bypath_filtered : _bypath; } }
 
@@ -56,6 +57,9 @@ namespace SynoDuplicateFolders.Data
         {
             set
             {
+                // reset .BindingSource
+                _files = null;
+
                 if (value == null)
                 {
                     filtered = false;
@@ -92,14 +96,8 @@ namespace SynoDuplicateFolders.Data
                 if (_files == null)
                 {
                     _files = new SortableListBindingSource<IDuplicateFileInfo>();
-                    foreach (var k in _dupes.Keys)
-                    {
-                        var q = _dupes[k];
-                        foreach (var d in q)
-                        {
-                            _files.Add(d);
-                        }
-                    }
+                    DuplicatesByGroup.Keys.ToList().ForEach(group => DuplicatesByGroup[group].ForEach(dupe => _files.Add(dupe)));
+
                 }
                 return _files;
             }
@@ -188,6 +186,7 @@ namespace SynoDuplicateFolders.Data
             bypath.Clear();
             byname.Clear();
             tree.Clear();
+            _dupes_filtered.Clear();
 
             if (predicate == null)
             {
@@ -202,6 +201,8 @@ namespace SynoDuplicateFolders.Data
                 {
                     if (predicate(_dupes[key].First()))
                     {
+                        _dupes_filtered.Add(key, _dupes[key]);
+
                         BuildIndexes(key, bypath, byname, tree);
                     }
                 }
@@ -239,7 +240,7 @@ namespace SynoDuplicateFolders.Data
                 {
                     // TODO: dispose managed state (managed objects).
                     if (_files != null) _files.Dispose();
-                    if(_histogram!=null)_histogram.Dispose();
+                    if (_histogram != null) _histogram.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
@@ -266,7 +267,87 @@ namespace SynoDuplicateFolders.Data
         }
         #endregion
 
+        private static string GetUNCPathUnchecked(string host, string path)
+        {
+            if (string.IsNullOrWhiteSpace(host)) throw new ArgumentException("The HostName property must be set, it cannot be empty.");
+            return string.Format("{0}{1}", Path.DirectorySeparatorChar, Path.DirectorySeparatorChar) + host + path.Replace('/', Path.DirectorySeparatorChar);
+        }
+        public static FileInfo GetUNCPath(string host, string path, out bool location, out bool file, out bool isFile)
+        {
+            FileInfo result = null;
+            try
+            {
+                path = RemoveVolumeFromPath(path);
+
+                if (PathCanBeOpened(host, path, out location, out file, out isFile, out result) == false)
+                {
+                    string[] homes = path.Split('/');
+                    if (homes.Length > 2)
+                    {
+                        if (homes[1] == "homes")
+                        {
+                            path = "/home" + path.Substring(2 + homes[1].Length + homes[2].Length);
+                            PathCanBeOpened(host, path, out location, out file, out isFile, out result);
+                        }
+                    }
+                }
+
+                return result;
+            }
+            catch (System.Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(string.Format("{0} {1}", System.DateTime.UtcNow.Ticks, ex.Message));
+
+                location = false;
+                file = false;
+                isFile = false;
+                return null;
+            }
+        }
+
+        private static bool PathCanBeOpened(string host, string path, out bool openFileLocation, out bool openFile, out bool isFile, out FileInfo result)
+        {
+            openFileLocation = false;
+            openFile = false;
+            isFile = false;
+
+            var uncpath = GetUNCPathUnchecked(host, path);
+
+            result = null;
+            try
+            {
+                if (Directory.Exists(uncpath))
+                {
+                    openFileLocation = false;
+                    openFile = true;
+                    var test = Directory.GetFiles(uncpath);
+                    isFile = false;
+                }
+                if (File.Exists(uncpath))
+                {
+                    openFileLocation = true;
+                    openFile = true;
+                    using (var test = File.OpenRead(uncpath))
+                    { }
+                    isFile = true;
+                }
+                result = new FileInfo(uncpath);
+            }
+            catch (System.Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(string.Format("{0} {1}", System.DateTime.UtcNow.Ticks, ex.Message));
+            }
+            return openFile || openFileLocation;
+        }
+
+        private static string RemoveVolumeFromPath(string path)
+        {
+            return path.Substring(path.IndexOf('/'));
+        }
+
     }
+
+
 
     internal class DuplicatesHistogramValue : IDuplicatesHistogramValue
     {
