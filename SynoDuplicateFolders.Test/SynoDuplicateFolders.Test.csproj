@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SynoDuplicateFolders.Test</RootNamespace>
     <AssemblyName>SynoDuplicateFolders.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -43,6 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <Choose>
@@ -57,16 +58,6 @@
     <Compile Include="TestSynoReports.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SynoDuplicateFolders.Data.Core\SynoDuplicateFolders.Data.Core.csproj">
-      <Project>{93c3b975-6715-4d7b-956a-1dc44fafd546}</Project>
-      <Name>SynoDuplicateFolders.Data.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SynoDuplicateFolders.Data\SynoDuplicateFolders.Data.csproj">
-      <Project>{09866eda-9815-4250-ae9f-6fbb1eb7015b}</Project>
-      <Name>SynoDuplicateFolders.Data</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\duplicate_file.csv" />
@@ -93,6 +84,15 @@
     <PackageReference Include="NUnit3TestAdapter">
       <Version>4.2.1</Version>
     </PackageReference>
+    <PackageReference Include="SSH.NET">
+      <Version>2020.0.2</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SynoDuplicateFolders\SynoDuplicateFolders.csproj">
+      <Project>{777c592f-ed17-409d-ace9-39bb3e0bf1f8}</Project>
+      <Name>SynoDuplicateFolders</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

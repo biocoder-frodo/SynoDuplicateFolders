@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>057d8e56-f3fa-453e-9b2a-55a73ec8d09c</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SynoDuplicateFolders.Controls</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ChartControls.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChartGrid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ChartGrid.Designer.cs">
+      <DependentUpon>ChartGrid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)CurrentSortOrder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DuplicateCandidatesExclusion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DuplicateCandidatesView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)DuplicateCandidatesView.Designer.cs">
+      <DependentUpon>DuplicateCandidatesView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)GridControls.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IChartConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IChartLegend.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IRectangleLayout.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ITaggedColor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ItemHiddenEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ItemOpenedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ItemsComparedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ItemStatusUpdateEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LegendConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NoDblClickTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)RectangleLayout.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SortOrderManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SynoReportDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)TimeStampTrackBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)TimeStampTrackBar.Designer.cs">
+      <DependentUpon>TimeStampTrackBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)VolumeHistoricChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)VolumeHistoricChart.Designer.cs">
+      <DependentUpon>VolumeHistoricChart.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)ChartGrid.resx">
+      <DependentUpon>ChartGrid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)DuplicateCandidatesView.resx">
+      <DependentUpon>DuplicateCandidatesView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)TimeStampTrackBar.resx">
+      <DependentUpon>TimeStampTrackBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)VolumeHistoricChart.resx">
+      <DependentUpon>VolumeHistoricChart.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
