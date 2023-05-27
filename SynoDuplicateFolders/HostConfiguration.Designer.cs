@@ -32,11 +32,18 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.grpReportsFolder = new System.Windows.Forms.GroupBox();
+            this.lblReportFolderHint = new System.Windows.Forms.Label();
+            this.radFolderDefault = new System.Windows.Forms.RadioButton();
+            this.radFolderCustom = new System.Windows.Forms.RadioButton();
+            this.txtSynoReportHome = new System.Windows.Forms.TextBox();
+            this.grpUser = new System.Windows.Forms.GroupBox();
+            this.lblUserHint = new System.Windows.Forms.Label();
+            this.radUserCustom = new System.Windows.Forms.RadioButton();
+            this.radUserDefault = new System.Windows.Forms.RadioButton();
+            this.txtUser = new System.Windows.Forms.TextBox();
             this.lblHost = new System.Windows.Forms.Label();
             this.txtHost = new System.Windows.Forms.TextBox();
-            this.txtUser = new System.Windows.Forms.TextBox();
-            this.lblUser = new System.Windows.Forms.Label();
-            this.chkUser = new System.Windows.Forms.CheckBox();
             this.grpMethods = new System.Windows.Forms.GroupBox();
             this.btnKeyFileRemove = new System.Windows.Forms.Button();
             this.btnKeyFileAdd = new System.Windows.Forms.Button();
@@ -46,15 +53,12 @@
             this.chkPassword = new System.Windows.Forms.CheckBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.chkAuthNone = new System.Windows.Forms.CheckBox();
-            this.txtSynoReportHome = new System.Windows.Forms.TextBox();
             this.lblPort = new System.Windows.Forms.Label();
-            this.lblReports = new System.Windows.Forms.Label();
             this.txtPort = new System.Windows.Forms.TextBox();
-            this.chkSynoReportHome = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnDupeRemoveAll = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblIgnoreDupesFromPaths = new System.Windows.Forms.Label();
             this.btnDupeRemove = new System.Windows.Forms.Button();
             this.lstIgnoreDupes = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -67,6 +71,8 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.grpReportsFolder.SuspendLayout();
+            this.grpUser.SuspendLayout();
             this.grpMethods.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -109,17 +115,13 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.grpReportsFolder);
+            this.tabPage1.Controls.Add(this.grpUser);
             this.tabPage1.Controls.Add(this.lblHost);
             this.tabPage1.Controls.Add(this.txtHost);
-            this.tabPage1.Controls.Add(this.txtUser);
-            this.tabPage1.Controls.Add(this.lblUser);
-            this.tabPage1.Controls.Add(this.chkUser);
             this.tabPage1.Controls.Add(this.grpMethods);
-            this.tabPage1.Controls.Add(this.txtSynoReportHome);
             this.tabPage1.Controls.Add(this.lblPort);
-            this.tabPage1.Controls.Add(this.lblReports);
             this.tabPage1.Controls.Add(this.txtPort);
-            this.tabPage1.Controls.Add(this.chkSynoReportHome);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -127,6 +129,119 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "SSH Configuration";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // grpReportsFolder
+            // 
+            this.grpReportsFolder.Controls.Add(this.lblReportFolderHint);
+            this.grpReportsFolder.Controls.Add(this.radFolderDefault);
+            this.grpReportsFolder.Controls.Add(this.radFolderCustom);
+            this.grpReportsFolder.Controls.Add(this.txtSynoReportHome);
+            this.grpReportsFolder.Location = new System.Drawing.Point(9, 120);
+            this.grpReportsFolder.Name = "grpReportsFolder";
+            this.grpReportsFolder.Size = new System.Drawing.Size(462, 62);
+            this.grpReportsFolder.TabIndex = 18;
+            this.grpReportsFolder.TabStop = false;
+            this.grpReportsFolder.Text = "Reports folder";
+            // 
+            // lblReportFolderHint
+            // 
+            this.lblReportFolderHint.AutoSize = true;
+            this.lblReportFolderHint.Location = new System.Drawing.Point(155, 42);
+            this.lblReportFolderHint.Name = "lblReportFolderHint";
+            this.lblReportFolderHint.Size = new System.Drawing.Size(0, 13);
+            this.lblReportFolderHint.TabIndex = 20;
+            // 
+            // radFolderDefault
+            // 
+            this.radFolderDefault.AutoSize = true;
+            this.radFolderDefault.Location = new System.Drawing.Point(7, 22);
+            this.radFolderDefault.Name = "radFolderDefault";
+            this.radFolderDefault.Size = new System.Drawing.Size(59, 17);
+            this.radFolderDefault.TabIndex = 19;
+            this.radFolderDefault.TabStop = true;
+            this.radFolderDefault.Text = "Default";
+            this.radFolderDefault.UseVisualStyleBackColor = true;
+            this.radFolderDefault.CheckedChanged += new System.EventHandler(this.radFolderDefault_CheckedChanged);
+            this.radFolderDefault.MouseLeave += new System.EventHandler(this.radioButtonDefault_MouseLeave);
+            this.radFolderDefault.MouseHover += new System.EventHandler(this.radioButtonDefault_MouseHover);
+            // 
+            // radFolderCustom
+            // 
+            this.radFolderCustom.AutoSize = true;
+            this.radFolderCustom.Location = new System.Drawing.Point(72, 22);
+            this.radFolderCustom.Name = "radFolderCustom";
+            this.radFolderCustom.Size = new System.Drawing.Size(77, 17);
+            this.radFolderCustom.TabIndex = 18;
+            this.radFolderCustom.TabStop = true;
+            this.radFolderCustom.Text = "This folder:";
+            this.radFolderCustom.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.radFolderCustom.UseVisualStyleBackColor = true;
+            // 
+            // txtSynoReportHome
+            // 
+            this.txtSynoReportHome.Enabled = false;
+            this.txtSynoReportHome.Location = new System.Drawing.Point(155, 19);
+            this.txtSynoReportHome.Name = "txtSynoReportHome";
+            this.txtSynoReportHome.Size = new System.Drawing.Size(246, 20);
+            this.txtSynoReportHome.TabIndex = 6;
+            this.txtSynoReportHome.Validating += new System.ComponentModel.CancelEventHandler(this.txtSynoReportHome_Validating);
+            // 
+            // grpUser
+            // 
+            this.grpUser.Controls.Add(this.lblUserHint);
+            this.grpUser.Controls.Add(this.radUserCustom);
+            this.grpUser.Controls.Add(this.radUserDefault);
+            this.grpUser.Controls.Add(this.txtUser);
+            this.grpUser.Location = new System.Drawing.Point(9, 55);
+            this.grpUser.Name = "grpUser";
+            this.grpUser.Size = new System.Drawing.Size(462, 59);
+            this.grpUser.TabIndex = 17;
+            this.grpUser.TabStop = false;
+            this.grpUser.Text = "User";
+            // 
+            // lblUserHint
+            // 
+            this.lblUserHint.AutoSize = true;
+            this.lblUserHint.Location = new System.Drawing.Point(155, 42);
+            this.lblUserHint.Name = "lblUserHint";
+            this.lblUserHint.Size = new System.Drawing.Size(0, 13);
+            this.lblUserHint.TabIndex = 21;
+            // 
+            // radUserCustom
+            // 
+            this.radUserCustom.AutoSize = true;
+            this.radUserCustom.Location = new System.Drawing.Point(78, 19);
+            this.radUserCustom.Name = "radUserCustom";
+            this.radUserCustom.Size = new System.Drawing.Size(71, 17);
+            this.radUserCustom.TabIndex = 17;
+            this.radUserCustom.TabStop = true;
+            this.radUserCustom.Text = "This user:";
+            this.radUserCustom.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.radUserCustom.UseVisualStyleBackColor = true;
+            // 
+            // radUserDefault
+            // 
+            this.radUserDefault.AutoSize = true;
+            this.radUserDefault.Location = new System.Drawing.Point(7, 19);
+            this.radUserDefault.Name = "radUserDefault";
+            this.radUserDefault.Size = new System.Drawing.Size(59, 17);
+            this.radUserDefault.TabIndex = 16;
+            this.radUserDefault.TabStop = true;
+            this.radUserDefault.Text = "Default";
+            this.radUserDefault.UseVisualStyleBackColor = true;
+            this.radUserDefault.CheckedChanged += new System.EventHandler(this.radUserDefault_CheckedChanged);
+            this.radUserDefault.MouseLeave += new System.EventHandler(this.radioButtonDefault_MouseLeave);
+            this.radUserDefault.MouseHover += new System.EventHandler(this.radioButtonDefault_MouseHover);
+            // 
+            // txtUser
+            // 
+            this.txtUser.Enabled = false;
+            this.txtUser.Location = new System.Drawing.Point(155, 19);
+            this.txtUser.Name = "txtUser";
+            this.txtUser.Size = new System.Drawing.Size(164, 20);
+            this.txtUser.TabIndex = 3;
+            this.txtUser.TextChanged += new System.EventHandler(this.txtUser_TextChanged);
+            this.txtUser.Validating += new System.ComponentModel.CancelEventHandler(this.txtUser_Validating);
             // 
             // lblHost
             // 
@@ -139,44 +254,13 @@
             // 
             // txtHost
             // 
-            this.txtHost.Location = new System.Drawing.Point(6, 29);
+            this.txtHost.Location = new System.Drawing.Point(9, 28);
             this.txtHost.Name = "txtHost";
             this.txtHost.Size = new System.Drawing.Size(263, 20);
             this.txtHost.TabIndex = 0;
             this.txtHost.TextChanged += new System.EventHandler(this.txtHost_TextChanged);
             this.txtHost.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtHost_KeyDown);
             this.txtHost.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtHost_KeyPress);
-            // 
-            // txtUser
-            // 
-            this.txtUser.Enabled = false;
-            this.txtUser.Location = new System.Drawing.Point(74, 85);
-            this.txtUser.Name = "txtUser";
-            this.txtUser.Size = new System.Drawing.Size(89, 20);
-            this.txtUser.TabIndex = 3;
-            this.txtUser.Leave += new System.EventHandler(this.txtUser_Leave);
-            this.txtUser.Validating += new System.ComponentModel.CancelEventHandler(this.txtUser_Validating);
-            // 
-            // lblUser
-            // 
-            this.lblUser.AutoSize = true;
-            this.lblUser.Enabled = false;
-            this.lblUser.Location = new System.Drawing.Point(74, 69);
-            this.lblUser.Name = "lblUser";
-            this.lblUser.Size = new System.Drawing.Size(29, 13);
-            this.lblUser.TabIndex = 3;
-            this.lblUser.Text = "User";
-            // 
-            // chkUser
-            // 
-            this.chkUser.AutoSize = true;
-            this.chkUser.Location = new System.Drawing.Point(7, 68);
-            this.chkUser.Name = "chkUser";
-            this.chkUser.Size = new System.Drawing.Size(61, 17);
-            this.chkUser.TabIndex = 2;
-            this.chkUser.Text = "Custom";
-            this.chkUser.UseVisualStyleBackColor = true;
-            this.chkUser.CheckedChanged += new System.EventHandler(this.chkUser_CheckedChanged);
             // 
             // grpMethods
             // 
@@ -188,9 +272,9 @@
             this.grpMethods.Controls.Add(this.chkPassword);
             this.grpMethods.Controls.Add(this.txtPassword);
             this.grpMethods.Controls.Add(this.chkAuthNone);
-            this.grpMethods.Location = new System.Drawing.Point(6, 175);
+            this.grpMethods.Location = new System.Drawing.Point(9, 188);
             this.grpMethods.Name = "grpMethods";
-            this.grpMethods.Size = new System.Drawing.Size(462, 270);
+            this.grpMethods.Size = new System.Drawing.Size(462, 261);
             this.grpMethods.TabIndex = 15;
             this.grpMethods.TabStop = false;
             this.grpMethods.Text = "Authentication Methods";
@@ -284,37 +368,18 @@
             this.chkAuthNone.Text = "None";
             this.chkAuthNone.UseVisualStyleBackColor = true;
             // 
-            // txtSynoReportHome
-            // 
-            this.txtSynoReportHome.Enabled = false;
-            this.txtSynoReportHome.Location = new System.Drawing.Point(74, 133);
-            this.txtSynoReportHome.Name = "txtSynoReportHome";
-            this.txtSynoReportHome.Size = new System.Drawing.Size(238, 20);
-            this.txtSynoReportHome.TabIndex = 5;
-            this.txtSynoReportHome.Validating += new System.ComponentModel.CancelEventHandler(this.txtSynoReportHome_Validating);
-            // 
             // lblPort
             // 
             this.lblPort.AutoSize = true;
-            this.lblPort.Location = new System.Drawing.Point(273, 12);
+            this.lblPort.Location = new System.Drawing.Point(278, 12);
             this.lblPort.Name = "lblPort";
             this.lblPort.Size = new System.Drawing.Size(26, 13);
             this.lblPort.TabIndex = 13;
             this.lblPort.Text = "Port";
             // 
-            // lblReports
-            // 
-            this.lblReports.AutoSize = true;
-            this.lblReports.Enabled = false;
-            this.lblReports.Location = new System.Drawing.Point(74, 117);
-            this.lblReports.Name = "lblReports";
-            this.lblReports.Size = new System.Drawing.Size(73, 13);
-            this.lblReports.TabIndex = 8;
-            this.lblReports.Text = "Reports folder";
-            // 
             // txtPort
             // 
-            this.txtPort.Location = new System.Drawing.Point(273, 29);
+            this.txtPort.Location = new System.Drawing.Point(278, 28);
             this.txtPort.MaxLength = 12;
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(72, 20);
@@ -322,17 +387,6 @@
             this.txtPort.TabStop = false;
             this.txtPort.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPort_KeyDown);
             this.txtPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPort_KeyPress);
-            // 
-            // chkSynoReportHome
-            // 
-            this.chkSynoReportHome.AutoSize = true;
-            this.chkSynoReportHome.Location = new System.Drawing.Point(6, 116);
-            this.chkSynoReportHome.Name = "chkSynoReportHome";
-            this.chkSynoReportHome.Size = new System.Drawing.Size(61, 17);
-            this.chkSynoReportHome.TabIndex = 4;
-            this.chkSynoReportHome.Text = "Custom";
-            this.chkSynoReportHome.UseVisualStyleBackColor = true;
-            this.chkSynoReportHome.CheckedChanged += new System.EventHandler(this.chkSynoReportHome_CheckedChanged);
             // 
             // tabPage2
             // 
@@ -349,7 +403,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.btnDupeRemoveAll);
-            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.lblIgnoreDupesFromPaths);
             this.groupBox2.Controls.Add(this.btnDupeRemove);
             this.groupBox2.Controls.Add(this.lstIgnoreDupes);
             this.groupBox2.Location = new System.Drawing.Point(6, 126);
@@ -369,14 +423,14 @@
             this.btnDupeRemoveAll.UseVisualStyleBackColor = true;
             this.btnDupeRemoveAll.Click += new System.EventHandler(this.btnDupeRemoveAll_Click);
             // 
-            // label1
+            // lblIgnoreDupesFromPaths
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(255, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Ignore duplicate candidates from the following paths:";
+            this.lblIgnoreDupesFromPaths.AutoSize = true;
+            this.lblIgnoreDupesFromPaths.Location = new System.Drawing.Point(6, 28);
+            this.lblIgnoreDupesFromPaths.Name = "lblIgnoreDupesFromPaths";
+            this.lblIgnoreDupesFromPaths.Size = new System.Drawing.Size(255, 13);
+            this.lblIgnoreDupesFromPaths.TabIndex = 2;
+            this.lblIgnoreDupesFromPaths.Text = "Ignore duplicate candidates from the following paths:";
             // 
             // btnDupeRemove
             // 
@@ -496,6 +550,10 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.grpReportsFolder.ResumeLayout(false);
+            this.grpReportsFolder.PerformLayout();
+            this.grpUser.ResumeLayout(false);
+            this.grpUser.PerformLayout();
             this.grpMethods.ResumeLayout(false);
             this.grpMethods.PerformLayout();
             this.tabPage2.ResumeLayout(false);
@@ -515,8 +573,6 @@
         private System.Windows.Forms.Label lblHost;
         private System.Windows.Forms.TextBox txtHost;
         private System.Windows.Forms.TextBox txtUser;
-        private System.Windows.Forms.Label lblUser;
-        private System.Windows.Forms.CheckBox chkUser;
         private System.Windows.Forms.GroupBox grpMethods;
         private System.Windows.Forms.Button btnKeyFileRemove;
         private System.Windows.Forms.Button btnKeyFileAdd;
@@ -526,11 +582,8 @@
         private System.Windows.Forms.CheckBox chkPassword;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.CheckBox chkAuthNone;
-        private System.Windows.Forms.TextBox txtSynoReportHome;
         private System.Windows.Forms.Label lblPort;
-        private System.Windows.Forms.Label lblReports;
         private System.Windows.Forms.TextBox txtPort;
-        private System.Windows.Forms.CheckBox chkSynoReportHome;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnCancel;
@@ -541,8 +594,17 @@
         private System.Windows.Forms.RadioButton optAnalyzerDbRemove;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnDupeRemoveAll;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblIgnoreDupesFromPaths;
         private System.Windows.Forms.Button btnDupeRemove;
         private System.Windows.Forms.ListBox lstIgnoreDupes;
+        private System.Windows.Forms.GroupBox grpReportsFolder;
+        private System.Windows.Forms.RadioButton radFolderDefault;
+        private System.Windows.Forms.RadioButton radFolderCustom;
+        private System.Windows.Forms.TextBox txtSynoReportHome;
+        private System.Windows.Forms.GroupBox grpUser;
+        private System.Windows.Forms.RadioButton radUserCustom;
+        private System.Windows.Forms.RadioButton radUserDefault;
+        private System.Windows.Forms.Label lblReportFolderHint;
+        private System.Windows.Forms.Label lblUserHint;
     }
 }

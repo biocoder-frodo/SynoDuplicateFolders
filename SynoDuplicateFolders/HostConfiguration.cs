@@ -27,27 +27,28 @@ namespace SynoDuplicateFolders
 
         private void InitializeComponent(bool existing)
         {
+            radUserCustom.Checked = true;
+            radFolderCustom.Checked = true;
 
             txtPort.Text = (existing ? Host.Port : Host.ElementInformation.Properties["port"].DefaultValue).ToString();
 
             txtUser.Text = existing ? Host.UserName : DSMHost.DefaultUserName;
 
-            txtSynoReportHome.Text = existing ? string.IsNullOrWhiteSpace(Host.SynoReportHome)
-                                                ? DSMHost.SynoReportHomeDefault(Host.UserName)
-                                                : Host.SynoReportHome
-                                              : DSMHost.SynoReportHomeDefault(DSMHost.DefaultUserName);
-
             if (existing)
             {
                 txtHost.Text = Host.Host;
-                chkUser.Checked = !txtUser.Text.Equals(DSMHost.DefaultUserName);
-                chkSynoReportHome.Checked = !txtSynoReportHome.Text.Equals(DSMHost.SynoReportHomeDefault(Host.UserName));               
+                radUserDefault.Checked = IsDefaultUserNameSet;
+                radFolderDefault.Checked = string.IsNullOrWhiteSpace(Host.SynoReportHome);
+                txtSynoReportHome.Text = radFolderDefault.Checked ? DSMHost.SynoReportHomeDefault(Host.UserName) : Host.SynoReportHome;
             }
             else
             {
-                chkUser.CheckState = CheckState.Unchecked;
-                chkSynoReportHome.CheckState = CheckState.Unchecked;
+                radUserDefault.Checked = true;
+                radFolderDefault.Checked = true;
+                txtSynoReportHome.Text = DSMHost.SynoReportHomeDefault(DSMHost.DefaultUserName);
             }
+            txtSynoReportHome.Enabled = IsDefaultFolderSet == false;
+            txtUser.Enabled = IsDefaultUserNameSet == false;
 
             chkKeep.Checked = Host.KeepDsmFilesCustom;
 
@@ -60,7 +61,6 @@ namespace SynoDuplicateFolders
             {
                 btnDupeRemoveAll.Enabled = exclusion.Paths.Any();
                 exclusion.Paths.ToList().ForEach(file => lstIgnoreDupes.Items.Add(file));
-
             }
 
             chkKeep_CheckedChanged(null, null);
@@ -141,7 +141,7 @@ namespace SynoDuplicateFolders
         private void btnOk_Click(object sender, EventArgs e)
         {
 
-            if (chkSynoReportHome.Checked)
+            if (radUserCustom.Checked)
             {
                 if (ValidateHomePath())
                 {
@@ -170,7 +170,7 @@ namespace SynoDuplicateFolders
             Host.UserName = txtUser.Text;
             DSMAuthentication method = null;
 
-            Host.SynoReportHome = chkSynoReportHome.Checked ? txtSynoReportHome.Text : string.Empty;
+            Host.SynoReportHome = radFolderCustom.Checked ? txtSynoReportHome.Text : string.Empty;
             if (Validate())
             {
                 method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.None, chkAuthNone.Checked);
@@ -205,8 +205,6 @@ namespace SynoDuplicateFolders
                 ;
             }
 
-            //if (exclusion != null) exclusion.PropertyChanged -= Exclusion_PropertyChanged;
-
             Hide();
 
         }
@@ -236,67 +234,30 @@ namespace SynoDuplicateFolders
             bool enable = optAnalyzerDbRemove.Checked;
             txtKeep.Enabled = enable;
         }
-        private void chkUser_CheckedChanged(object sender, EventArgs e)
-        {
-            bool custom = chkUser.CheckState != CheckState.Unchecked;//&& txtUser.Text.Equals(DSMHost.DefaultUserName)==false;
 
-            lblUser.Enabled = custom;
-            txtUser.Enabled = custom;
-
-            if (!custom)
-            {
-                txtUser.Text = DSMHost.DefaultUserName;
-            }
-            else
-            {
-                txtUser.Focus();
-            }
-            chkSynoReportHome_CheckedChanged(sender, e);
-        }
-        private void txtUser_Leave(object sender, EventArgs e)
-        {
-            chkSynoReportHome_CheckedChanged(sender, e);
-        }
         private void txtUser_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
             e.Cancel = !NAME_REGEX.IsMatch((sender as TextBox).Text);
 
             if (string.IsNullOrWhiteSpace((sender as TextBox).Text) == true)
             {
                 e.Cancel = false;
-                chkUser.Checked = false;
+                radUserDefault.Checked = true;
             }
             if (!e.Cancel && (sender as TextBox).Text.Equals(DSMHost.DefaultUserName))
             {
-                chkUser.Checked = false;
+                radUserDefault.Checked = true;
             }
             Console.WriteLine((sender as TextBox).Name + " CancelEventArgs e.Cancel = " + e.Cancel);
         }
 
-        private void chkSynoReportHome_CheckedChanged(object sender, EventArgs e)
-        {
-            bool custom = chkSynoReportHome.CheckState != CheckState.Unchecked;
-            lblReports.Enabled = custom;
-            txtSynoReportHome.Enabled = custom;
-
-            if (!custom)
-            {
-                txtSynoReportHome.Text = DSMHost.SynoReportHomeDefault(txtUser.Text);
-            }
-            else
-            {
-                txtSynoReportHome.Focus();
-            }
-
-        }
         private void txtSynoReportHome_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = !ValidateHomePath();
             if (!e.Cancel && (sender as TextBox).Text.Equals(DSMHost.SynoReportHomeDefault(txtUser.Text)))
             {
-                if (chkSynoReportHome.Checked)
-                    chkSynoReportHome.Checked = false;
+                if (radFolderCustom.Checked)
+                    radFolderDefault.Checked = true;
             }
         }
 
@@ -432,6 +393,75 @@ namespace SynoDuplicateFolders
             {
                 passwordDirty = true;
             }
+        }
+
+        private void radioButtonDefault_MouseHover(object sender, EventArgs e)
+        {
+            var rb = sender as RadioButton;
+
+            if (rb == radFolderDefault && radFolderCustom.Checked && IsDefaultFolderSet == false)
+                lblReportFolderHint.Text = DSMHost.SynoReportHomeDefault(txtUser.Text);
+            if (rb == radUserDefault && radUserCustom.Checked && IsDefaultUserNameSet == false)
+                lblUserHint.Text = DSMHost.DefaultUserName;
+
+        }
+
+        private void radioButtonDefault_MouseLeave(object sender, EventArgs e)
+        {
+            var rb = sender as RadioButton;
+            if (rb == radFolderDefault)
+                lblReportFolderHint.Text = string.Empty;
+            if (rb == radUserDefault)
+                lblUserHint.Text = string.Empty;
+        }
+        private bool IsDefaultUserNameSet => txtUser.Text.Equals(DSMHost.DefaultUserName);
+        private bool IsDefaultFolderSet => DSMHost.SynoReportHomeDefault(txtUser.Text) == txtSynoReportHome.Text || string.IsNullOrWhiteSpace(txtSynoReportHome.Text);
+
+        private void radUserDefault_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initialization == false)
+            {
+                var text = txtUser;
+                var self = radUserCustom as RadioButton;
+                bool custom = self.Checked;
+
+                if (custom)
+                {
+                    text.Focus();
+                }
+                else
+                {
+                    text.Text = DSMHost.DefaultUserName;
+                }
+
+                text.Enabled = custom;
+            }
+        }
+
+        private void radFolderDefault_CheckedChanged(object sender, EventArgs e)
+        {
+            if (initialization == false)
+            {
+                var text = txtSynoReportHome;
+                var self = radFolderCustom as RadioButton;
+                bool custom = self.Checked;
+
+                if (custom)
+                {
+                    text.Focus();
+                }
+                else
+                {
+                    text.Text = DSMHost.SynoReportHomeDefault(txtUser.Text);
+                }
+
+                text.Enabled = custom;
+            }
+        }
+
+        private void txtUser_TextChanged(object sender, EventArgs e)
+        {
+            if (radFolderDefault.Checked) txtSynoReportHome.Text = DSMHost.SynoReportHomeDefault(txtUser.Text);
         }
     }
 }
