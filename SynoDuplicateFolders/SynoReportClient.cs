@@ -180,19 +180,29 @@ namespace SynoDuplicateFolders
         {
             ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Idle));
         }
-        private void SynoReportClient_CacheUpdate(string host)
+        private bool SelectHost(string hostName)
         {
-            try
+            var host = Profile.DSMHosts.Items.TryGet(hostName);
+            if (host != null)
             {
-                Invoke(new Action(ProgressUpdateProcessing));
-
-                selected = Profile.DSMHosts.Items.TryGet(host);
-
+                selected = host;
                 selected.StorePassPhrases = Default.StorePassPhrases;
 
                 if (exclusion != null) exclusion.PropertyChanged -= Exclusion_PropertyChanged;
                 exclusion = new DuplicateCandidatesExclusion<DSMHost>(selected, cfg => cfg.FilterDuplicates, (cfg, v) => cfg.FilterDuplicates = v);
                 exclusion.PropertyChanged += Exclusion_PropertyChanged;
+                return true;
+            }
+            return false;
+        }
+        private void SynoReportClient_CacheUpdate(string hostName)
+        {
+            try
+            {
+                Invoke(new Action(ProgressUpdateProcessing));
+
+                if (SelectHost(hostName) == false)
+                    throw new ArgumentException($"The requested name '{hostName}' cannot be found in the configuration.", nameof(hostName));
 
                 SynoReportViaSSH connection = null;
 
@@ -414,7 +424,8 @@ namespace SynoDuplicateFolders
             }
             else if (e.ClickedItem == propertiesToolStripMenuItem)
             {
-                using (var srv = new HostConfiguration(Profile.DSMHosts.Items.TryGet(tag), exclusion))
+                if (SelectHost(tag))
+                using (var srv = new HostConfiguration(selected, exclusion))
                 {
 
                     srv.ShowDialog();
