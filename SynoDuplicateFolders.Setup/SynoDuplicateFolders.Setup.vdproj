@@ -324,7 +324,7 @@
             "{1525181F-901A-416C-8A58-119130FE478E}:_B765D08AF6434245BAE7D65C6800BC87"
             {
             "Name" = "8:#1919"
-            "AlwaysCreate" = "11:FALSE"
+            "AlwaysCreate" = "11:TRUE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Property" = "8:ProgramMenuFolder"
@@ -349,7 +349,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SynoDuplicateFolders"
         "ProductCode" = "8:{59A68A68-E97B-4EED-B6CA-3A95AFCB5FEE}"
-        "PackageCode" = "8:{9294EA4A-F499-4309-ACD1-D0A55820EAD9}"
+        "PackageCode" = "8:{61C4F552-B5BF-4F0E-BE62-013AE66F8835}"
         "UpgradeCode" = "8:{37906585-554A-4459-9070-35F18B139ECB}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -469,6 +469,20 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_02511A5F6293486798C379D0F08278F7"
+            {
+            "Name" = "8:Storage Analyzer Client"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_B765D08AF6434245BAE7D65C6800BC87"
+            "Folder" = "8:_B765D08AF6434245BAE7D65C6800BC87"
+            "WorkingFolder" = "8:_B765D08AF6434245BAE7D65C6800BC87"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {
