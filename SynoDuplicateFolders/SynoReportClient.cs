@@ -1,22 +1,20 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Diagnostics;
-
+﻿using SynoDuplicateFolders.Controls;
 using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Data.SecureShell;
-using SynoDuplicateFolders.Properties;
 using SynoDuplicateFolders.Extensions;
-using SynoDuplicateFolders.Controls;
-
-using static SynoDuplicateFolders.Configuration.UserSectionHandler;
-using static SynoDuplicateFolders.Properties.Settings;
-using static SynoDuplicateFolders.Properties.CustomSettings;
-using static System.Environment;
-using System.IO;
-
+using SynoDuplicateFolders.Properties;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using static SynoDuplicateFolders.Configuration.UserSectionHandler;
+using static SynoDuplicateFolders.Properties.CustomSettings;
+using static SynoDuplicateFolders.Properties.Settings;
+using static System.Environment;
 
 namespace SynoDuplicateFolders
 {
@@ -26,9 +24,10 @@ namespace SynoDuplicateFolders
         private event Action DuplicatesAnalysisCompleted;
 
         private ISynoReportCache cache = null;
-        //private CustomSettings config = null;
         private SynoReportDuplicateCandidates dupes = null;
 
+        private DSMHost selected;
+        private DuplicateCandidatesExclusion<DSMHost> exclusion;
         private bool _PassPhraseUpdate = false;
 
         public SynoReportClient()
@@ -45,7 +44,9 @@ namespace SynoDuplicateFolders
             duplicateCandidatesView1.OnItemOpen += DuplicateCandidatesView1_OnItemOpen;
             duplicateCandidatesView1.OnItemCompare += DuplicateCandidatesView1_OnItemCompare;
             duplicateCandidatesView1.OnItemStatusUpdate += DuplicateCandidatesView1_OnItemStatusUpdate;
+            duplicateCandidatesView1.OnItemHide += DuplicateCandidatesView1_OnItemHide;
         }
+
         private void OnDispose(bool disposing)
         {
             if (dupes != null) dupes.Dispose();
@@ -179,31 +180,45 @@ namespace SynoDuplicateFolders
         {
             ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Idle));
         }
-        private void SynoReportClient_CacheUpdate(string host)
+        private bool SelectHost(string hostName)
+        {
+            var host = Profile.DSMHosts.Items.TryGet(hostName);
+            if (host != null)
+            {
+                selected = host;
+                selected.StorePassPhrases = Default.StorePassPhrases;
+
+                if (exclusion != null) exclusion.PropertyChanged -= Exclusion_PropertyChanged;
+                exclusion = new DuplicateCandidatesExclusion<DSMHost>(selected, cfg => cfg.FilterDuplicates, (cfg, v) => cfg.FilterDuplicates = v);
+                exclusion.PropertyChanged += Exclusion_PropertyChanged;
+                return true;
+            }
+            return false;
+        }
+        private void SynoReportClient_CacheUpdate(string hostName)
         {
             try
             {
                 Invoke(new Action(ProgressUpdateProcessing));
 
-                DSMHost h = Profile.DSMHosts.Items.TryGet(host);
-
-                h.StorePassPhrases = Default.StorePassPhrases;
+                if (SelectHost(hostName) == false)
+                    throw new ArgumentException($"The requested name '{hostName}' cannot be found in the configuration.", nameof(hostName));
 
                 SynoReportViaSSH connection = null;
 
-                if (Default.UseProxy && h.Proxy == null)
+                if (Default.UseProxy && selected.Proxy == null)
                 {
-                    connection = new SynoReportViaSSH(h, GetPassPhrase, GetInteractiveMethod, new DefaultProxy());
+                    connection = new SynoReportViaSSH(selected, GetPassPhrase, GetInteractiveMethod, new DefaultProxy());
                 }
                 else
                 {
-                    if (h.Proxy != null)
+                    if (selected.Proxy != null)
                     {
-                        connection = new SynoReportViaSSH(h, GetPassPhrase, GetInteractiveMethod, h.Proxy);
+                        connection = new SynoReportViaSSH(selected, GetPassPhrase, GetInteractiveMethod, selected.Proxy);
                     }
                     else
                     {
-                        connection = new SynoReportViaSSH(h, GetPassPhrase, GetInteractiveMethod);
+                        connection = new SynoReportViaSSH(selected, GetPassPhrase, GetInteractiveMethod);
                     }
                 }
                 connection.HostKeyChange += Connection_HostKeyChange;
@@ -213,13 +228,13 @@ namespace SynoDuplicateFolders
 
                 if (!string.IsNullOrEmpty(Default.CacheFolder))
                 {
-                    cache.Path = Path.Combine(Default.CacheFolder, h.Host);
+                    cache.Path = Path.Combine(Default.CacheFolder, selected.Host);
                 }
                 else
                 {
-                    cache.Path = Path.Combine(GetFolderPath(SpecialFolder.MyDocuments), Application.ProductName, h.Host);
+                    cache.Path = Path.Combine(GetFolderPath(SpecialFolder.MyDocuments), Application.ProductName, selected.Host);
                 }
-                var k = h as IKeepDSMFiles;
+                var k = selected as IKeepDSMFiles;
                 if (k.Custom)
                 {
                     if (k.KeepAll == true)
@@ -284,6 +299,22 @@ namespace SynoDuplicateFolders
             }
         }
 
+        private void Exclusion_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"Exclusion PropertyChanged {e.PropertyName}");
+
+            Profile.Save();
+            Profile.Reload();
+
+            PopulateDuplicatesTab();
+
+        }
+        private void DuplicateCandidatesView1_OnItemHide(object sender, ItemHiddenEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"OnItemHide {e.Path}");
+            exclusion.AddExclusion(e.Path);
+        }
+
         private void Connection_HostKeyChange(object sender, EventArgs e)
         {
             Profile.Save();
@@ -307,7 +338,7 @@ namespace SynoDuplicateFolders
             banner.AddRange(e.Instruction.Split('\n'));
 
             string result;
-            using (PassPhrase dialog = new PassPhrase(e.Username, banner.ToArray(), e.Id+": "+e.Request))
+            using (PassPhrase dialog = new PassPhrase(e.Username, banner.ToArray(), e.Id + ": " + e.Request))
             {
                 dialog.ShowDialog();
                 result = dialog.Password;
@@ -370,7 +401,7 @@ namespace SynoDuplicateFolders
 
         private void contextMenuStrip2_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            string tag = (string)treeView1.SelectedNode.Tag;
+            string tag = (string)KnownHosts.SelectedNode.Tag;
             if (e.ClickedItem == refreshToolStripMenuItem)
             {
                 Task.Factory.StartNew(() => SynoReportClient_CacheUpdate(tag));
@@ -393,15 +424,17 @@ namespace SynoDuplicateFolders
             }
             else if (e.ClickedItem == propertiesToolStripMenuItem)
             {
-                using (var srv = new HostConfiguration(Profile.DSMHosts.Items.TryGet(tag)))
-                {
-                    srv.ShowDialog();
-                    if (srv.Canceled == false)
+                if (SelectHost(tag))
+                    using (var srv = new HostConfiguration(selected, exclusion))
                     {
-                        Profile.Save();
-                        
+
+                        srv.ShowDialog();
+                        if (srv.Canceled == false)
+                        {
+                            Profile.Save();
+                            Profile.Reload();
+                        }
                     }
-                }
             }
         }
 
@@ -430,13 +463,13 @@ namespace SynoDuplicateFolders
 
         private void PopulateServerTree()
         {
-            treeView1.Nodes.Clear();
-            treeView1.Nodes.Add("NAS");
-            treeView1.Nodes[0].ContextMenuStrip = contextMenuStrip1;
+            KnownHosts.Nodes.Clear();
+            KnownHosts.Nodes.Add("NAS");
+            KnownHosts.Nodes[0].ContextMenuStrip = contextMenuStrip1;
 
             foreach (DSMHost h in Profile.DSMHosts.Items)
             {
-                var node = treeView1.Nodes[0].Nodes.Add(h.Host, h.Host);
+                var node = KnownHosts.Nodes[0].Nodes.Add(h.Host, h.Host);
                 node.ContextMenuStrip = contextMenuStrip2;
                 node.Tag = h.Host;
             }
@@ -444,7 +477,7 @@ namespace SynoDuplicateFolders
 
         private void ProgressUpdate(SynoReportCacheDownloadEventArgs e)
         {
-            treeView1.Enabled = false;
+            KnownHosts.Enabled = false;
             toolsStripMenuItem.Enabled = false;
             toolStripMenuItem2.Enabled = false;
 
@@ -472,7 +505,7 @@ namespace SynoDuplicateFolders
                     break;
                 default:
 
-                    treeView1.Enabled = true;
+                    KnownHosts.Enabled = true;
                     toolsStripMenuItem.Enabled = true;
                     toolStripMenuItem2.Enabled = true;
                     exportSharesReportToolStripMenuItem.Enabled = cache != null;
@@ -494,7 +527,7 @@ namespace SynoDuplicateFolders
         {
             ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Processing));
             this.Text = "SynoReport Client - " + version;
-            treeView1.SelectedNode.ToolTipText = version;
+            KnownHosts.SelectedNode.ToolTipText = version;
 
             volumeHistoricChart1.View = vhcViewMode.VolumeTotals;
             volumeHistoricChart1.DataSource = cache;
@@ -510,12 +543,13 @@ namespace SynoDuplicateFolders
             ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Processing));
             if (dupes != null)
             {
+                duplicateCandidatesView1.ExclusionSource = exclusion;
                 duplicateCandidatesView1.DataSource = dupes;
             }
             ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Idle));
         }
 
-        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void KnownHosts_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             ((TreeView)sender).SelectedNode = e.Node;
         }

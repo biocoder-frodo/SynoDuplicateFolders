@@ -63,7 +63,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
                 foreach (var db in dsm_databases)
                 {
-                    RemoveFile(session, db, ConsoleCommandMode.Directly, scr);
+                    RemoveFile(scr, session, db, ConsoleCommandMode.Directly);
                 }
 
                 scr.Disconnect();

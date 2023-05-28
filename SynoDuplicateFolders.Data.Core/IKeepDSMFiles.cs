@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SynoDuplicateFolders.Data.Core
+﻿namespace SynoDuplicateFolders.Data.Core
 {
-    public interface IKeepDSMFiles
+    public interface IKeepDSMFiles: ISpecificSettings
     {
         bool Custom { get; }
         bool KeepAll { get; }

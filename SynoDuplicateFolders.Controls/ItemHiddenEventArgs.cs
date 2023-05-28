@@ -2,15 +2,15 @@
 
 namespace SynoDuplicateFolders.Controls
 {
-    public class ItemOpenedEventArgs : EventArgs
+    public class ItemHiddenEventArgs : EventArgs
     {
+        public readonly string Hostname;
         public readonly string Path;
-        public readonly bool OpenLocation;
         public readonly bool IsFile;
-        public ItemOpenedEventArgs(string path, bool openLocation, bool isFile)
+        public ItemHiddenEventArgs(string host, string path, bool isFile)
         {
+            Hostname = host;
             Path = path;
-            OpenLocation = openLocation;
             IsFile = isFile;
         }
     }

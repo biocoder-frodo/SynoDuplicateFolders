@@ -15,11 +15,12 @@ namespace SynoDuplicateFolders.Controls
         private bool _first = true;
         private readonly ChartControls _charts;
         private IChartConfiguration _legends = null;
+        private LegendConfiguration _legendConfiguration = null;
         private bool _percentage_free_only = false;
         public ChartGrid()
         {
             InitializeComponent();
-            _charts = new ChartControls(chart_MouseClick, C_GetToolTipText);
+            _charts = new ChartControls(chart_MouseClick, chart_GetToolTipText, chart_PostPaint);
 
         }
         public IChartConfiguration Configuration
@@ -35,6 +36,7 @@ namespace SynoDuplicateFolders.Controls
                     {
                         value.Add("Free", KnownColor.AntiqueWhite);
                     }
+                    _legendConfiguration = new LegendConfiguration(value);
                 }
             }
         }
@@ -55,6 +57,7 @@ namespace SynoDuplicateFolders.Controls
                     {
                         _first = false;
 
+                        _legendConfiguration.ResetUnknownTraces();
 
 
                         tableLayoutPanel1.Controls.Clear();
@@ -79,7 +82,6 @@ namespace SynoDuplicateFolders.Controls
                                 c = 0;
                                 r++;
                             }
-
                         }
                         tableLayoutPanel1_SizeChanged(null, null);
                     }
@@ -89,6 +91,7 @@ namespace SynoDuplicateFolders.Controls
                     {
                         RenderData(r, _charts[r]);
                     }
+                    _legendConfiguration.Invalidate();
                 }
             }
         }
@@ -112,15 +115,7 @@ namespace SynoDuplicateFolders.Controls
             foreach (PieChartDataPoint dp in _src[index])
             {
                 dpc[dpc.AddXY(dp.SliceName, dp.Value)].LegendText = dp.SliceName;
-
-                if (_legends.ContainsKey(dp.SliceName))
-                {
-                    dpc[dpc.Count - 1].Color = _legends[dp.SliceName].Color;
-                }
-                else
-                {
-                    // _legends.Add(dp.SliceName, dpc[dpc.Count - 1].Color);
-                }
+                _ = _legendConfiguration.TryPickColor(dp.SliceName, dpc[dpc.Count - 1]);
             }
 
         }
@@ -137,7 +132,7 @@ namespace SynoDuplicateFolders.Controls
             return c;
         }
 
-        private void C_GetToolTipText(object sender, ToolTipEventArgs e)
+        private void chart_GetToolTipText(object sender, ToolTipEventArgs e)
         {
             string text = string.Empty;
             if (e.HitTestResult.ChartElementType == ChartElementType.DataPoint)
@@ -167,7 +162,19 @@ namespace SynoDuplicateFolders.Controls
             }
             if (!e.Text.Equals(text)) e.Text = text;
         }
-
+        private void chart_PostPaint(object sender, ChartPaintEventArgs e)
+        {
+            if (_src != null)
+            {
+                for (int r = 0; r < _charts.Count; r++)
+                {
+                    if (sender == _charts[r])
+                    {
+                        _legendConfiguration.AddNewTraces(r, _charts[r], _src);
+                    };
+                }
+            }
+        }
         private void chart_MouseClick(object sender, MouseEventArgs e)
         {
             _percentage_free_only = !_percentage_free_only;

@@ -10,13 +10,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SynoDuplicateFolders</RootNamespace>
     <AssemblyName>SynoDuplicateFolders</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -40,10 +40,15 @@
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>SynoDuplicateFolders.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
@@ -127,28 +132,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SynoDuplicateFolders.Configuration\SynoDuplicateFolders.Configuration.csproj">
-      <Project>{3edde043-a9fd-4617-9eab-c248658826de}</Project>
-      <Name>SynoDuplicateFolders.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SynoDuplicateFolders.Controls\SynoDuplicateFolders.Controls.csproj">
-      <Project>{512d9842-4681-47b3-a702-7a063f953059}</Project>
-      <Name>SynoDuplicateFolders.Controls</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SynoDuplicateFolders.Data.Core\SynoDuplicateFolders.Data.Core.csproj">
-      <Project>{93c3b975-6715-4d7b-956a-1dc44fafd546}</Project>
-      <Name>SynoDuplicateFolders.Data.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SynoDuplicateFolders.Data\SynoDuplicateFolders.Data.csproj">
-      <Project>{09866eda-9815-4250-ae9f-6fbb1eb7015b}</Project>
-      <Name>SynoDuplicateFolders.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SynoDuplicateFolders.Extensions\SynoDuplicateFolders.Extensions.csproj">
-      <Project>{0e94e781-271c-49cb-95a8-70fb25f8fcf6}</Project>
-      <Name>SynoDuplicateFolders.Extensions</Name>
-    </ProjectReference>
+    <PackageReference Include="SSH.NET">
+      <Version>2020.0.2</Version>
+    </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <Import Project="..\SynoDuplicateFolders.Configuration\SynoDuplicateFolders.Configuration.projitems" Label="Shared" />
+  <Import Project="..\SynoDuplicateFolders.Controls\SynoDuplicateFolders.Controls.projitems" Label="Shared" />
+  <Import Project="..\SynoDuplicateFolders.Data\SynoDuplicateFolders.Data.projitems" Label="Shared" />
+  <Import Project="..\SynoDuplicateFolders.Data.Core\SynoDuplicateFolders.Data.Core.projitems" Label="Shared" />
+  <Import Project="..\SynoDuplicateFolders.Extensions\SynoDuplicateFolders.Extensions.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

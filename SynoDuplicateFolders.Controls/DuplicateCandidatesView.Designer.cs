@@ -40,6 +40,7 @@
             this.openFileLocationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.compareExternallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -137,9 +138,10 @@
             this.toolStripSeparator1,
             this.openFileLocationToolStripMenuItem,
             this.toolStripSeparator2,
-            this.compareExternallyToolStripMenuItem});
+            this.compareExternallyToolStripMenuItem,
+            this.hideToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 82);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 104);
             this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
             // 
             // openFileToolStripMenuItem
@@ -170,6 +172,12 @@
             this.compareExternallyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.compareExternallyToolStripMenuItem.Text = "Compare ...";
             // 
+            // hideToolStripMenuItem
+            // 
+            this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
+            this.hideToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideToolStripMenuItem.Text = "Hide";
+            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -180,6 +188,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(550, 423);
             this.tabControl1.TabIndex = 2;
+            this.tabControl1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseUp);
             // 
             // tabPage1
             // 
@@ -257,5 +266,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private Controls.SynoReportDataGridView dataGridView1;
+        private System.Windows.Forms.ToolStripMenuItem hideToolStripMenuItem;
     }
 }

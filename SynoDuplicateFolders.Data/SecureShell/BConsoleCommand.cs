@@ -10,7 +10,6 @@ namespace SynoDuplicateFolders.Data.SecureShell
     public abstract class BConsoleCommand : IConsoleCommand
     {
         internal string _homepath = null;
-        internal static readonly string sudo = "sudo {0}";
         internal Dictionary<string, string> _properties = null;
 
         private static string GetHomePath(SshClient client)
@@ -59,84 +58,22 @@ namespace SynoDuplicateFolders.Data.SecureShell
         public abstract List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, SynoReportViaSSH session, bool Disconnect = true);
         public abstract void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases);
 
+
         internal string RemoveFileCommand(string path)
         {
-            return string.Format("rm {0}", path);
+            return $"rm {path}";
         }
         internal string RemoveFileCommand(SynoReportViaSSH connection, ConsoleFileInfo file)
         {
-            return RemoveFileCommand(connection.SynoReportHome + file.Path);
+
+            return connection.SynoReportHome.EndsWith("/") && file.Path.StartsWith("/")
+                                                ? RemoveFileCommand(connection.SynoReportHome + file.Path.Substring(1))
+                                                : RemoveFileCommand(connection.SynoReportHome + file.Path);
         }
-        internal void RemoveFile(SynoReportViaSSH connection, ConsoleFileInfo file, ConsoleCommandMode mode, SshClient session = null)
+        internal void RemoveFile(SshClient session, SynoReportViaSSH connection, ConsoleFileInfo file, ConsoleCommandMode mode)
         {
-            RunCommand(connection, RemoveFileCommand(connection, file), mode, session);
+            SudoSession.RunCommand(session, RemoveFileCommand(connection, file), mode, () => connection.Password);
         }
 
-        internal string RunCommand(SynoReportViaSSH connection, string command, ConsoleCommandMode mode = ConsoleCommandMode.Directly, SshClient session = null)
-        {
-
-            switch (mode)
-            {
-                case ConsoleCommandMode.Sudo:
-                    return session.RunCommand(string.Format(sudo, command)).Result;
-                case ConsoleCommandMode.InteractiveSudo:
-                    ExperimentalSudo(connection, command);
-                    return string.Empty;
-                default:
-                    return session.RunCommand(command).Result;
-            }
-        }
-        private void ExperimentalSudo(SynoReportViaSSH session, string command)
-        {
-            try
-            {
-                using (SshClient sshClient = new SshClient(session.ConnectionInfo))
-                {
-
-                    sshClient.Connect();
-                    IDictionary<TerminalModes, uint> termkvp = new Dictionary<TerminalModes, uint>
-                {
-                    { TerminalModes.ECHO, 53 }
-                };
-
-                    ShellStream shellStream = sshClient.CreateShellStream("xterm", 80, 24, 800, 600, 1024, termkvp);
-
-
-                    //Get logged in
-                    string rep = shellStream.Expect(new Regex(@"[$>]")); //expect user prompt
-                                                                         //this.writeOutput(results, rep);
-                                                                         //
-                                                                         //send command
-                    shellStream.WriteLine("sudo " + command);
-                    rep = shellStream.Expect(new Regex(@"([$#>:])")); //expect password or user prompt
-                                                                      //this.writeOutput(results, rep);
-
-                    //check to send password
-                    if (rep.Contains(":"))
-                    {
-                        //send password
-                        shellStream.WriteLine(session.Password);
-                        rep = shellStream.Expect(new Regex(@"[$#>]"), new TimeSpan(0, 0, 10)); //expect user or root prompt
-                                                                                               //this.writeOutput(results, rep);
-                        if (rep == null)
-                        {
-                            System.Diagnostics.Debug.WriteLine("sudo action failed?");
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("{0}\r\n{1}", command, rep);
-                        }
-                    }
-
-                    sshClient.Disconnect();
-                }
-            }//try to open connection
-            catch (Exception ex)
-            {
-                System.Console.WriteLine(ex.ToString());
-                throw;
-            }
-
-        }
     }
 }

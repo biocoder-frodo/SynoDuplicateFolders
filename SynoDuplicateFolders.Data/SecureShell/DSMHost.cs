@@ -1,16 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
-using SynoDuplicateFolders.Configuration;
+﻿using SynoDuplicateFolders.Configuration;
 using SynoDuplicateFolders.Data.Core;
-using System.Text;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
-    public sealed class DSMHost : ConfigurationElement, IElementProvider, IKeepDSMFiles
+    public sealed class DSMHost : ConfigurationElement, IElementProvider, IHostSpecificSettings
     {
-
-
         public byte[] FingerPrint
         {
             get
@@ -30,11 +28,11 @@ namespace SynoDuplicateFolders.Data.SecureShell
             }
             set
             {
-                Fp = Convert.ToBase64String(value); 
+                Fp = Convert.ToBase64String(value);
             }
         }
 
-        [ConfigurationProperty("fingerprint", IsRequired = false, DefaultValue ="")]
+        [ConfigurationProperty("fingerprint", IsRequired = false, DefaultValue = "")]
         private string Fp
         {
             get
@@ -232,6 +230,28 @@ namespace SynoDuplicateFolders.Data.SecureShell
             }
         }
 
+        public IReadOnlyList<string> Paths
+        {
+            get
+            {
+                return FilterDuplicates.Split('\t').ToList().Where(s => string.IsNullOrWhiteSpace(s) == false).ToList();
+            }
+
+        }
+        [ConfigurationProperty("dsmdupesfilter", IsRequired = false, DefaultValue = "")]
+        public string FilterDuplicates
+        {
+            get
+            {
+                System.Diagnostics.Debug.WriteLine($"GET dsmdupesfilter={this["dsmdupesfilter"] as string}");
+                return this["dsmdupesfilter"] as string;
+            }
+            set
+            {
+                System.Diagnostics.Debug.WriteLine($"SET dsmdupesfilter={value}");
+                this["dsmdupesfilter"] = value;
+            }
+        }
         object IElementProvider.GetElementKey()
         {
             return Host;

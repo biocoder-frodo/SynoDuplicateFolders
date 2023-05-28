@@ -43,7 +43,7 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.treeView1 = new System.Windows.Forms.TreeView();
+            this.KnownHosts = new System.Windows.Forms.TreeView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.volumeHistoricChart1 = new SynoDuplicateFolders.Controls.VolumeHistoricChart();
@@ -191,7 +191,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.treeView1);
+            this.splitContainer1.Panel1.Controls.Add(this.KnownHosts);
             // 
             // splitContainer1.Panel2
             // 
@@ -200,19 +200,19 @@
             this.splitContainer1.SplitterDistance = 119;
             this.splitContainer1.TabIndex = 1;
             // 
-            // treeView1
+            // KnownHosts
             // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
+            this.KnownHosts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.KnownHosts.Location = new System.Drawing.Point(0, 0);
+            this.KnownHosts.Name = "KnownHosts";
             treeNode1.Name = "Node0";
             treeNode1.Text = "NAS";
-            this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            this.KnownHosts.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1});
-            this.treeView1.ShowNodeToolTips = true;
-            this.treeView1.Size = new System.Drawing.Size(119, 682);
-            this.treeView1.TabIndex = 0;
-            this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
+            this.KnownHosts.ShowNodeToolTips = true;
+            this.KnownHosts.Size = new System.Drawing.Size(119, 682);
+            this.KnownHosts.TabIndex = 0;
+            this.KnownHosts.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.KnownHosts_NodeMouseClick);
             // 
             // tabControl1
             // 
@@ -262,6 +262,7 @@
             // duplicateCandidatesView1
             // 
             this.duplicateCandidatesView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.duplicateCandidatesView1.ExclusionSource = null;
             this.duplicateCandidatesView1.HostName = null;
             this.duplicateCandidatesView1.Location = new System.Drawing.Point(3, 3);
             this.duplicateCandidatesView1.MaximumComparable = 3;
@@ -476,7 +477,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolsStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TreeView treeView1;
+        private System.Windows.Forms.TreeView KnownHosts;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
