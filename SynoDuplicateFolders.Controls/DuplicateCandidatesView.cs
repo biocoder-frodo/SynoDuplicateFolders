@@ -1,13 +1,12 @@
 ﻿using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Extensions;
-using System.Collections.Generic;
-using System.Windows.Forms;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.ComponentModel;
-using SynoDuplicateFolders.Data.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace SynoDuplicateFolders.Controls
 {
@@ -84,7 +83,11 @@ namespace SynoDuplicateFolders.Controls
         private void ExclusionSource_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (exclusionSource.Paths.Any())
-                System.Diagnostics.Debug.WriteLine(exclusionSource.Paths.First());
+            {
+                System.Diagnostics.Debug.WriteLine("Duplicate exclusions:");
+                foreach (var path in exclusionSource.Paths)
+                    System.Diagnostics.Debug.WriteLine(path);
+            }
             else
                 System.Diagnostics.Debug.WriteLine("No duplicate exclusions.");
         }
@@ -95,7 +98,7 @@ namespace SynoDuplicateFolders.Controls
             {
                 System.Diagnostics.Debug.WriteLine($" filtering ...");
                 src = value;
-                src.Filter = (fi) => exclusionSource?.Paths.Any(f => f.StartsWith(fi.FullPath.Substring(1))) == false;
+                src.Filter = dfi => dfi.Any(f => exclusionSource.Paths.Any(p => p.StartsWith(f.FullPath.Substring(1)))) == false;
                 Candidates.Nodes.Clear();
                 Files.Items.Clear();
                 Where.Nodes.Clear();

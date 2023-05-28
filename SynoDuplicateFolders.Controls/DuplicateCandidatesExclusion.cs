@@ -1,21 +1,21 @@
-﻿using SynoDuplicateFolders.Data.Core;
+﻿using SynoDuplicateFolders.Configuration;
+using SynoDuplicateFolders.Data.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 
 namespace SynoDuplicateFolders.Controls
 {
-    public interface IDuplicateExclusionSource : IDuplicateFileInfoExclusion, INotifyPropertyChanged
-    { }
-    public class DuplicateCandidatesExclusion<T> : IDuplicateExclusionSource where T :class
+    public class DuplicateCandidatesExclusion<T> : IDuplicateExclusionSource where T : ConfigurationElement, IElementProvider, IHostSpecificSettings
     {
         private readonly List<string> exclusions = new List<string>();
         private readonly Func<T, string> getter;
         private readonly Action<T, string> setter;
         private readonly T instance;
         private string cached;
-        
+
         public DuplicateCandidatesExclusion(T instance, Func<T, string> getter, Action<T, string> setter)
         {
             this.getter = getter;
@@ -24,8 +24,8 @@ namespace SynoDuplicateFolders.Controls
             cached = getter(instance);
             foreach (var path in cached.Split('\t'))
             {
-                if(string.IsNullOrWhiteSpace(path) == false)
-                exclusions.Add(path);
+                if (string.IsNullOrWhiteSpace(path) == false)
+                    exclusions.Add(path);
             }
         }
         public IReadOnlyList<string> Paths => exclusions;
@@ -63,12 +63,12 @@ namespace SynoDuplicateFolders.Controls
         public void RemoveAllExclusions()
         {
             exclusions.Clear();
-            UpdateBacking();          
+            UpdateBacking();
         }
 
         public void AttachDetach()
         {
-            UpdateBacking(); 
+            UpdateBacking();
         }
     }
 }

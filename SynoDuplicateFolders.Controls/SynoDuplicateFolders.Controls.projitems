@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)GridControls.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IChartConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IChartLegend.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IDuplicateExclusionSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IRectangleLayout.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ITaggedColor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ItemHiddenEventArgs.cs" />

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.Windows.Forms;
+﻿using SynoDuplicateFolders.Data.ComponentModel;
 using SynoDuplicateFolders.Data.Core;
-using SynoDuplicateFolders.Data.ComponentModel;
-using System.Threading.Tasks;
-
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace SynoDuplicateFolders.Data
@@ -53,7 +49,7 @@ namespace SynoDuplicateFolders.Data
                 return filtered ? _tree_filtered.Folders : _tree.Folders;
             }
         }
-        public Func<DuplicateFileInfo, bool> Filter
+        public Func<IReadOnlyList<DuplicateFileInfo>, bool> Filter
         {
             set
             {
@@ -181,7 +177,7 @@ namespace SynoDuplicateFolders.Data
             }
 
         }
-        private void BuildIndexes(DuplicatesAggregate<string, long> bypath, DuplicatesAggregate<string, long> byname, DuplicatesFolder tree, Func<DuplicateFileInfo, bool> predicate = null)
+        private void BuildIndexes(DuplicatesAggregate<string, long> bypath, DuplicatesAggregate<string, long> byname, DuplicatesFolder tree, Func<IReadOnlyList<DuplicateFileInfo>, bool> predicate = null)
         {
             bypath.Clear();
             byname.Clear();
@@ -199,7 +195,7 @@ namespace SynoDuplicateFolders.Data
             {
                 foreach (long key in _dupes.Keys)
                 {
-                    if (predicate(_dupes[key].First()))
+                    if (predicate(_dupes[key]))
                     {
                         _dupes_filtered.Add(key, _dupes[key]);
 

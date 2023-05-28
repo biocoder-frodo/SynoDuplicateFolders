@@ -425,16 +425,16 @@ namespace SynoDuplicateFolders
             else if (e.ClickedItem == propertiesToolStripMenuItem)
             {
                 if (SelectHost(tag))
-                using (var srv = new HostConfiguration(selected, exclusion))
-                {
-
-                    srv.ShowDialog();
-                    if (srv.Canceled == false)
+                    using (var srv = new HostConfiguration(selected, exclusion))
                     {
-                        Profile.Save();
-                        Profile.Reload();
+
+                        srv.ShowDialog();
+                        if (srv.Canceled == false)
+                        {
+                            Profile.Save();
+                            Profile.Reload();
+                        }
                     }
-                }
             }
         }
 
