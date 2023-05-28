@@ -349,7 +349,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SynoDuplicateFolders"
         "ProductCode" = "8:{59A68A68-E97B-4EED-B6CA-3A95AFCB5FEE}"
-        "PackageCode" = "8:{61C4F552-B5BF-4F0E-BE62-013AE66F8835}"
+        "PackageCode" = "8:{F2E155EC-B679-4443-B218-17D1CD2883FB}"
         "UpgradeCode" = "8:{37906585-554A-4459-9070-35F18B139ECB}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -469,17 +469,17 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_02511A5F6293486798C379D0F08278F7"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_A7B21B932CA44C9585C43F51AED6B4EB"
             {
-            "Name" = "8:Storage Analyzer Client"
+            "Name" = "8:SynoReport Client"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_B765D08AF6434245BAE7D65C6800BC87"
+            "Target" = "8:_B6D4CACC22734620B786723BD45710B2"
             "Folder" = "8:_B765D08AF6434245BAE7D65C6800BC87"
-            "WorkingFolder" = "8:_B765D08AF6434245BAE7D65C6800BC87"
+            "WorkingFolder" = "8:_1974B70F3E474FDC9966802A41BB96A4"
             "Icon" = "8:"
             "Feature" = "8:"
             }
