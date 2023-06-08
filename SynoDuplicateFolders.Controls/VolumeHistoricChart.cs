@@ -7,6 +7,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using System.Linq;
 using SynoDuplicateFolders.Data.Core;
 using System.Drawing;
+using Extensions;
 
 namespace SynoDuplicateFolders.Controls
 {

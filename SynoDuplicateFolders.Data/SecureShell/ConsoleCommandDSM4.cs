@@ -4,24 +4,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
-    internal class ConsoleCommandDSM4 : BConsoleCommand
+    internal partial class ConsoleCommandDSM4 : BConsoleCommand
     {
-        public ConsoleCommandDSM4(Dictionary<string, string> version, string home)
-        {
-            _homepath = home;
-            _properties = version;
-        }
-        public override IDSMVersion GetVersionInfo()
-        {
-            return new DSMVersion4(_properties);
-        }
-        public override IDSMVersion GetVersionInfo(SshClient client)
-        {
-            return new DSMVersion4(GetVersionProperties(client));
-        }
-        public override List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, SynoReportViaSSH session, bool Disconnect = true)
+         public override List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, SynoReportViaSSH session, bool Disconnect = true)
         {
             List<ConsoleFileInfo> result = new List<ConsoleFileInfo>();
             var cmd2 = client.RunCommand("cd " + session.SynoReportHome + ";ls -lARe synoreport/");
@@ -57,7 +44,8 @@ namespace SynoDuplicateFolders.Data.SecureShell
 
         public override void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases)
         {
-            using (SshClient scr = new SshClient(session.Host, "root", session.Password))
+            var dsm = session as ISecureShellSession;
+            using (SshClient scr = new SshClient(dsm.Host.Host, "root", session.Password))
             {
                 scr.Connect();
 

@@ -1,6 +1,5 @@
-﻿using System;
-using SynoDuplicateFolders.Extensions;
-using SynoDuplicateFolders.Data.SecureShell;
+﻿using DiskStationManager.SecureShell;
+using System.Security.Cryptography;
 using static SynoDuplicateFolders.Properties.Settings;
 
 namespace SynoDuplicateFolders.Properties

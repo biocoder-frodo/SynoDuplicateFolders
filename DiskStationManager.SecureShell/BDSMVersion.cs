@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
     public abstract class BDSMVersion : IDSMVersion
     {

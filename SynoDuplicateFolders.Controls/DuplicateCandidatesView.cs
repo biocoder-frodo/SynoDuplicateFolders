@@ -1,4 +1,5 @@
-﻿using SynoDuplicateFolders.Data;
+﻿using Extensions;
+using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Extensions;
 using System;

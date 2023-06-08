@@ -1,10 +1,9 @@
-﻿using System.Configuration;
-using SynoDuplicateFolders.Configuration;
-using SynoDuplicateFolders.Controls;
-using SynoDuplicateFolders.Extensions;
+﻿using SynoDuplicateFolders.Controls;
+using Extensions;
+using System;
+using System.Configuration;
 using System.Drawing;
 using System.Linq;
-using System;
 
 namespace SynoDuplicateFolders.Properties
 {

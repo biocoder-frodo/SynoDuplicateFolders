@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
     interface IKeyboardInteractiveKeyPress
     {
@@ -29,6 +29,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
         private readonly ConnectionInfo _connectionInfo;
         private readonly Func<string> _password;
         private readonly Func<Form> _interactivePassword;
+
         public SudoSession(ConnectionInfo connectionInfo, Func<string> passwordGetter)
             : this(connectionInfo, ConsoleCommandMode.InteractiveSudo)
         {

@@ -1,4 +1,4 @@
-﻿using SynoDuplicateFolders.Configuration;
+﻿
 using SynoDuplicateFolders.Data.Core;
 using System;
 using System.Collections.Generic;

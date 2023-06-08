@@ -1,19 +1,19 @@
-﻿using SynoDuplicateFolders.Controls;
+﻿using DiskStationManager.SecureShell;
+using SynoDuplicateFolders.Controls;
 using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
-using SynoDuplicateFolders.Data.SecureShell;
-using SynoDuplicateFolders.Extensions;
 using SynoDuplicateFolders.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static SynoDuplicateFolders.Configuration.UserSectionHandler;
 using static SynoDuplicateFolders.Properties.CustomSettings;
 using static SynoDuplicateFolders.Properties.Settings;
+using static System.Configuration.UserSectionHandler;
 using static System.Environment;
 
 namespace SynoDuplicateFolders
@@ -222,7 +222,9 @@ namespace SynoDuplicateFolders
                     }
                 }
                 connection.HostKeyChange += Connection_HostKeyChange;
-                connection.RmExecutionMode = Default.RmExecutionMode;
+                //connection.RmExecutionMode = Default.RmExecutionMode;
+                
+                (connection.Session as DSMSession).GetPassword = () => connection.Password;
 
                 cache = connection;
 
@@ -265,8 +267,8 @@ namespace SynoDuplicateFolders
 
                 if (CacheUpdateCompleted != null)
                 {
-                    CacheUpdateCompleted.Invoke(string.Format("{0} ({1})", connection.Host, connection.Version));
-                    duplicateCandidatesView1.HostName = connection.Host;
+                    CacheUpdateCompleted.Invoke(string.Format("{0} ({1})", connection.HostName, connection.Version));
+                    duplicateCandidatesView1.HostName = connection.HostName;
                 }
 
                 if (_PassPhraseUpdate)

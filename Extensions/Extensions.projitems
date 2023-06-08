@@ -3,13 +3,18 @@
   <PropertyGroup>
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>670c0880-d4e3-4b24-b01f-10efbc8dab03</SharedGUID>
+    <SharedGUID>787dfd81-ce59-48e5-886f-7d7f5269f548</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>SynoDuplicateFolders.Extensions</Import_RootNamespace>
+    <Import_RootNamespace>Extensions</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BasicConfigurationElementMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FileSizeFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IElementProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NamedBasicConfigurationElementMap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PasswordExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UserSectionHandler.cs" />
   </ItemGroup>
 </Project>

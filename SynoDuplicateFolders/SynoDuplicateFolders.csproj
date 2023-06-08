@@ -136,11 +136,11 @@
       <Version>2020.0.2</Version>
     </PackageReference>
   </ItemGroup>
-  <Import Project="..\SynoDuplicateFolders.Configuration\SynoDuplicateFolders.Configuration.projitems" Label="Shared" />
   <Import Project="..\SynoDuplicateFolders.Controls\SynoDuplicateFolders.Controls.projitems" Label="Shared" />
   <Import Project="..\SynoDuplicateFolders.Data\SynoDuplicateFolders.Data.projitems" Label="Shared" />
   <Import Project="..\SynoDuplicateFolders.Data.Core\SynoDuplicateFolders.Data.Core.projitems" Label="Shared" />
-  <Import Project="..\SynoDuplicateFolders.Extensions\SynoDuplicateFolders.Extensions.projitems" Label="Shared" />
+  <Import Project="..\DiskStationManager.SecureShell\DiskStationManager.SecureShell.projitems" Label="Shared" />
+  <Import Project="..\Extensions\Extensions.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

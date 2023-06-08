@@ -1,60 +1,11 @@
 ﻿using Renci.SshNet;
-using Renci.SshNet.Common;
-using SynoDuplicateFolders.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
-    public abstract class BConsoleCommand : IConsoleCommand
+    public abstract partial class BConsoleCommand : IConsoleCommand
     {
-        internal string _homepath = null;
-        internal Dictionary<string, string> _properties = null;
-
-        private static string GetHomePath(SshClient client)
-        {
-            return client.RunCommand("readlink -f ~").Result.Split('\n')[0];
-        }
-        internal static IConsoleCommand GetDSMConsole(SshClient client)
-        {
-            string home = GetHomePath(client);
-            if (!home.EndsWith("/")) home += "/";
-            Dictionary<string, string> properties = GetVersionProperties(client);
-            IDSMVersion version = new DSMVersion4(properties);
-            if (version.MajorVersion >= 6)
-            {
-                return new ConsoleCommandDSM6(properties, home);
-            }
-            else
-            {
-                return new ConsoleCommandDSM4(properties, home);
-            }
-        }
-        internal string HomePath
-        {
-            get { return _homepath; }
-        }
-        internal static Dictionary<string, string> GetVersionProperties(SshClient client)
-        {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-
-            var cmd2 = client.RunCommand("cat /etc.defaults/VERSION");
-            string[] properties = cmd2.Result.Split('\n');
-            foreach (string p in properties)
-            {
-                if (p.Length > 0)
-                {
-                    string name = p.Substring(0, p.IndexOf("="));
-                    string value = p.Substring(p.IndexOf("=") + 1).Trim();
-
-                    result.Add(name, value.RemoveEnclosingCharacter("\""));
-                }
-            }
-            return result;
-        }
-        public abstract IDSMVersion GetVersionInfo();
-        public abstract IDSMVersion GetVersionInfo(SshClient client);
         public abstract List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, SynoReportViaSSH session, bool Disconnect = true);
         public abstract void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases);
 
@@ -63,16 +14,17 @@ namespace SynoDuplicateFolders.Data.SecureShell
         {
             return $"rm {path}";
         }
-        internal string RemoveFileCommand(SynoReportViaSSH connection, ConsoleFileInfo file)
+        internal string RemoveFileCommand(string rootPath, ConsoleFileInfo file)
         {
 
-            return connection.SynoReportHome.EndsWith("/") && file.Path.StartsWith("/")
-                                                ? RemoveFileCommand(connection.SynoReportHome + file.Path.Substring(1))
-                                                : RemoveFileCommand(connection.SynoReportHome + file.Path);
+            return rootPath.EndsWith("/") && file.Path.StartsWith("/")
+                                                ? RemoveFileCommand(rootPath + file.Path.Substring(1))
+                                                : RemoveFileCommand(rootPath + file.Path);
         }
         internal void RemoveFile(SshClient session, SynoReportViaSSH connection, ConsoleFileInfo file, ConsoleCommandMode mode)
         {
-            SudoSession.RunCommand(session, RemoveFileCommand(connection, file), mode, () => connection.Password);
+            var dsm = connection as ISecureShellSession;
+            SudoSession.RunCommand(session, RemoveFileCommand(connection.SynoReportHome, file), mode, dsm.GetPassword);
         }
 
     }

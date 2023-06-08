@@ -1,4 +1,4 @@
-﻿namespace SynoDuplicateFolders.Data.SecureShell
+﻿namespace DiskStationManager.SecureShell
 {
     public interface IDSMVersion
     {

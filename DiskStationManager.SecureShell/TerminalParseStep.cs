@@ -2,7 +2,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
     public delegate TerminalParseResult ExecuteStep(string message);
     public class TerminalParseStep

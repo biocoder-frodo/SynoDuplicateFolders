@@ -4,28 +4,12 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
-    internal class ConsoleCommandDSM6 : BConsoleCommand
+    internal partial class ConsoleCommandDSM6 : BConsoleCommand
     {
-        public ConsoleCommandDSM6(Dictionary<string, string> version, string home)
-        {
-            _homepath = home;
-            _properties = version;
-        }
-        public override IDSMVersion GetVersionInfo()
-        {
-            return new DSMVersion6(_properties);
-        }
-
-        public override IDSMVersion GetVersionInfo(SshClient client)
-        {
-            return new DSMVersion6(GetVersionProperties(client));
-        }
-
         public override List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, SynoReportViaSSH session, bool Disconnect = true)
         {
-
             List<ConsoleFileInfo> result = new List<ConsoleFileInfo>();
             var cmd2 = client.RunCommand("cd " + session.SynoReportHome + ";ls -latR --time-style=full-iso synoreport");
             string[] result2 = cmd2.Result.Split('\n');
@@ -70,50 +54,6 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 row++;
             }
             return result;
-
-        }
-
-        public void WriteFile(ConnectionInfo connectionInfo, string destinationPath, Action<StreamWriter> action)
-        {
-            using (var ms = new MemoryStream())
-            {
-                using (StreamWriter sw = new StreamWriter(ms))
-                {
-                    action(sw);
-                    sw.Flush();
-
-                    ms.Seek(0, SeekOrigin.Begin);
-
-                    using (ScpClient cp = new ScpClient(connectionInfo))
-                    {
-                        UploadFile(cp, ms, destinationPath);
-
-                    }
-                }
-            }
-        }
-        public void WriteFile(ScpClient scpClient, string destinationPath, Action<StreamWriter> action)
-        {
-            using (var ms = new MemoryStream())
-            {
-                using (StreamWriter sw = new StreamWriter(ms))
-                {
-                    action(sw);
-                    sw.Flush();
-
-                    ms.Seek(0, SeekOrigin.Begin);
-
-                    UploadFile(scpClient, ms, destinationPath);
-                }
-            }
-        }
-        public void UploadFile(ScpClient scpClient, Stream stream, string destinationPath)
-        {
-            bool reOpen = scpClient.IsConnected == false;
-            scpClient.RemotePathTransformation = RemotePathTransformation.None;
-            if (reOpen) scpClient.Connect();
-            scpClient.Upload(stream, destinationPath);
-            if (reOpen) scpClient.Disconnect();
         }
 
         public override void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases)
@@ -136,7 +76,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                             {
                                 folders.Add(file.Folder, file);
                             }
-                            sw.Write(base.RemoveFileCommand(session, file));
+                            sw.Write(base.RemoveFileCommand(session.SynoReportHome, file));
                             sw.Write("\n");
                         }
                     });

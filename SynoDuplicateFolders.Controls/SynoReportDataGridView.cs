@@ -1,7 +1,7 @@
 ﻿using System;
 using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
-using SynoDuplicateFolders.Extensions;
+using Extensions;
 using System.ComponentModel;
 using System.Windows.Forms;
 using static SynoDuplicateFolders.Controls.SortOrderManager;

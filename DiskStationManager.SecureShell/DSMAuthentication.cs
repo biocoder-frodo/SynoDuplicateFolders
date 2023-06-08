@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Renci.SshNet;
+using System;
 using System.Configuration;
-using SynoDuplicateFolders.Configuration;
-using SynoDuplicateFolders.Extensions;
-using Renci.SshNet;
-namespace SynoDuplicateFolders.Data.SecureShell
+using System.Security.Cryptography;
+
+namespace DiskStationManager.SecureShell
 {
     public enum DSMAuthenticationMethod
     {

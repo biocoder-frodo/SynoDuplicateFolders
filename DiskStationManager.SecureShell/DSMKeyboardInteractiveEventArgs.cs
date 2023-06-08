@@ -1,7 +1,7 @@
 ﻿using System;
 using Renci.SshNet.Common;
 
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
     public class DSMKeyboardInteractiveEventArgs: EventArgs
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using SynoDuplicateFolders.Data.Core;
-using SynoDuplicateFolders.Extensions;
+using Extensions;
 using System.Linq;
 namespace SynoDuplicateFolders.Data
 {

@@ -1,6 +1,6 @@
 ﻿using Renci.SshNet;
 using System;
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
     public enum TerminalParse
     {

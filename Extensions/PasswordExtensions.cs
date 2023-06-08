@@ -8,9 +8,9 @@ using System.Reflection;
 using System.Security;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
-using static SynoDuplicateFolders.Extensions.DpApiString;
+using static System.Security.Cryptography.DpApiString;
 
-namespace SynoDuplicateFolders.Extensions
+namespace System.Security.Cryptography
 {
     public class WrappedPassword<T>
         where T : class

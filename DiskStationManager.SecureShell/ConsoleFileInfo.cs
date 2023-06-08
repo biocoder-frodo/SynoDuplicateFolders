@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SynoDuplicateFolders.Data
+namespace DiskStationManager.SecureShell
 {
     public class ConsoleFileInfo
     {

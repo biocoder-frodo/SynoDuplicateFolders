@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using SynoDuplicateFolders.Configuration;
+﻿using System.Configuration;
 
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
     public sealed class DSMProxy : ConfigurationElement, IElementProvider, IProxySettings
     {

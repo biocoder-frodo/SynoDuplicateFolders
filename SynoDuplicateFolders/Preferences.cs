@@ -1,14 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using SynoDuplicateFolders.Properties;
+﻿using DiskStationManager.SecureShell;
 using SynoDuplicateFolders.Controls;
-using SynoDuplicateFolders.Extensions;
-using SynoDuplicateFolders.Data.SecureShell;
-using static System.Environment;
-using static SynoDuplicateFolders.Properties.Settings;
+using SynoDuplicateFolders.Properties;
+using System;
+using System.IO;
+using System.Windows.Forms;
 using static SynoDuplicateFolders.Properties.CustomSettings;
+using static SynoDuplicateFolders.Properties.Settings;
+using static System.Environment;
+
 namespace SynoDuplicateFolders
 {
     public partial class Preferences : Form

@@ -1,9 +1,8 @@
 ﻿using System.Drawing;
 using System.Configuration;
-using SynoDuplicateFolders.Configuration;
 using System.Collections.Generic;
 using SynoDuplicateFolders.Controls;
-using SynoDuplicateFolders.Data.SecureShell;
+using DiskStationManager.SecureShell;
 using System;
 
 namespace SynoDuplicateFolders.Properties

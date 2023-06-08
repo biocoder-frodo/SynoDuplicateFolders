@@ -884,7 +884,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B6D4CACC22734620B786723BD45710B2"
             {
-            "SourcePath" = "8:..\\SynoDuplicateFolders\\obj\\x86\\Release\\SynoDuplicateFolders.exe"
+            "SourcePath" = "8:..\\SynoDuplicateFolders\\obj\\x86\\Debug\\SynoDuplicateFolders.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1974B70F3E474FDC9966802A41BB96A4"

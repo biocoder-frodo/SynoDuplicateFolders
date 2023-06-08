@@ -1,11 +1,10 @@
-﻿using System;
-using System.Configuration;
-using SynoDuplicateFolders.Configuration;
-using SynoDuplicateFolders.Extensions;
-using Renci.SshNet;
+﻿using Renci.SshNet;
 using Renci.SshNet.Common;
+using System;
+using System.Configuration;
+using System.Security.Cryptography;
 
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
     public sealed class DSMAuthenticationKeyFile : ConfigurationElement, IElementProvider
     {
