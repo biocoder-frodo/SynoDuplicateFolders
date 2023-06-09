@@ -58,30 +58,28 @@ namespace DiskStationManager.SecureShell
 
         public override void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases)
         {
-
+            var dsm = session.Session;
             string scriptName = "./SynoDuplicateFoldersRemoveSADB.sh";
             if (dsm_databases.Count > 0)
-            {
+            {                
                 string script = $"{this.HomePath}{scriptName}";
 
-                WriteFile(session.ConnectionInfo, script,
-                    (sw) =>
+                dsm.UploadFile(script, (sw) =>
+                {
+                    var folders = new Dictionary<string, ConsoleFileInfo>();
+                    sw.Write("#!/bin/bash\n");
+                    foreach (var file in dsm_databases)
                     {
-
-                        var folders = new Dictionary<string, ConsoleFileInfo>();
-                        sw.Write("#!/bin/bash\n");
-                        foreach (var file in dsm_databases)
+                        if (folders.ContainsKey(file.Folder) == false)
                         {
-                            if (folders.ContainsKey(file.Folder) == false)
-                            {
-                                folders.Add(file.Folder, file);
-                            }
-                            sw.Write(base.RemoveFileCommand(session.SynoReportHome, file));
-                            sw.Write("\n");
+                            folders.Add(file.Folder, file);
                         }
-                    });
+                        sw.Write(base.RemoveFileCommand(session.SynoReportHome, file));
+                        sw.Write("\n");
+                    }
+                });
 
-                var runSession = new SudoSession(session.ConnectionInfo, () => session.Password);
+                var runSession = new SudoSession(dsm);
                 runSession.Run(new List<string>()
                     {
                         $"chmod +x {script}",

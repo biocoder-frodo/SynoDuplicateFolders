@@ -44,18 +44,19 @@ namespace DiskStationManager.SecureShell
 
         public override void RemoveFiles(SynoReportViaSSH session, IList<ConsoleFileInfo> dsm_databases)
         {
-            var dsm = session as ISecureShellSession;
-            using (SshClient scr = new SshClient(dsm.Host.Host, "root", session.Password))
-            {
-                scr.Connect();
+            var dsm = session.Session;
+            dsm.ClientExecuteAsRoot(sc =>
+            { 
+                sc.Connect();
 
                 foreach (var db in dsm_databases)
                 {
-                    RemoveFile(scr, session, db, ConsoleCommandMode.Directly);
+                    RemoveFile(sc, session, db, ConsoleCommandMode.Directly);
                 }
 
-                scr.Disconnect();
-            }
+                sc.Disconnect();
+           
+            });
         }
     }
 

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SynoDuplicateFolders
+namespace DiskStationManager.SecureShell
 {
     public partial class PassPhrase : Form
     {

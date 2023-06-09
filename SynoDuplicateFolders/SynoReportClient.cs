@@ -4,7 +4,6 @@ using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Properties;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -28,7 +27,6 @@ namespace SynoDuplicateFolders
 
         private DSMHost selected;
         private DuplicateCandidatesExclusion<DSMHost> exclusion;
-        private bool _PassPhraseUpdate = false;
 
         public SynoReportClient()
         {
@@ -208,23 +206,23 @@ namespace SynoDuplicateFolders
 
                 if (Default.UseProxy && selected.Proxy == null)
                 {
-                    connection = new SynoReportViaSSH(selected, GetPassPhrase, GetInteractiveMethod, new DefaultProxy());
+                    connection = new SynoReportViaSSH(selected, new DefaultProxy());
                 }
                 else
                 {
                     if (selected.Proxy != null)
                     {
-                        connection = new SynoReportViaSSH(selected, GetPassPhrase, GetInteractiveMethod, selected.Proxy);
+                        connection = new SynoReportViaSSH(selected, selected.Proxy);
                     }
                     else
                     {
-                        connection = new SynoReportViaSSH(selected, GetPassPhrase, GetInteractiveMethod);
+                        connection = new SynoReportViaSSH(selected);
                     }
                 }
+                
                 connection.HostKeyChange += Connection_HostKeyChange;
                 //connection.RmExecutionMode = Default.RmExecutionMode;
-                
-                (connection.Session as DSMSession).GetPassword = () => connection.Password;
+              
 
                 cache = connection;
 
@@ -267,11 +265,11 @@ namespace SynoDuplicateFolders
 
                 if (CacheUpdateCompleted != null)
                 {
-                    CacheUpdateCompleted.Invoke(string.Format("{0} ({1})", connection.HostName, connection.Version));
+                    CacheUpdateCompleted.Invoke(string.Format("{0} ({1})", connection.HostName, connection.Session.Version));
                     duplicateCandidatesView1.HostName = connection.HostName;
                 }
 
-                if (_PassPhraseUpdate)
+                if (selected.StorePassPhrases)
                 {
                     Profile.Save();
                 }
@@ -322,31 +320,7 @@ namespace SynoDuplicateFolders
             Profile.Save();
         }
 
-        private string GetPassPhrase(string fileName)
-        {
-            string result;
-            using (PassPhrase dialog = new PassPhrase(fileName))
-            {
-                dialog.ShowDialog();
-                _PassPhraseUpdate = Default.StorePassPhrases;
-                result = dialog.Password;
-            }
-            return result;
-        }
-        private string GetInteractiveMethod(DSMKeyboardInteractiveEventArgs e)
-        {
-            List<string> banner = new List<string>();
-            banner.AddRange(e.Banner.Split('\n'));
-            banner.AddRange(e.Instruction.Split('\n'));
 
-            string result;
-            using (PassPhrase dialog = new PassPhrase(e.Username, banner.ToArray(), e.Id + ": " + e.Request))
-            {
-                dialog.ShowDialog();
-                result = dialog.Password;
-            }
-            return result;
-        }
         private void Cache_StatusUpdate(object sender, SynoReportCacheDownloadEventArgs e)
         {
             Invoke(new Action<SynoReportCacheDownloadEventArgs>(ProgressUpdate), e);

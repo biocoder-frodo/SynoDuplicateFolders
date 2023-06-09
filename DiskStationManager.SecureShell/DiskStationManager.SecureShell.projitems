@@ -26,8 +26,19 @@
     <Compile Include="$(MSBuildThisFileDirectory)IProxySettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISecureShellSession.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DSMSession.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PassPhrase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)PassPhrase.Designer.cs">
+      <DependentUpon>PassPhrase.cs</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)SudoSession.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TerminalParseResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TerminalParseStep.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)PassPhrase.resx">
+      <DependentUpon>PassPhrase.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

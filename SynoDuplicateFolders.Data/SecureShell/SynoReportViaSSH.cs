@@ -11,38 +11,27 @@ using System.Windows.Forms;
 
 namespace DiskStationManager.SecureShell
 {
-    public sealed class SynoReportViaSSH : BSynoReportCache, IDisposable, ISecureShellSession
+    public sealed class SynoReportViaSSH : BSynoReportCache, IDisposable
     {
         private readonly DSMSession _session;
         public ISecureShellSession Session => _session;
         private bool disposedValue;
 
         public event EventHandler HostKeyChange;
-        public void OnHostKeyChange(object sender, EventArgs e)
+
+        public SynoReportViaSSH(DSMHost host, IProxySettings proxy = null)
+        {
+            _session = new DSMSession(host, session_HostKeyChange, proxy);
+        }
+
+        private void session_HostKeyChange(object sender, EventArgs e)
         {
             HostKeyChange?.Invoke(sender, e);
-        }
-        public SynoReportViaSSH(DSMHost host, Func<string, string> getPassPhraseMethod, Func<DSMKeyboardInteractiveEventArgs, string> getInteractiveMethod, IProxySettings proxy = null)
-        {
-            _session = new DSMSession(host, getPassPhraseMethod, getInteractiveMethod, proxy);
         }
 
         // public ConsoleCommandMode RmExecutionMode { get; set; }
 
-        internal string Password
-        {
-            get
-            {
-                foreach (DSMAuthentication a in _session.Host.AuthenticationMethods)
-                {
-                    if (a.Method == DSMAuthenticationMethod.Password)
-                    {
-                        return a.Password;
-                    }
-                }
-                return string.Empty;
-            }
-        }
+
         public string SynoReportHome
         {
             get
@@ -64,8 +53,6 @@ namespace DiskStationManager.SecureShell
             get { return _session.ConnectionInfo.Host; }
         }
 
-        internal ConnectionInfo ConnectionInfo { get { return _session.ConnectionInfo; } }
-
         private void RaiseDownloadEvent(CacheStatus status)
         {
             OnDownloadUpdate(this, new SynoReportCacheDownloadEventArgs(status));
@@ -79,86 +66,6 @@ namespace DiskStationManager.SecureShell
             OnDownloadUpdate(this, new SynoReportCacheDownloadEventArgs(status, totalFiles, file));
         }
 
-
-
-        ConnectionInfo ISecureShellSession.ConnectionInfo => throw new NotImplementedException();
-
-        public DSMHost Host => throw new NotImplementedException();
-
-        public Func<string, string> PassPhraseMethod => throw new NotImplementedException();
-
-        public Func<DSMKeyboardInteractiveEventArgs, string> InteractiveMethod => throw new NotImplementedException();
-
-        public IProxySettings Proxy => throw new NotImplementedException();
-
-        public string Version => _session.Version;
-
-        public Func<string> GetPassword => throw new NotImplementedException();
-
-        private string KeyFingerPrint(HostKeyEventArgs e)
-        {
-            return e.HostKeyName + " " + e.KeyLength + " " + e.FingerPrint.ToString(':').ToLower();
-        }
-        private string GetHostAddress(string nameOrAddress, out bool success)
-        {
-            success = false;
-            string address = string.Empty;
-            try
-            {
-                var iplist = Dns.GetHostAddresses(nameOrAddress);
-
-                foreach (var ip in iplist)
-                {
-                    if (string.IsNullOrEmpty(address))
-                    {
-                        address = ip.ToString();
-                    }
-                    else
-                    {
-                        address += ";" + ip.ToString();
-                    }
-                }
-                success = true;
-
-            }
-            catch (Exception)
-            {
-                address = "0.0.0.0";
-            }
-            return address;
-        }
-        private void client_HostKeyReceived(object sender, HostKeyEventArgs e)
-        {
-            bool nslookup;
-            DialogResult trust = DialogResult.Yes; e.CanTrust = false; //we clicked yes if the fingerprint matches
-            var host = _session.Host;
-            if (host.FingerPrint.Length.Equals(0) || !host.FingerPrint.SequenceEqual(e.FingerPrint))
-            {
-
-                if (host.FingerPrint.Length.Equals(0))
-                {
-                    trust = MessageBox.Show(
-                        string.Format("Do you trust the new connection with host {0}[{1}]\r\n\r\nKey fingerprint: {2}\r\n\r\nServer version: {3}",
-                        HostName, GetHostAddress(host.Host, out nslookup), KeyFingerPrint(e), _session.ConnectionInfo.ServerVersion)
-                        , "New host key for " + host.Host, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-                }
-                else
-                {
-                    trust = MessageBox.Show(
-                        string.Format("Do you trust the changed connection with host {0}[{1}]\r\n\r\nKey fingerprint: {2}\r\n\r\nServer version: {3}",
-                        HostName, GetHostAddress(host.Host, out nslookup), KeyFingerPrint(e), _session.ConnectionInfo.ServerVersion)
-                        , "The host key has changed for " + host.Host, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-
-                }
-                if (trust == DialogResult.Yes)
-                {
-                    host.FingerPrint = e.FingerPrint;
-                    OnHostKeyChange(this, new EventArgs());
-                }
-            }
-            e.CanTrust = trust.Equals(DialogResult.Yes);
-        }
-
         private IConsoleCommand GetConsole(SshClient client)
         {
             RaiseDownloadEvent(CacheStatus.FetchingVersionInfo);
@@ -170,40 +77,7 @@ namespace DiskStationManager.SecureShell
 
             return console;
         }
-        private bool DownloadFile(ScpClient client, string source, FileInfo localfile)
-        {
-            try
-            {
-                if (localfile.Exists == false)
-                {
-                    client.Download(source, localfile);
-                }
-                else
-                {
 
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-
-        }
-        //private void AuthorizationBannerAction(object sender, AuthenticationBannerEventArgs e)
-        //{
-        //    _banner = e;
-        //}
-        //private void AuthenticationPromptAction(object sender, AuthenticationPromptEventArgs e)
-        //{
-        //    Console.WriteLine("AuthenticationPromptAction");
-
-        //    foreach (var p in e.Prompts)
-        //    {
-        //        p.Response = _interactiveMethod(new DSMKeyboardInteractiveEventArgs(_banner, e, p));
-        //    }
-        //}
         public override void DownloadCSVFiles()
         {
             try
@@ -213,10 +87,8 @@ namespace DiskStationManager.SecureShell
 
                 _files.Clear();
 
-                using (SshClient sc = new SshClient(_session.ConnectionInfo))
+                _session.ClientExecute((sc) =>
                 {
-                    sc.HostKeyReceived += client_HostKeyReceived;
-
                     RaiseDownloadEvent(CacheStatus.FetchingDirectoryInfo);
 
                     sc.Connect();
@@ -253,11 +125,10 @@ namespace DiskStationManager.SecureShell
                             }
                         }
                     }
-                    sc.HostKeyReceived -= client_HostKeyReceived;
-                }
-                using (ScpClient cp = new ScpClient(_session.ConnectionInfo))
-                {
-                    cp.HostKeyReceived += client_HostKeyReceived;
+                });
+
+                _session.ClientExecute(cp =>
+                { 
                     cp.Connect();
 
                     RaiseDownloadEvent(CacheStatus.Downloading, _files.Count, 0);
@@ -272,7 +143,7 @@ namespace DiskStationManager.SecureShell
                             while (result == false && attempts < 2)
                             {
                                 attempts++;
-                                result = DownloadFile(cp, SynoReportHome + src.Source, src.LocalFile);
+                                result = _session.DownloadFile(cp, SynoReportHome + src.Source, src.LocalFile);
                             }
 
                             if (result == false)
@@ -286,8 +157,7 @@ namespace DiskStationManager.SecureShell
                     }
 
                     cp.Disconnect();
-                    cp.HostKeyReceived -= client_HostKeyReceived;
-                }
+                });
 
 
                 List<ConsoleFileInfo> removal = new List<ConsoleFileInfo>();

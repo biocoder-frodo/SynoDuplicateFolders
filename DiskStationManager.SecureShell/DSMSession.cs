@@ -1,12 +1,12 @@
-﻿using Renci.SshNet;
+﻿using Extensions;
+using Renci.SshNet;
 using Renci.SshNet.Common;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using Extensions;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Windows.Forms;
 
 namespace DiskStationManager.SecureShell
 {
@@ -18,29 +18,33 @@ namespace DiskStationManager.SecureShell
         private readonly ConnectionInfo _ci;
         private readonly IProxySettings _proxySettings;
         private IDSMVersion _version = null;
-        private Func<DSMKeyboardInteractiveEventArgs, string> _interactiveMethod = null;
+
+        private readonly EventHandler _hostKeyChange;
+
         private AuthenticationBannerEventArgs _banner;
         public void OnHostKeyChange(object sender, EventArgs e)
         {
             HostKeyChange?.Invoke(sender, e);
         }
-        public DSMSession(DSMHost host, Func<string, string> getPassPhraseMethod, Func<DSMKeyboardInteractiveEventArgs, string> getInteractiveMethod, IProxySettings proxy = null)
+        public DSMSession(DSMHost host, EventHandler hostKeyChange, IProxySettings proxy = null)
         {
             bool canceled = false;
+
+            if (hostKeyChange == null) throw new ArgumentNullException(nameof(hostKeyChange));
+            _hostKeyChange = hostKeyChange;
+            HostKeyChange += _hostKeyChange;
 
             //RmExecutionMode = ConsoleCommandMode.InteractiveSudo;
 
             _host = host ?? throw new ArgumentNullException(nameof(host));
-            if (getPassPhraseMethod == null) throw new ArgumentNullException(nameof(getPassPhraseMethod));
-            if (getInteractiveMethod == null) throw new ArgumentNullException(nameof(getInteractiveMethod));
-            _interactiveMethod = getInteractiveMethod;
+
             _proxySettings = proxy;
 
             int i = 0;
             AuthenticationMethod[] methods = new AuthenticationMethod[host.AuthenticationSection.Count];
             foreach (var m in host.AuthenticationMethods)
             {
-                methods[i++] = m.getAuthenticationMethod(host.UserName, host.StorePassPhrases, getPassPhraseMethod, getInteractiveMethod, out canceled);
+                methods[i++] = m.getAuthenticationMethod(host.UserName, host.StorePassPhrases, GetPassPhrase, GetInteractiveMethod, out canceled);
             }
             if (!canceled)
             {
@@ -68,6 +72,20 @@ namespace DiskStationManager.SecureShell
                         kb.AuthenticationPrompt += AuthenticationPromptAction;
                     }
                 }
+            }
+        }
+        internal string Password
+        {
+            get
+            {
+                foreach (DSMAuthentication a in _host.AuthenticationMethods)
+                {
+                    if (a.Method == DSMAuthenticationMethod.Password)
+                    {
+                        return a.Password;
+                    }
+                }
+                return string.Empty;
             }
         }
         private string KeyFingerPrint(HostKeyEventArgs e)
@@ -128,11 +146,39 @@ namespace DiskStationManager.SecureShell
                 if (trust == DialogResult.Yes)
                 {
                     host.FingerPrint = e.FingerPrint;
-                   
+
                     OnHostKeyChange(this, new EventArgs());
                 }
             }
             e.CanTrust = trust.Equals(DialogResult.Yes);
+        }
+        [Obsolete("This method is only present to support DSM versions below 6.x")]
+        public void ClientExecuteAsRoot(Action<SshClient> action)
+        {
+            using (SshClient sc = new SshClient(_host.Host, "root", GetPassword()))
+            {
+                sc.HostKeyReceived += client_HostKeyReceived;
+                action(sc);
+                sc.HostKeyReceived -= client_HostKeyReceived;
+            }
+        }
+        public void ClientExecute(Action<SshClient> action)
+        {
+            using (SshClient sc = new SshClient(_ci))
+            {
+                sc.HostKeyReceived += client_HostKeyReceived;
+                action(sc);
+                sc.HostKeyReceived -= client_HostKeyReceived;
+            }
+        }
+        public void ClientExecute(Action<ScpClient> action)
+        {
+            using (ScpClient sc = new ScpClient(_ci))
+            {
+                sc.HostKeyReceived += client_HostKeyReceived;
+                action(sc);
+                sc.HostKeyReceived -= client_HostKeyReceived;
+            }
         }
 
         public string Version
@@ -141,12 +187,7 @@ namespace DiskStationManager.SecureShell
             {
                 if (_version == null)
                 {
-                    using (SshClient sc = new SshClient(_ci))
-                    {
-                        sc.HostKeyReceived += client_HostKeyReceived;
-                        GetConsole(sc);
-                        sc.HostKeyReceived -= client_HostKeyReceived;
-                    }
+                    ClientExecute(sc => GetConsole(sc));
                 }
                 return _version.Version;
             }
@@ -157,7 +198,7 @@ namespace DiskStationManager.SecureShell
 
             bool briefly = client.IsConnected == false;
 
-           // RaiseDownloadEvent(CacheStatus.FetchingVersionInfo);
+            // RaiseDownloadEvent(CacheStatus.FetchingVersionInfo);
 
             if (briefly) client.Connect();
 
@@ -167,7 +208,7 @@ namespace DiskStationManager.SecureShell
 
             _version = console.GetVersionInfo();
 
-           // RaiseDownloadEvent(CacheStatus.FetchingVersionInfoCompleted, _version.Version);
+            // RaiseDownloadEvent(CacheStatus.FetchingVersionInfoCompleted, _version.Version);
 
             return console;
         }
@@ -175,9 +216,7 @@ namespace DiskStationManager.SecureShell
 
         public DSMHost Host => _host;
 
-     
 
-        public Func<DSMKeyboardInteractiveEventArgs, string> InteractiveMethod => _interactiveMethod;
 
         public IProxySettings Proxy => _proxySettings;
 
@@ -189,11 +228,11 @@ namespace DiskStationManager.SecureShell
         }
         private void AuthenticationPromptAction(object sender, AuthenticationPromptEventArgs e)
         {
-            Console.WriteLine("AuthenticationPromptAction");
+            System.Diagnostics.Debug.WriteLine("AuthenticationPromptAction");
 
             foreach (var p in e.Prompts)
             {
-                p.Response = _interactiveMethod(new DSMKeyboardInteractiveEventArgs(_banner, e, p));
+                p.Response = GetInteractiveMethod(new DSMKeyboardInteractiveEventArgs(_banner, e, p));
             }
         }
         #region IDisposable Support
@@ -215,6 +254,8 @@ namespace DiskStationManager.SecureShell
                             kb.AuthenticationPrompt -= AuthenticationPromptAction;
                         }
                     }
+
+                    HostKeyChange -= _hostKeyChange;
                 }
 
                 disposedValue = true;
@@ -227,5 +268,90 @@ namespace DiskStationManager.SecureShell
             Dispose(true);
         }
         #endregion
+
+        private string GetPassPhrase(string fileName)
+        {
+            string result;
+            using (PassPhrase dialog = new PassPhrase(fileName))
+            {
+                dialog.ShowDialog();
+                result = dialog.Password;
+            }
+            return result;
+        }
+        private string GetInteractiveMethod(DSMKeyboardInteractiveEventArgs e)
+        {
+            var banner = new List<string>();
+            banner.AddRange(e.Banner.Split('\n'));
+            banner.AddRange(e.Instruction.Split('\n'));
+
+            string result;
+            using (PassPhrase dialog = new PassPhrase(e.Username, banner.ToArray(), e.Id + ": " + e.Request))
+            {
+                dialog.ShowDialog();
+                result = dialog.Password;
+            }
+            return result;
+        }
+
+        public void UploadFile(string destinationPath, Action<StreamWriter> action)
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (StreamWriter sw = new StreamWriter(ms))
+                {
+                    action(sw);
+                    sw.Flush();
+
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    ClientExecute((cp) => UploadFile(cp, ms, destinationPath));
+                }
+            }
+        }
+        public void UploadFile(ScpClient scpClient, string destinationPath, Action<StreamWriter> action)
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (StreamWriter sw = new StreamWriter(ms))
+                {
+                    action(sw);
+                    sw.Flush();
+
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    UploadFile(scpClient, ms, destinationPath);
+                }
+            }
+        }
+        public void UploadFile(ScpClient scpClient, Stream stream, string destinationPath)
+        {
+            bool reOpen = scpClient.IsConnected == false;
+            scpClient.RemotePathTransformation = RemotePathTransformation.None;
+            if (reOpen) scpClient.Connect();
+            scpClient.Upload(stream, destinationPath);
+            if (reOpen) scpClient.Disconnect();
+        }
+        public bool DownloadFile(ScpClient client, string source, FileInfo localfile)
+        {
+            try
+            {
+                if (localfile.Exists == false)
+                {
+                    client.Download(source, localfile);
+                }
+                else
+                {
+
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return false;
+            }
+
+        }
     }
 }

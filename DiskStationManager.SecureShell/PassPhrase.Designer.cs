@@ -1,4 +1,4 @@
-﻿namespace SynoDuplicateFolders
+﻿namespace DiskStationManager.SecureShell
 {
     partial class PassPhrase
     {

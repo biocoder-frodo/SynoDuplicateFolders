@@ -52,6 +52,21 @@ namespace DiskStationManager.SecureShell
         }
         public abstract IDSMVersion GetVersionInfo();
         public abstract IDSMVersion GetVersionInfo(SshClient client);
+        internal string RemoveFileCommand(string path)
+        {
+            return $"rm {path}";
+        }
+        internal string RemoveFileCommand(string rootPath, ConsoleFileInfo file)
+        {
+
+            return rootPath.EndsWith("/") && file.Path.StartsWith("/")
+                                                ? RemoveFileCommand(rootPath + file.Path.Substring(1))
+                                                : RemoveFileCommand(rootPath + file.Path);
+        }
+        internal void RemoveFile(SshClient session, ISecureShellSession dsm, string rootPath, ConsoleFileInfo file, ConsoleCommandMode mode)
+        {
+            SudoSession.RunCommand(session, RemoveFileCommand(rootPath, file), mode, dsm.GetPassword);
+        }
 
     }
 }

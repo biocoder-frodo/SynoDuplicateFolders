@@ -72,12 +72,6 @@
     <Compile Include="HostConfiguration.Designer.cs">
       <DependentUpon>HostConfiguration.cs</DependentUpon>
     </Compile>
-    <Compile Include="PassPhrase.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PassPhrase.Designer.cs">
-      <DependentUpon>PassPhrase.cs</DependentUpon>
-    </Compile>
     <Compile Include="Preferences.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,9 +90,6 @@
     <Compile Include="Settings.cs" />
     <EmbeddedResource Include="HostConfiguration.resx">
       <DependentUpon>HostConfiguration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PassPhrase.resx">
-      <DependentUpon>PassPhrase.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SynoReportClient.resx">
       <DependentUpon>SynoReportClient.cs</DependentUpon>

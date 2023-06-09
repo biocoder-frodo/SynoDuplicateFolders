@@ -13,7 +13,7 @@ namespace DiskStationManager.SecureShell
     {
         event KeyPressEventHandler KeyPress;
     }
-    class SudoSession<F> : SudoSession where F : System.Windows.Forms.Form, IKeyboardInteractiveKeyPress, new()
+    class SudoSession<F> : SudoSession where F : Form, IKeyboardInteractiveKeyPress, new()
     {
         public SudoSession(ConnectionInfo connectionInfo) : base(connectionInfo, ()=>new F()) { }
     }
@@ -30,6 +30,9 @@ namespace DiskStationManager.SecureShell
         private readonly Func<string> _password;
         private readonly Func<Form> _interactivePassword;
 
+        public SudoSession(ISecureShellSession secureShell)
+            :this(secureShell.ConnectionInfo,secureShell.GetPassword)
+        { }
         public SudoSession(ConnectionInfo connectionInfo, Func<string> passwordGetter)
             : this(connectionInfo, ConsoleCommandMode.InteractiveSudo)
         {
@@ -59,7 +62,6 @@ namespace DiskStationManager.SecureShell
             using (SshClient scr = new SshClient(_connectionInfo))
             {
                 scr.Connect();
-
                 RunCommands(scr, commands, _mode, _password);
                 scr.Disconnect();
             }
