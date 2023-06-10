@@ -2,6 +2,7 @@
 using SynoDuplicateFolders.Controls;
 using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
+using SynoDuplicateFolders.Data.SecureShell;
 using SynoDuplicateFolders.Properties;
 using System;
 using System.ComponentModel;
@@ -265,8 +266,11 @@ namespace SynoDuplicateFolders
 
                 if (CacheUpdateCompleted != null)
                 {
-                    CacheUpdateCompleted.Invoke(string.Format("{0} ({1})", connection.HostName, connection.Session.Version));
-                    duplicateCandidatesView1.HostName = connection.HostName;
+                    var session = connection.Session;
+                    var connectedHost = session.ConnectionInfo.Host;
+
+                    CacheUpdateCompleted.Invoke($"{connectedHost} ({session.Version})");
+                    duplicateCandidatesView1.HostName = connectedHost;
                 }
 
                 if (selected.StorePassPhrases)

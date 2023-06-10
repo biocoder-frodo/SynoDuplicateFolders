@@ -1,14 +1,28 @@
 ﻿using Extensions;
 using Renci.SshNet;
+using System;
 using System.Collections.Generic;
 
 namespace DiskStationManager.SecureShell
 {
-    public abstract partial class BConsoleCommand : IConsoleCommand
+    public abstract class BConsoleCommand : IConsoleCommand
     {
         internal string _homepath = null;
         internal Dictionary<string, string> _properties = null;
+        private static readonly Random rng = new Random();
+        
+        public abstract List<ConsoleFileInfo> GetDirectoryContentsRecursive(SshClient client, string rootPath, string lsPath = ".", bool disconnect = true);
+        public abstract void RemoveFiles(ISecureShellSession dsm, string rootPath, IList<ConsoleFileInfo> files, string scriptName = null);
 
+
+        public static string GetTempPathName()
+        {
+            return GetTempId().ToString("x8");
+        }
+        private static long GetTempId()
+        {
+            return Convert.ToInt64(new decimal(long.MaxValue) * (rng.Next(int.MinValue, int.MaxValue) / new decimal(int.MaxValue)));
+        }
         private static string GetHomePath(SshClient client)
         {
             return client.RunCommand("readlink -f ~").Result.Split('\n')[0];
@@ -34,10 +48,10 @@ namespace DiskStationManager.SecureShell
         }
         internal static Dictionary<string, string> GetVersionProperties(SshClient client)
         {
-            Dictionary<string, string> result = new Dictionary<string, string>();
+            var result = new Dictionary<string, string>();
 
-            var cmd2 = client.RunCommand("cat /etc.defaults/VERSION");
-            string[] properties = cmd2.Result.Split('\n');
+            var cmd = client.RunCommand("cat /etc.defaults/VERSION");
+            var properties = cmd.Result.Split('\n');
             foreach (string p in properties)
             {
                 if (p.Length > 0)
@@ -67,6 +81,5 @@ namespace DiskStationManager.SecureShell
         {
             SudoSession.RunCommand(session, RemoveFileCommand(rootPath, file), mode, dsm.GetPassword);
         }
-
     }
 }

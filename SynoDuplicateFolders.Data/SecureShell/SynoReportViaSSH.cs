@@ -1,27 +1,25 @@
-﻿using Extensions;
+﻿using DiskStationManager.SecureShell;
 using Renci.SshNet;
 using Renci.SshNet.Common;
-using SynoDuplicateFolders.Data;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Windows.Forms;
 
-namespace DiskStationManager.SecureShell
+namespace SynoDuplicateFolders.Data.SecureShell
 {
     public sealed class SynoReportViaSSH : BSynoReportCache, IDisposable
     {
-        private readonly DSMSession _session;
+        private readonly SynoReportSession _session;
+        
         public ISecureShellSession Session => _session;
+        
         private bool disposedValue;
 
         public event EventHandler HostKeyChange;
 
         public SynoReportViaSSH(DSMHost host, IProxySettings proxy = null)
         {
-            _session = new DSMSession(host, session_HostKeyChange, proxy);
+            _session = new SynoReportSession(host, session_HostKeyChange, proxy);
         }
 
         private void session_HostKeyChange(object sender, EventArgs e)
@@ -48,10 +46,6 @@ namespace DiskStationManager.SecureShell
                 return result;
             }
         }
-        public string HostName
-        {
-            get { return _session.ConnectionInfo.Host; }
-        }
 
         private void RaiseDownloadEvent(CacheStatus status)
         {
@@ -66,7 +60,7 @@ namespace DiskStationManager.SecureShell
             OnDownloadUpdate(this, new SynoReportCacheDownloadEventArgs(status, totalFiles, file));
         }
 
-        private IConsoleCommand GetConsole(SshClient client)
+        private ISynoReportCommand GetConsole(SshClient client)
         {
             RaiseDownloadEvent(CacheStatus.FetchingVersionInfo);
 
@@ -82,8 +76,8 @@ namespace DiskStationManager.SecureShell
         {
             try
             {
-                SortedDictionary<DateTime, List<ConsoleFileInfo>> dsm_databases = new SortedDictionary<DateTime, List<ConsoleFileInfo>>();
-                IConsoleCommand console = null;
+                var dsm_databases = new SortedDictionary<DateTime, List<ConsoleFileInfo>>();
+                ISynoReportCommand console = null;
 
                 _files.Clear();
 
@@ -160,7 +154,7 @@ namespace DiskStationManager.SecureShell
                 });
 
 
-                List<ConsoleFileInfo> removal = new List<ConsoleFileInfo>();
+                var removal = new List<ConsoleFileInfo>();
                 if (KeepAnalyzerDbCount >= 0)
                 {
                     List<DateTime> remove = dsm_databases.Keys.Take(dsm_databases.Count - KeepAnalyzerDbCount).ToList();
@@ -169,7 +163,7 @@ namespace DiskStationManager.SecureShell
                         removal.AddRange(dsm_databases[r]);
                     }
                     RaiseDownloadEvent(CacheStatus.Cleanup);
-                    console.RemoveFiles(this, removal);
+                    console.RemoveFiles(this.Session, this.SynoReportHome, removal);
                 }
 
             }

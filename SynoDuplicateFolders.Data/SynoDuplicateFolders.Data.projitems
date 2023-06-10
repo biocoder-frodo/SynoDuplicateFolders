@@ -24,11 +24,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)ICachedReportFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISynoReportCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PieChartDataPoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SecureShell\BConsoleCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SecureShell\ConsoleCommandDSM4.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SecureShell\ConsoleCommandDSM6.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SecureShell\BSynoReportCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SecureShell\SynoReportCommandDSM4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SecureShell\SynoReportCommandDSM6.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SecureShell\DSMHost.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SecureShell\IConsoleCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SecureShell\ISynoReportCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SecureShell\SynoReportSession.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SecureShell\SynoReportViaSSH.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SimpleCSVReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SimpleCSVReaderColumnNameReplacer.cs" />

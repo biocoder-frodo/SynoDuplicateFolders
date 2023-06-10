@@ -1,6 +1,7 @@
 ﻿using Extensions;
 using Renci.SshNet;
 using Renci.SshNet.Common;
+using SynoDuplicateFolders.Data.SecureShell;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,9 +18,11 @@ namespace DiskStationManager.SecureShell
         private readonly DSMHost _host;
         private readonly ConnectionInfo _ci;
         private readonly IProxySettings _proxySettings;
-        private IDSMVersion _version = null;
+        protected IDSMVersion _version = null;
 
         private readonly EventHandler _hostKeyChange;
+
+        public static bool ConsoleUI { get; set; }
 
         private AuthenticationBannerEventArgs _banner;
         public void OnHostKeyChange(object sender, EventArgs e)
@@ -195,23 +198,15 @@ namespace DiskStationManager.SecureShell
         internal IConsoleCommand GetConsole(SshClient client)
         {
             IConsoleCommand console;
-
             bool briefly = client.IsConnected == false;
 
-            // RaiseDownloadEvent(CacheStatus.FetchingVersionInfo);
-
             if (briefly) client.Connect();
-
             console = BConsoleCommand.GetDSMConsole(client);
-
             if (briefly) client.Disconnect();
-
             _version = console.GetVersionInfo();
-
-            // RaiseDownloadEvent(CacheStatus.FetchingVersionInfoCompleted, _version.Version);
-
             return console;
         }
+
         public ConnectionInfo ConnectionInfo => _ci;
 
         public DSMHost Host => _host;

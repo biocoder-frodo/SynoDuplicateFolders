@@ -49,10 +49,6 @@ namespace DiskStationManager.SecureShell
             _interactivePassword = passwordForm;
         }
 
-        public void Run(IReadOnlyList<string> script)
-        {
-            Run(script.ToArray());
-        }
         public void Run(string command)
         {
             Run(new string[] { command });
