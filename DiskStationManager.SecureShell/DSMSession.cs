@@ -1,7 +1,6 @@
 ﻿using Extensions;
 using Renci.SshNet;
 using Renci.SshNet.Common;
-using SynoDuplicateFolders.Data.SecureShell;
 using System;
 using System.Collections.Generic;
 using System.IO;
