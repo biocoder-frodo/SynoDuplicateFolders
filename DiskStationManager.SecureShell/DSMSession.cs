@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows.Forms;
+using static System.Collections.Specialized.BitVector32;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace DiskStationManager.SecureShell
 {
@@ -76,20 +78,7 @@ namespace DiskStationManager.SecureShell
                 }
             }
         }
-        internal string Password
-        {
-            get
-            {
-                foreach (DSMAuthentication a in _host.AuthenticationMethods)
-                {
-                    if (a.Method == DSMAuthenticationMethod.Password)
-                    {
-                        return a.Password;
-                    }
-                }
-                return string.Empty;
-            }
-        }
+
         private string KeyFingerPrint(HostKeyEventArgs e)
         {
             return e.HostKeyName + " " + e.KeyLength + " " + e.FingerPrint.ToString(':').ToLower();
@@ -214,8 +203,19 @@ namespace DiskStationManager.SecureShell
 
         public IProxySettings Proxy => _proxySettings;
 
-        public Func<string> GetPassword { get; set; }
-
+        public Func<string> GetPassword => returnPassword;
+        private string returnPassword()
+        {
+            foreach (DSMAuthentication a in _host.AuthenticationMethods)
+            {
+                if (a.Method == DSMAuthenticationMethod.Password)
+                {
+                    return a.Password;
+                }
+            }
+            return GetInteractiveMethod();
+            return string.Empty;
+        }
         private void AuthorizationBannerAction(object sender, AuthenticationBannerEventArgs e)
         {
             _banner = e;
@@ -287,7 +287,34 @@ namespace DiskStationManager.SecureShell
             }
             return result;
         }
+        private string GetInteractiveMethod()
+        {
 
+
+            string result;
+            using (PassPhrase dialog = new PassPhrase("you", new string[0], "ww"))
+            {
+                dialog.ShowDialog();
+                result = dialog.Password;
+            }
+            return result;
+        }
+        public void UploadFile(string destinationPath, string sourcePath)
+        {
+            UploadFile(destinationPath, new FileInfo(sourcePath));
+        }
+        public void UploadFile(ScpClient scpClient, string destinationPath, string sourcePath)
+        {
+            UploadFile(scpClient, destinationPath, new FileInfo(sourcePath));
+        }
+        public void UploadFile(string destinationPath, FileInfo fileInfo)
+        {
+            ClientExecute((cp) => UploadFile(cp, new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read), destinationPath));
+        }
+        public void UploadFile(ScpClient scpClient, string destinationPath, FileInfo fileInfo)
+        {
+            UploadFile(scpClient, new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read), destinationPath);
+        }
         public void UploadFile(string destinationPath, Action<StreamWriter> action)
         {
             using (var ms = new MemoryStream())
@@ -296,7 +323,6 @@ namespace DiskStationManager.SecureShell
                 {
                     action(sw);
                     sw.Flush();
-
                     ms.Seek(0, SeekOrigin.Begin);
 
                     ClientExecute((cp) => UploadFile(cp, ms, destinationPath));
@@ -326,26 +352,54 @@ namespace DiskStationManager.SecureShell
             scpClient.Upload(stream, destinationPath);
             if (reOpen) scpClient.Disconnect();
         }
-        public bool DownloadFile(ScpClient client, string source, FileInfo localfile)
+
+        public void DownloadFile(ScpClient client, string source, FileInfo localfile)
         {
-            try
-            {
-                if (localfile.Exists == false)
-                {
-                    client.Download(source, localfile);
-                }
-                else
-                {
 
-                }
-                return true;
-            }
-            catch (Exception ex)
+            if (localfile.Exists == false)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                return false;
+                client.Download(source, localfile);
+            }
+            else
+            {
+                throw new FileNotFoundException("File already exists", localfile.FullName);
+
             }
 
+
+        }
+        public void DownloadFile(string source, FileInfo localfile)
+        {
+
+            ClientExecute(scp =>
+            {
+                scp.RemotePathTransformation = RemotePathTransformation.None;
+                DownloadFile(scp, source, localfile);
+            });
+        }
+        public void DownloadFile(string source, out MemoryStream stream)
+        {
+            MemoryStream ms = null;
+            ClientExecute(scp =>
+            {
+                scp.RemotePathTransformation = RemotePathTransformation.None;
+                scp.Connect();
+                ms = DownloadStream(scp, source);
+                scp.Disconnect();
+            });
+            stream = ms;
+        }
+        private MemoryStream DownloadStream(ScpClient client, string source)
+        {
+            var result = new MemoryStream();
+
+            client.Download(source, result);
+            result.Seek(0, SeekOrigin.Begin);
+            return result;
+        }
+        public void DownloadFile(ScpClient client, string source, out MemoryStream stream)
+        {
+            stream = DownloadStream(client, source);
         }
     }
 }

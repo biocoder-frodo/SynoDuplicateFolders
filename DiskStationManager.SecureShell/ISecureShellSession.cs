@@ -14,8 +14,8 @@ namespace DiskStationManager.SecureShell
 
         [Obsolete("This method is only present to support DSM versions below 6.x")]
         void ClientExecuteAsRoot(Action<SshClient> action);
-        DSMHost Host { get; }
 
+        DSMHost Host { get; }
         Func<string> GetPassword { get; }
         IProxySettings Proxy { get; }
         string Version { get; }
@@ -23,6 +23,6 @@ namespace DiskStationManager.SecureShell
         void UploadFile(string destinationPath, Action<StreamWriter> action);
         void UploadFile(ScpClient scpClient, string destinationPath, Action<StreamWriter> action);
         void UploadFile(ScpClient scpClient, Stream stream, string destinationPath);
-        bool DownloadFile(ScpClient client, string source, FileInfo localfile);
+        void DownloadFile(ScpClient client, string source, FileInfo localfile);
     }
 }
