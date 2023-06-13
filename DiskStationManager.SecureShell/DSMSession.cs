@@ -339,6 +339,7 @@ namespace DiskStationManager.SecureShell
         }
         public void UploadFile(ScpClient scpClient, Stream stream, string destinationPath)
         {
+            System.Diagnostics.Debug.WriteLine($"Upload to {destinationPath}");
             bool reOpen = scpClient.IsConnected == false;
             scpClient.RemotePathTransformation = RemotePathTransformation.None;
             if (reOpen) scpClient.Connect();
@@ -348,27 +349,23 @@ namespace DiskStationManager.SecureShell
 
         public void DownloadFile(ScpClient client, string source, FileInfo localfile)
         {
-
+            System.Diagnostics.Debug.WriteLine($"Download from {source}");
             if (localfile.Exists == false)
             {
+                bool reOpen = client.IsConnected == false;
+                client.RemotePathTransformation = RemotePathTransformation.None;
+                if (reOpen) client.Connect();
                 client.Download(source, localfile);
+                if (reOpen) client.Disconnect();
             }
             else
             {
                 throw new FileNotFoundException("File already exists", localfile.FullName);
-
             }
-
-
         }
         public void DownloadFile(string source, FileInfo localfile)
         {
-
-            ClientExecute(scp =>
-            {
-                scp.RemotePathTransformation = RemotePathTransformation.None;
-                DownloadFile(scp, source, localfile);
-            });
+            ClientExecute(scp => DownloadFile(scp, source, localfile));
         }
         public void DownloadFile(string source, out MemoryStream stream)
         {
