@@ -137,7 +137,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                             while (result == false && attempts < 2)
                             {
                                 attempts++;
-                                result = _session.DownloadFile(cp, SynoReportHome + src.Source, src.LocalFile);
+                                _session.DownloadFile(cp, SynoReportHome + src.Source, src.LocalFile, out result);
                             }
 
                             if (result == false)

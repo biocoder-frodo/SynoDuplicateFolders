@@ -15,20 +15,20 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SynoDuplicateFolders.Contro
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SynoDuplicateFolders.Setup", "SynoDuplicateFolders.Setup\SynoDuplicateFolders.Setup.vdproj", "{3AB7D688-77E8-4DFB-87C7-ADD952BEAAF4}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DiskStationManager.SecureShell", "DiskStationManager.SecureShell\DiskStationManager.SecureShell.shproj", "{6B164EFA-FB82-425C-A692-2C8EE1876582}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "DiskStationManager.SecureShell", "..\DiskStationManager.SecureShell\source\DiskStationManager.SecureShell\DiskStationManager.SecureShell.shproj", "{6B164EFA-FB82-425C-A692-2C8EE1876582}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Extensions", "Extensions\Extensions.shproj", "{787DFD81-CE59-48E5-886F-7D7F5269F548}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Extensions", "..\DiskStationManager.SecureShell\source\Extensions\Extensions.shproj", "{787DFD81-CE59-48E5-886F-7D7F5269F548}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		SynoDuplicateFolders.Controls\SynoDuplicateFolders.Controls.projitems*{057d8e56-f3fa-453e-9b2a-55a73ec8d09c}*SharedItemsImports = 13
-		DiskStationManager.SecureShell\DiskStationManager.SecureShell.projitems*{6b164efa-fb82-425c-a692-2c8ee1876582}*SharedItemsImports = 13
-		DiskStationManager.SecureShell\DiskStationManager.SecureShell.projitems*{777c592f-ed17-409d-ace9-39bb3e0bf1f8}*SharedItemsImports = 4
-		Extensions\Extensions.projitems*{777c592f-ed17-409d-ace9-39bb3e0bf1f8}*SharedItemsImports = 4
+		..\DiskStationManager.SecureShell\source\DiskStationManager.SecureShell\DiskStationManager.SecureShell.projitems*{6b164efa-fb82-425c-a692-2c8ee1876582}*SharedItemsImports = 13
+		..\DiskStationManager.SecureShell\source\DiskStationManager.SecureShell\DiskStationManager.SecureShell.projitems*{777c592f-ed17-409d-ace9-39bb3e0bf1f8}*SharedItemsImports = 4
+		..\DiskStationManager.SecureShell\source\Extensions\Extensions.projitems*{777c592f-ed17-409d-ace9-39bb3e0bf1f8}*SharedItemsImports = 4
 		SynoDuplicateFolders.Controls\SynoDuplicateFolders.Controls.projitems*{777c592f-ed17-409d-ace9-39bb3e0bf1f8}*SharedItemsImports = 4
 		SynoDuplicateFolders.Data.Core\SynoDuplicateFolders.Data.Core.projitems*{777c592f-ed17-409d-ace9-39bb3e0bf1f8}*SharedItemsImports = 4
 		SynoDuplicateFolders.Data\SynoDuplicateFolders.Data.projitems*{777c592f-ed17-409d-ace9-39bb3e0bf1f8}*SharedItemsImports = 4
-		Extensions\Extensions.projitems*{787dfd81-ce59-48e5-886f-7d7f5269f548}*SharedItemsImports = 13
+		..\DiskStationManager.SecureShell\source\Extensions\Extensions.projitems*{787dfd81-ce59-48e5-886f-7d7f5269f548}*SharedItemsImports = 13
 		SynoDuplicateFolders.Data\SynoDuplicateFolders.Data.projitems*{8dbb19b7-d498-4a45-be77-116a77757a7c}*SharedItemsImports = 13
 		SynoDuplicateFolders.Data.Core\SynoDuplicateFolders.Data.Core.projitems*{e94f4d58-2989-4579-b405-0ee2c290767f}*SharedItemsImports = 13
 	EndGlobalSection
