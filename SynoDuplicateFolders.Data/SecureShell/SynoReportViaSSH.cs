@@ -10,9 +10,9 @@ namespace SynoDuplicateFolders.Data.SecureShell
     public sealed class SynoReportViaSSH : BSynoReportCache, IDisposable
     {
         private readonly SynoReportSession _session;
-        
+
         public ISecureShellSession Session => _session;
-        
+
         private bool disposedValue;
 
         public event EventHandler HostKeyChange;
@@ -122,14 +122,14 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 });
 
                 _session.ClientExecute(cp =>
-                { 
+                {
                     cp.Connect();
 
                     RaiseDownloadEvent(CacheStatus.Downloading, _files.Count, 0);
                     int n = 0;
                     foreach (ICachedReportFile src in _files.Values)
                     {
-                        if (src.Type != SynoReportType.Unknown)
+                        if (src.Type != SynoReportType.Unknown && src.LocalFile.Exists == false)
                         {
                             int attempts = 0;
                             bool result = false;

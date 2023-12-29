@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using NUnit.Framework;
-
+﻿using NUnit.Framework;
 using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
+using System.Collections.Generic;
 using System.Data.Linq;
+using System.IO;
+using static NUnit.Framework.Legacy.ClassicAssert;
 
 namespace SynoDuplicateFolders.Test
 {
@@ -96,9 +96,9 @@ namespace SynoDuplicateFolders.Test
         {
             foreach (var report in TestHelper<SynoReportDuplicateCandidates>.LoadTests(SynoReportType.DuplicateCandidates, input))
             {
-                Assert.NotNull(report, "The report should not be a null reference.");
-                Assert.AreEqual(1, report.Folders.Count);
-                Assert.AreEqual(report.UniqueSize * 2, report.TotalSize);
+                NotNull(report, "The report should not be a null reference.");
+                AreEqual(1, report.Folders.Count);
+                AreEqual(report.UniqueSize * 2, report.TotalSize);
             }
         }
 
@@ -110,14 +110,14 @@ namespace SynoDuplicateFolders.Test
             foreach (var report in TestHelper<SynoReportGroups>.LoadTests(SynoReportType.FileGroup, input))
             {
                 files++;
-                Assert.NotNull(report, "The report should not be a null reference.");
+                NotNull(report, "The report should not be a null reference.");
                 var rows = report.BindingSource.DataSource as SortableBindingList<ISynoReportGroupDetail>;
-                Assert.NotNull(rows, "The binding source should have a datasource instance.");
+                NotNull(rows, "The binding source should have a datasource instance.");
                 if (rows.Count == 0) emptyfiles++;
-                Assert.LessOrEqual(rows.Count,1, "The number of rows does not match.");
+                LessOrEqual(rows.Count, 1, "The number of rows does not match.");
 
             }
-            if (emptyfiles==files && files>0) throw new InconclusiveException("The number of rows should be larger than zero.");
+            if (emptyfiles == files && files > 0) throw new InconclusiveException("The number of rows should be larger than zero.");
         }
 
         [Test]
@@ -125,10 +125,10 @@ namespace SynoDuplicateFolders.Test
         {
             foreach (var report in TestHelper<SynoReportOwners>.LoadTests(SynoReportType.FileOwner, input))
             {
-                Assert.NotNull(report, "The report should not be a null reference.");
+                NotNull(report, "The report should not be a null reference.");
                 var rows = report.BindingSource.DataSource as SortableBindingList<ISynoReportOwnerDetail>;
-                Assert.NotNull(rows, "The binding source should have a datasource instance.");
-                Assert.AreEqual(9, rows.Count, "The number of rows does not match.");
+                NotNull(rows, "The binding source should have a datasource instance.");
+                AreEqual(9, rows.Count, "The number of rows does not match.");
             }
         }
 
@@ -137,10 +137,10 @@ namespace SynoDuplicateFolders.Test
         {
             foreach (var report in TestHelper<SynoReportFileDetails>.LoadTests(SynoReportType.LargeFiles, input))
             {
-                Assert.NotNull(report, "The report should not be a null reference.");
+                NotNull(report, "The report should not be a null reference.");
                 var rows = report.BindingSource.DataSource as SortableBindingList<ISynoReportFileDetail>;
-                Assert.NotNull(rows, "The binding source should have a datasource instance.");
-                Assert.AreEqual(4, rows.Count, "The number of rows does not match.");
+                NotNull(rows, "The binding source should have a datasource instance.");
+                AreEqual(4, rows.Count, "The number of rows does not match.");
             }
         }
 
@@ -149,10 +149,10 @@ namespace SynoDuplicateFolders.Test
         {
             foreach (var report in TestHelper<SynoReportFileDetails>.LoadTests(SynoReportType.LeastModified, input))
             {
-                Assert.NotNull(report, "The report should not be a null reference.");
+                NotNull(report, "The report should not be a null reference.");
                 var rows = report.BindingSource.DataSource as SortableBindingList<ISynoReportFileDetail>;
-                Assert.NotNull(rows, "The binding source should have a datasource instance.");
-                Assert.AreEqual(2, rows.Count, "The number of rows does not match.");
+                NotNull(rows, "The binding source should have a datasource instance.");
+                AreEqual(2, rows.Count, "The number of rows does not match.");
             }
         }
         [Test]
@@ -160,10 +160,10 @@ namespace SynoDuplicateFolders.Test
         {
             foreach (var report in TestHelper<SynoReportFileDetails>.LoadTests(SynoReportType.MostModified, input))
             {
-                Assert.NotNull(report, "The report should not be a null reference.");
+                NotNull(report, "The report should not be a null reference.");
                 var rows = report.BindingSource.DataSource as SortableBindingList<ISynoReportFileDetail>;
-                Assert.NotNull(rows, "The binding source should have a datasource instance.");
-                Assert.AreEqual(13, rows.Count, "The number of rows does not match.");
+                NotNull(rows, "The binding source should have a datasource instance.");
+                AreEqual(13, rows.Count, "The number of rows does not match.");
             }
         }
         [Test]
@@ -171,18 +171,18 @@ namespace SynoDuplicateFolders.Test
         {
             foreach (var report in TestHelper<SynoReportSharesValues>.LoadTests(SynoReportType.ShareList, input))
             {
-                Assert.NotNull(report, "The report should not be a null reference.");
-                Assert.AreEqual(7, report.Shares.Count, "The amount of shares does not match the expected count.");
-                Assert.AreEqual(report.Shares.Count, report.Quota.Count, "There should be as many Quota values as there are Shares.");
-                Assert.AreEqual(report.Shares.Count, report.Used.Count, "There should be as many Used values as there are Shares.");
-                Assert.AreEqual(report.Shares.Count, report.Volumes.Count, "There should be as many Volumes values as there are Shares.");
+                NotNull(report, "The report should not be a null reference.");
+                AreEqual(7, report.Shares.Count, "The amount of shares does not match the expected count.");
+                AreEqual(report.Shares.Count, report.Quota.Count, "There should be as many Quota values as there are Shares.");
+                AreEqual(report.Shares.Count, report.Used.Count, "There should be as many Used values as there are Shares.");
+                AreEqual(report.Shares.Count, report.Volumes.Count, "There should be as many Volumes values as there are Shares.");
 
 
                 foreach (string share in report.Shares)
                 {
-                    Assert.AreEqual(0, report.Quota[share], "The quota had an unexpected value.");
-                    Assert.AreNotEqual(0, report.Used[share], "The usage value had an unexpected value.");
-                    Assert.AreNotEqual(0, report.Volumes[share].Length, "The volume name had an unexpected length.");
+                    AreEqual(0, report.Quota[share], "The quota had an unexpected value.");
+                    AreNotEqual(0, report.Used[share], "The usage value had an unexpected value.");
+                    AreNotEqual(0, report.Volumes[share].Length, "The volume name had an unexpected length.");
                 }
             }
         }
@@ -191,15 +191,15 @@ namespace SynoDuplicateFolders.Test
         {
             foreach (var report in TestHelper<SynoReportVolumeUsageValues>.LoadTests(SynoReportType.VolumeUsage, input))
             {
-                Assert.NotNull(report, "The report should not be a null reference.");
-                Assert.AreEqual(2, report.Volumes.Count, "The number of volumes does not match.");
+                NotNull(report, "The report should not be a null reference.");
+                AreEqual(2, report.Volumes.Count, "The number of volumes does not match.");
 
                 foreach (string volume in report.Volumes)
                 {
-                    Assert.AreNotEqual(0, report.Size[volume], "The Size value had an unexpected value.");
-                    Assert.AreEqual(0, report.DaysTillFull[volume], "The DaysTillFull value had an unexpected value.");
-                    Assert.AreNotEqual(0, report.Used[volume], "The usage value had an unexpected value.");
-                    Assert.AreNotEqual(0, volume.Length, "The volume name had an unexpected length.");
+                    AreNotEqual(0, report.Size[volume], "The Size value had an unexpected value.");
+                    AreEqual(0, report.DaysTillFull[volume], "The DaysTillFull value had an unexpected value.");
+                    AreNotEqual(0, report.Used[volume], "The usage value had an unexpected value.");
+                    AreNotEqual(0, volume.Length, "The volume name had an unexpected length.");
                 }
             }
         }
