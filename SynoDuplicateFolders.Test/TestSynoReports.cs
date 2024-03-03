@@ -20,7 +20,8 @@ namespace SynoDuplicateFolders.Test
                 "duplicate_file.csv",
                 Path.Combine("reports-2-0-0-0164","duplicate_file.csv"),
                 Path.Combine("reports-2-0-1-0198","duplicate_file.csv"),
-                Path.Combine("reports-2-0-1-0208","duplicate_file.csv")
+                Path.Combine("reports-2-0-1-0208","duplicate_file.csv"),
+                Path.Combine("reports-2-0-1-0214","duplicate_file.csv"),
                 }
             },
             {
@@ -29,7 +30,8 @@ namespace SynoDuplicateFolders.Test
                 "file_group.csv",
                 Path.Combine("reports-2-0-0-0164","file_group.csv"),
                 Path.Combine("reports-2-0-1-0198","file_group.csv"),
-                Path.Combine("reports-2-0-1-0208","file_group.csv")
+                Path.Combine("reports-2-0-1-0208","file_group.csv"),
+                Path.Combine("reports-2-0-1-0214","file_group.csv"),
                 }
             },
             {
@@ -38,7 +40,8 @@ namespace SynoDuplicateFolders.Test
                 "file_owner.csv",
                 Path.Combine("reports-2-0-0-0164","file_owner.csv"),
                 Path.Combine("reports-2-0-1-0198","file_owner.csv"),
-                Path.Combine("reports-2-0-1-0208","file_owner.csv")
+                Path.Combine("reports-2-0-1-0208","file_owner.csv"),
+                Path.Combine("reports-2-0-1-0214","file_owner.csv"),
                 }
             },
             {
@@ -47,7 +50,8 @@ namespace SynoDuplicateFolders.Test
                 "large_file.csv",
                 Path.Combine("reports-2-0-0-0164","large_file.csv"),
                 Path.Combine("reports-2-0-1-0198","large_file.csv"),
-                Path.Combine("reports-2-0-1-0208","large_file.csv")
+                Path.Combine("reports-2-0-1-0208","large_file.csv"),
+                Path.Combine("reports-2-0-1-0214","large_file.csv"),
                 }
             },
             {
@@ -56,7 +60,8 @@ namespace SynoDuplicateFolders.Test
                 "least_modify.csv",
                 Path.Combine("reports-2-0-0-0164","least_modify.csv"),
                 Path.Combine("reports-2-0-1-0198","least_modify.csv"),
-                Path.Combine("reports-2-0-1-0208","least_modify.csv")
+                Path.Combine("reports-2-0-1-0208","least_modify.csv"),
+                Path.Combine("reports-2-0-1-0214","least_modify.csv"),
                 }
             },
             {
@@ -65,7 +70,8 @@ namespace SynoDuplicateFolders.Test
                 "most_modify.csv",
                 Path.Combine("reports-2-0-0-0164","most_modify.csv"),
                 Path.Combine("reports-2-0-1-0198","most_modify.csv"),
-                Path.Combine("reports-2-0-1-0208","most_modify.csv")
+                Path.Combine("reports-2-0-1-0208","most_modify.csv"),
+                Path.Combine("reports-2-0-1-0214","most_modify.csv"),
                 }
             },
             {
@@ -74,7 +80,8 @@ namespace SynoDuplicateFolders.Test
                 "share_list.csv",
                 Path.Combine("reports-2-0-0-0164","share_list.csv"),
                 Path.Combine("reports-2-0-1-0198","share_list.csv"),
-                Path.Combine("reports-2-0-1-0208","share_list.csv")
+                Path.Combine("reports-2-0-1-0208","share_list.csv"),
+                Path.Combine("reports-2-0-1-0214","share_list.csv"),
                 }
             },
             {
@@ -83,7 +90,8 @@ namespace SynoDuplicateFolders.Test
                 "volume_usage.csv",
                 Path.Combine("reports-2-0-0-0164","volume_usage.csv"),
                 Path.Combine("reports-2-0-1-0198","volume_usage.csv"),
-                Path.Combine("reports-2-0-1-0208","volume_usage.csv")
+                Path.Combine("reports-2-0-1-0208","volume_usage.csv"),
+                Path.Combine("reports-2-0-1-0214","volume_usage.csv"),
                 }
             }
 
@@ -194,11 +202,11 @@ namespace SynoDuplicateFolders.Test
                 NotNull(report, "The report should not be a null reference.");
                 AreEqual(2, report.Volumes.Count, "The number of volumes does not match.");
 
-                foreach (string volume in report.Volumes)
+                foreach (string volume in report.Volumes.Keys)
                 {
-                    AreNotEqual(0, report.Size[volume], "The Size value had an unexpected value.");
-                    AreEqual(0, report.DaysTillFull[volume], "The DaysTillFull value had an unexpected value.");
-                    AreNotEqual(0, report.Used[volume], "The usage value had an unexpected value.");
+                    AreNotEqual(0, report[volume].Size, "The Size value had an unexpected value.");
+                    if (report[volume].DaysTillFull.HasValue) AreEqual(0, report[volume].DaysTillFull, "The DaysTillFull value had an unexpected value.");
+                    AreNotEqual(0, report[volume].Used, "The usage value had an unexpected value.");
                     AreNotEqual(0, volume.Length, "The volume name had an unexpected length.");
                 }
             }
