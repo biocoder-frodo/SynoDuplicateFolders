@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{98E146DF-03DD-4159-9628-7AAE7D3C85D8}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SynoDuplicateFolders.Controls.DesignerWorkAround</RootNamespace>
+    <AssemblyName>SynoDuplicateFolders.Controls.DesignerWorkAround</AssemblyName>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Windows.Forms.DataVisualization.Design" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="..\SynoDuplicateFolders.Controls\DuplicateCandidatesView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\SynoDuplicateFolders.Controls\DuplicateCandidatesView.Designer.cs">
+      <DependentUpon>DuplicateCandidatesView.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="..\SynoDuplicateFolders.Controls\DuplicateCandidatesView.resx">
+      <DependentUpon>DuplicateCandidatesView.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="..\SynoDuplicateFolders.Controls\ChartGrid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\SynoDuplicateFolders.Controls\ChartGrid.Designer.cs">
+      <DependentUpon>ChartGrid.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="..\SynoDuplicateFolders.Controls\ChartGrid.resx">
+      <DependentUpon>ChartGrid.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="..\SynoDuplicateFolders.Controls\TimeStampTrackBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\SynoDuplicateFolders.Controls\TimeStampTrackBar.Designer.cs">
+      <DependentUpon>TimeStampTrackBar.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="..\SynoDuplicateFolders.Controls\TimeStampTrackBar.resx">
+      <DependentUpon>TimeStampTrackBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <Compile Include="..\SynoDuplicateFolders.Controls\VolumeHistoricChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="..\SynoDuplicateFolders.Controls\VolumeHistoricChart.Designer.cs">
+      <DependentUpon>VolumeHistoricChart.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="..\SynoDuplicateFolders.Controls\VolumeHistoricChart.resx">
+      <DependentUpon>VolumeHistoricChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="WorkAround.Dependencies\WorkAround.Dependencies.csproj">
+      <Project>{90ec0800-1302-467f-8458-c95c5ba1d9b5}</Project>
+      <Name>WorkAround.Dependencies</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
