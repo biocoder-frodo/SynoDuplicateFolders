@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using SynoDuplicateFolders.Controls;
 using DiskStationManager.SecureShell;
 using System;
+using System.Linq;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace SynoDuplicateFolders.Properties
 {
@@ -13,7 +15,9 @@ namespace SynoDuplicateFolders.Properties
         private static CustomSettings _default_instance = null;
         private static Func<CustomSettings> _load_method = null;
         private readonly static object _thread = new object();
-        private static int _save_count = 0;
+
+        public event EventHandler LegendChanged;
+
         public static void Initialize(Func<CustomSettings> method)
         {
             lock (_thread)
@@ -22,15 +26,12 @@ namespace SynoDuplicateFolders.Properties
                 _default_instance = _load_method();
             }
         }
-        public static CustomSettings Profile
-        {
-            get { return _default_instance; }
-        }
+        public static CustomSettings Profile => _default_instance;
         public void Save()
-        {   
+        {
             lock (_thread)
             {
-                ++_save_count;
+
                 _default_instance.CurrentConfiguration.Save();
                 Reload();
                 Settings.Default.Reload();
@@ -63,48 +64,144 @@ namespace SynoDuplicateFolders.Properties
         {
             get
             {
-                return ChartLegends.Items.TryGet(key) as IChartLegend;
+                lock (_thread)
+                {
+                    return Profile.ChartLegends.Items.TryGet(key) as IChartLegend;
+                }
             }
         }
 
         [ConfigurationProperty("ChartLegends")]
-        public NamedBasicConfigurationElementMap<ChartLegend> ChartLegends
-        {
-            get
-            {
-                return this["ChartLegends"] as NamedBasicConfigurationElementMap<ChartLegend>;
-            }
-        }
+        public ChartLegends ChartLegends => this["ChartLegends"] as ChartLegends;
+
+        //public NamedBasicConfigurationElementMap<ChartLegend> ChartLegends
+        //{
+        //    get
+        //    {
+        //        return this["ChartLegends"] as NamedBasicConfigurationElementMap<ChartLegend>;
+        //    }
+        //}
 
         public List<ITaggedColor> List
         {
             get
             {
-                _list.Clear();
-                foreach (ITaggedColor l in ChartLegends.Items)
+                lock (_thread)
                 {
-                    _list.Add(l);
+                    _list.Clear();
+                    var chartLegends = Profile.ChartLegends;
+                    foreach (ITaggedColor l in chartLegends.Items)
+                    {
+                        _list.Add(l);
+                    }
+                    return _list;
                 }
-                return _list;
             }
         }
 
         public bool ContainsKey(string key)
         {
-            return ChartLegends.Items.ContainsKey(key);
+            lock (_thread)
+            {
+                return Profile.ChartLegends.Items.ContainsKey(key);
+            }
         }
+
         public IChartLegend Add(string key, Color k, bool forceKnownColor = false)
         {
-            IChartLegend l = new ChartLegend(key, k, forceKnownColor);
-            ChartLegends.Items.Add(l as ChartLegend);
-            return l;
+            lock (_thread)
+            {
+                return Add(new ChartLegend(key, k, forceKnownColor));
+            }
         }
 
         public IChartLegend Add(string key, KnownColor k)
         {
-            IChartLegend l = new ChartLegend(key, k);
-            ChartLegends.Items.Add(l as ChartLegend);
-            return l;
+            lock (_thread)
+            {
+                return Add(new ChartLegend(key, k));
+            }
+        }
+        private IChartLegend Add(ChartLegend chartLegend)
+        {
+            var presetPalettes = Profile.ChartLegends.Palettes.Split(';').Select(p => (ChartColorPalette)Enum.Parse(typeof(ChartColorPalette), p, true)).ToList();
+            var presets = new List<string>();
+            foreach (var palette in presetPalettes)
+            {
+                foreach (var preset in ChartLegend.PaletteMap[palette])
+                {
+                    presets.Add(ColorTranslator.ToHtml(Color.FromArgb(preset.ToArgb())));
+                }
+            }
+
+            var rgbMap = new Dictionary<int, Dictionary<string, string>>()
+            {
+                { 0, new Dictionary<string, string>() },
+                { 1, new Dictionary<string, string>() }
+            };
+            var rgbDupes = new Dictionary<int, Dictionary<string, List<string>>>()
+            {
+                { 0, new Dictionary<string, List<string>>() },
+                { 1, new Dictionary<string, List<string>>() }
+            };
+            int volume;
+            foreach (ChartLegend item in Profile.ChartLegends.Items)
+            {
+                volume = item.Key.StartsWith("/") ? 1 : 0;
+
+                string colorName = item.ColorName.StartsWith("#")
+                    ? item.ColorName
+                    : ColorTranslator.ToHtml(Color.FromArgb(item.Color.ToArgb()));
+
+                if (rgbMap[volume].ContainsKey(colorName) == false)
+                {
+                    rgbMap[volume].Add(colorName, item.Key);
+                }
+                else
+                {
+                    if (rgbDupes[volume].ContainsKey(colorName) == false)
+                    {
+                        rgbDupes[volume].Add(colorName, new List<string>());
+                    }
+                    rgbDupes[volume][colorName].Add(item.Key);
+
+                }
+            }
+            string newColor = ColorTranslator.ToHtml(Color.FromArgb(chartLegend.Color.ToArgb()));
+            volume = chartLegend.Key.StartsWith("/") ? 1 : 0;
+
+            if (rgbMap[volume].ContainsKey(newColor) != false || rgbDupes[volume].ContainsKey(newColor) != false)
+            {
+                newColor = presets.FirstOrDefault(p => rgbDupes[volume].ContainsKey(p) == false && rgbMap[volume].ContainsKey(p));
+                if (string.IsNullOrWhiteSpace(newColor) == false)
+                {
+                    chartLegend = new ChartLegend(chartLegend.Key, ColorTranslator.FromHtml(newColor));
+                }
+            }
+            foreach (var v in rgbDupes.Keys)
+            {
+                foreach (var dupe in rgbDupes[v].Keys)
+                {
+                    foreach (var key in rgbDupes[v][dupe])
+                    {
+                        newColor = presets.FirstOrDefault(p => rgbDupes[v].ContainsKey(p) == false && rgbMap[v].ContainsKey(p)==false);
+                        if (string.IsNullOrWhiteSpace(newColor) == false)
+                        {
+                            var wohoo = Profile.ChartLegends.Items.TryGet(key);
+                            wohoo.ColorName = newColor;
+                        }
+                    }
+                }
+            }
+
+            Profile.ChartLegends.Items.Add(chartLegend);
+            return chartLegend;
+        }
+        public void SaveLegendChanges()
+        {
+            Save();
+
+            LegendChanged?.Invoke(this, new EventArgs());
         }
     }
 }

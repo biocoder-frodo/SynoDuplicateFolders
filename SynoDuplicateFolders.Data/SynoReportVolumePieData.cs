@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Data
@@ -30,7 +30,7 @@ namespace SynoDuplicateFolders.Data
         {
             get
             {
-                return _volumes.Volumes;
+                return _volumes.Volumes.Keys.ToList();
             }
         }
 
@@ -50,20 +50,20 @@ namespace SynoDuplicateFolders.Data
 
                 if (_render_volume_only)
                 {
-                    yield return new PieChartDataPoint("Used", _volumes.Used[_volumes.Volumes[index]]);
-                    yield return new PieChartDataPoint("Free", unity - _volumes.Used[_volumes.Volumes[index]]);
+                    yield return new PieChartDataPoint("Used", _volumes[index].Used);
+                    yield return new PieChartDataPoint("Free", unity - _volumes[index].Used);
 
                 }
                 else
                 {
-                    yield return new PieChartDataPoint("Free", unity - _volumes.Used[_volumes.Volumes[index]]);
+                    yield return new PieChartDataPoint("Free", unity - _volumes[index].Used);
 
                     foreach (string s in _shares.Shares)
                     {
-                        if (_shares.Volumes[s].Equals(_volumes.Volumes[index]))
+                        if (_shares.Volumes[s]==_volumes[index].Volume)
                         {
                             long u = _shares.Used[s];
-                            long sz = _volumes.Size[_volumes.Volumes[index]];
+                            long sz = _volumes[index].Size;
                             yield return new PieChartDataPoint(s, (float)(Convert.ToDouble(unity) * Convert.ToDouble(u) / Convert.ToDouble(sz)));
                         }
                     }
@@ -75,18 +75,18 @@ namespace SynoDuplicateFolders.Data
         {
             get
             {
-                return this[_volumes.Volumes.IndexOf(name)];
+                return this[_volumes.Volumes.KeyList.IndexOf(name)];
             }
         }
 
         public long TotalSize(int index)
         {
-             return TotalSize(_volumes.Volumes[index]);
+             return _volumes[index].Size;
         }
 
         public long TotalSize(string volume)
         {
-            return _volumes.Size[volume];
+            return _volumes[volume].Size;
         }
     }
 }

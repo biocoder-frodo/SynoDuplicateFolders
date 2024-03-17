@@ -1,22 +1,14 @@
-﻿using SynoDuplicateFolders.Data;
-using SynoDuplicateFolders.Extensions;
+﻿using Extensions;
+using SynoDuplicateFolders.Data;
+using SynoDuplicateFolders.Data.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Linq;
-using SynoDuplicateFolders.Data.Core;
-using System.Drawing;
-using Extensions;
 
 namespace SynoDuplicateFolders.Controls
 {
-    public enum vhcViewMode
-    {
-        Shares,
-        Volume,
-        VolumeTotals
-    }
     public partial class VolumeHistoricChart : UserControl
     {
         private ISynoReportCache src = null;
@@ -55,14 +47,11 @@ namespace SynoDuplicateFolders.Controls
 
         public IChartConfiguration Configuration
         {
-            get
-            {
-                return _legends;
-            }
+            get => _legends;
             set
             {
                 _legends = value;
-                _legendConfiguration = new LegendConfiguration(value);
+                _legendConfiguration = new LegendConfiguration(_legends);
             }
         }
 
@@ -130,7 +119,7 @@ namespace SynoDuplicateFolders.Controls
                                 ChartType = SeriesChartType.StepLine
                             };
 
-                            _ =_legendConfiguration.TryPickColor(s, series1);
+                            _ = _legendConfiguration.TryPickColor(s, series1);
 
                             chart1.Series.Add(series1);
 
@@ -243,5 +232,11 @@ namespace SynoDuplicateFolders.Controls
 
             }
         }
+    }
+    public enum vhcViewMode
+    {
+        Shares,
+        Volume,
+        VolumeTotals
     }
 }

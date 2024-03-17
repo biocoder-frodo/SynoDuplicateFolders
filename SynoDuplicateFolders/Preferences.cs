@@ -235,15 +235,18 @@ namespace SynoDuplicateFolders
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 1)
+            if (e.ColumnIndex == 1 && e.RowIndex > -1)
             {
                 var r = ((DataGridView)sender).Rows[e.RowIndex];
                 var d = r.DataBoundItem as ITaggedColor;
-                colorDialog1.AnyColor = false;
-                if (colorDialog1.ShowDialog() == DialogResult.OK)
+                using (var c = new ColorSelection(ChartLegend.PaletteMap, CustomSettings.Profile.ChartLegends, d.Color))
                 {
-                    d.Color = colorDialog1.Color;
-                    dirty_custom = true;
+                    c.ShowDialog();
+                    if (c.Canceled == false)
+                    {
+                        d.Color = c.Selection;
+                        dirty_custom = true;
+                    }
                 }
             }
         }

@@ -5,6 +5,7 @@ using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Data.SecureShell;
 using SynoDuplicateFolders.Properties;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -15,6 +16,7 @@ using static SynoDuplicateFolders.Properties.CustomSettings;
 using static SynoDuplicateFolders.Properties.Settings;
 using static System.Configuration.UserSectionHandler;
 using static System.Environment;
+using System.Linq;
 
 namespace SynoDuplicateFolders
 {
@@ -44,6 +46,24 @@ namespace SynoDuplicateFolders
             duplicateCandidatesView1.OnItemCompare += DuplicateCandidatesView1_OnItemCompare;
             duplicateCandidatesView1.OnItemStatusUpdate += DuplicateCandidatesView1_OnItemStatusUpdate;
             duplicateCandidatesView1.OnItemHide += DuplicateCandidatesView1_OnItemHide;
+            duplicateCandidatesView1.OnDeduplicationRequest += DuplicateCandidatesView1_OnDeduplicationRequest;
+
+        }
+
+        private void DuplicateCandidatesView1_OnDeduplicationRequest(object sender, ItemsComparedEventArgs e)
+        {
+            var folders = new List<string>(e.Items).Select(f => new DirectoryInfo(f)).ToList();
+            using (var form = new DeduplicationConfirmation(folders))
+            {
+                form.ShowDialog();                            
+            }
+            duplicateCandidatesView1.ClearDedupSelection();
+        }
+
+        private void Profile_LegendChanged(object sender, EventArgs e)
+        {
+            volumeHistoricChart1.Refresh();
+            chartGrid1.Refresh();
         }
 
         private void OnDispose(bool disposing)
@@ -146,8 +166,10 @@ namespace SynoDuplicateFolders
 
                 PopulateServerTree();
 
+                Profile.LegendChanged += Profile_LegendChanged;
                 volumeHistoricChart1.Configuration = Profile;
                 chartGrid1.Configuration = Profile;
+
 
                 duplicateCandidatesView1.MaximumComparable = Default.MaximumComparable;
 
@@ -220,10 +242,10 @@ namespace SynoDuplicateFolders
                         connection = new SynoReportViaSSH(selected);
                     }
                 }
-                
+
                 connection.HostKeyChange += Connection_HostKeyChange;
                 //connection.RmExecutionMode = Default.RmExecutionMode;
-              
+
 
                 cache = connection;
 
@@ -509,7 +531,7 @@ namespace SynoDuplicateFolders
             this.Text = "SynoReport Client - " + version;
             KnownHosts.SelectedNode.ToolTipText = version;
 
-            volumeHistoricChart1.View = vhcViewMode.VolumeTotals;
+            volumeHistoricChart1.View = vhcViewMode.Shares;
             volumeHistoricChart1.DataSource = cache;
 
             timeStampTrackBar.DateRange = cache.DateRange;

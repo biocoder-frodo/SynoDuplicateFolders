@@ -45,6 +45,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)SynoReportViaPlatform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SynoReportVolumePieData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SynoReportVolumeUsage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SynoReportVolumeUsageValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SynoReportVolumeUsageValues.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TimeLineDataPoint.cs" />
   </ItemGroup>

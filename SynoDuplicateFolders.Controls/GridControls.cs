@@ -1,8 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
+
 namespace SynoDuplicateFolders.Controls
 {
-    internal class GridControls<T> : List<T> where T : Control
+
+#if DESIGNER_WORKAROUND
+    public
+#else
+    internal 
+#endif
+        class GridControls<T> : List<T> where T : Control
     {
         private readonly List<T> controls = new List<T>();
         protected MouseEventHandler mouseEvent;

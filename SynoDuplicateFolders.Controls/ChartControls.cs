@@ -1,9 +1,15 @@
 ﻿using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System;
+
 namespace SynoDuplicateFolders.Controls
 {
-    internal class ChartControls : GridControls<Chart>
+#if DESIGNER_WORKAROUND
+    public
+#else
+    internal 
+#endif
+        class ChartControls : GridControls<Chart>
     {
         private readonly EventHandler<ToolTipEventArgs> toolTipEvent;
         private readonly EventHandler<ChartPaintEventArgs> postPaintEvent;

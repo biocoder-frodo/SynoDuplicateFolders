@@ -1,13 +1,10 @@
-﻿using System;
-using DiskStationManager.SecureShell;
-using SynoDuplicateFolders.Extensions;
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using static SynoDuplicateFolders.Properties.Settings;
-using SynoDuplicateFolders.Data.Core;
-using System.Linq;
-using System.Collections.Generic;
+﻿using DiskStationManager.SecureShell;
 using SynoDuplicateFolders.Controls;
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using static SynoDuplicateFolders.Properties.Settings;
 
 namespace SynoDuplicateFolders
 {

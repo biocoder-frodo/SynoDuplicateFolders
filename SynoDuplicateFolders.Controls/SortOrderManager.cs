@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+
 namespace SynoDuplicateFolders.Controls
 {
     public static class SortOrderManager

@@ -9,6 +9,8 @@
     <Import_RootNamespace>SynoDuplicateFolders.Data.Core</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)DeduplicateFiles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RelativeFileInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ColumnWidthAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IDuplicateFileInfoExclusion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IHostSpecificSettings.cs" />

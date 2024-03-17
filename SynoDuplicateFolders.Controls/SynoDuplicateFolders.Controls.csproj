@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{512D9842-4681-47B3-A702-7A063F953059}</ProjectGuid>
+    <ProjectGuid>{4FF29187-E421-44AE-AF75-BCF3F9F7DEFF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SynoDuplicateFolders.Controls</RootNamespace>
     <AssemblyName>SynoDuplicateFolders.Controls</AssemblyName>
     <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,8 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,19 +29,14 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <SuppressLegacyCodeAnalysisDeprecatedWarning>true</SuppressLegacyCodeAnalysisDeprecatedWarning>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SynoDuplicateFolders">
-      <HintPath>..\SynoDuplicateFolders\bin\Debug\SynoDuplicateFolders.exe</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Windows.Forms.DataVisualization.Design" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,40 +45,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChartGrid.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="ChartGrid.cs" />
     <Compile Include="ChartGrid.Designer.cs">
       <DependentUpon>ChartGrid.cs</DependentUpon>
     </Compile>
-    <Compile Include="ChartControls.cs" />
-    <Compile Include="CurrentSortOrder.cs" />
-    <Compile Include="GridControls.cs" />
-    <Compile Include="IChartLegend.cs" />
-    <Compile Include="IRectangleLayout.cs" />
-    <Compile Include="ITaggedColor.cs" />
-    <Compile Include="ItemStatusUpdateEventArgs.cs" />
-    <Compile Include="ItemOpenedEventArgs.cs" />
-    <Compile Include="ItemsComparedEventArgs.cs" />
-    <Compile Include="RectangleLayout.cs" />
-    <Compile Include="SortOrderManager.cs" />
-    <Compile Include="DuplicateCandidatesView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="DuplicateCandidatesView.cs" />
     <Compile Include="DuplicateCandidatesView.Designer.cs">
       <DependentUpon>DuplicateCandidatesView.cs</DependentUpon>
     </Compile>
-    <Compile Include="IChartConfiguration.cs" />
-    <Compile Include="NoDblClickTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SynoReportDataGridView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TimeStampTrackBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="TimeStampTrackBar.cs" />
     <Compile Include="TimeStampTrackBar.Designer.cs">
       <DependentUpon>TimeStampTrackBar.cs</DependentUpon>
     </Compile>
@@ -97,25 +66,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ChartGrid.resx">
-      <DependentUpon>ChartGrid.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DuplicateCandidatesView.resx">
-      <DependentUpon>DuplicateCandidatesView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TimeStampTrackBar.resx">
-      <DependentUpon>TimeStampTrackBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VolumeHistoricChart.resx">
-      <DependentUpon>VolumeHistoricChart.cs</DependentUpon>
-    </EmbeddedResource>
+    <EmbeddedResource Include="ChartGrid.resx" />
+    <EmbeddedResource Include="DuplicateCandidatesView.resx" />
+    <EmbeddedResource Include="TimeStampTrackBar.resx" />
+    <EmbeddedResource Include="VolumeHistoricChart.resx" />
   </ItemGroup>
+  <Import Project="..\SynoDuplicateFolders.Controls.Shared\SynoDuplicateFolders.Controls.projitems" Label="Shared" />
+  <Import Project="..\SynoDuplicateFolders.Data\SynoDuplicateFolders.Data.projitems" Label="Shared" />
+  <Import Project="..\SynoDuplicateFolders.Data.Core\SynoDuplicateFolders.Data.Core.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
