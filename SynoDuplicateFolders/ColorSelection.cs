@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Configuration;
 
 namespace SynoDuplicateFolders
 {
@@ -16,7 +13,7 @@ namespace SynoDuplicateFolders
     internal partial class ColorSelection : Form
     {
         public bool Canceled { get; private set; }
-       
+        private readonly ChartLegends config;
    
         private readonly IReadOnlyDictionary<ChartColorPalette, IReadOnlyList<Color>> _map;
         private readonly Dictionary<ChartColorPalette, CheckBox> checkBoxes;
@@ -24,12 +21,22 @@ namespace SynoDuplicateFolders
         private Color selection;
         private Color? presetColorHovered = null;
 
-        public Color Selection { get => selection; private set  { selection = value; pictureBox1.BackColor = selection; } }
+        public Color Selection 
+        { 
+            get => selection; 
+            private set  
+            {
+                selection = value;
+                pictureBox1.BackColor = selection;
+            }
+        }
 
         public ColorSelection(IReadOnlyDictionary<ChartColorPalette, IReadOnlyList<Color>> map, ChartLegends config, Color current)
         {
             InitializeComponent();
+
             Selection = current;
+            this.config = config;
             pictureBox2.BackColor = current;
 
             _map = map;
@@ -52,16 +59,10 @@ namespace SynoDuplicateFolders
 
             checkBoxes.Keys.ToList().ForEach(p => { checkBoxes[p].Tag = p; checkBoxes[p].Text = p.ToString(); });
 
-            foreach (var p in config.Palettes.Split(';').Select(s => (ChartColorPalette)Enum.Parse(typeof(ChartColorPalette), s, true)))
+            foreach (var p in config.PresetPalettes)
             {
                 checkBoxes[p].Checked = true;
             }
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Hide();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -143,6 +144,14 @@ namespace SynoDuplicateFolders
             var ctl = sender as CheckBox;
 
             UpdateColorWheel();
+
+            var prefs = new List<ChartColorPalette>();
+            foreach (var p in checkBoxes.Keys)
+            {
+                if (checkBoxes[p].Checked) prefs.Add(p);
+            }
+            config.PresetPalettes = prefs;
+
         }
 
         private void chart1_GetToolTipText(object sender, ToolTipEventArgs e)

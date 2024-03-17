@@ -177,14 +177,18 @@ namespace SynoDuplicateFolders.Data.Core
             logMessage?.Invoke("Removing files ...");
             toBeRemoved.ForEach(r => r.Delete());
 
-            
-            //foreach (var removeFolder in removeFolders.Values.OrderByDescending(f => f.FullName.Length))
-            //{
-            //    if (removeFolder.GetFiles().Count() == 0)
-            //    {
-            //        removeFolder.Delete();
-            //    }
-            //}
+            int folder = 1;
+            OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs("Removing folders ...", removeFolders.Count));
+            foreach (var removeFolder in removeFolders.Values.OrderByDescending(f => f.FullName.Length))
+            {
+                try
+                {
+                    DeleteEmptyFolders(removeFolder, true);
+                }
+                catch { }
+                OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs(folder++));
+            }
+            OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs(string.Empty, 100, 0));
             logMessage?.Invoke("Done.");
         }
         private bool AskTheDialog(string[] question)
@@ -233,6 +237,55 @@ namespace SynoDuplicateFolders.Data.Core
             {
                 return false;
             }
+        }
+
+        private static void DeleteEmptyFolders(string path, bool recursive = false)
+        {
+            bool changed = true;
+            if (recursive)
+            {
+                while (changed)
+                {
+                    changed = false;
+                    DeleteEmptyFolders(ref changed, path);
+                }
+                return;
+            }
+
+            DeleteEmptyFolders(ref changed, path);
+        }
+        public static void DeleteEmptyFolders(DirectoryInfo folder, bool recursive = false)
+        {
+            if (folder is null) throw new ArgumentNullException(nameof(folder));
+            if (folder.Exists)
+            {
+                DeleteEmptyFolders(folder.FullName, recursive);
+            }
+            else throw new DirectoryNotFoundException();
+        }
+        private static void DeleteEmptyFolders(ref bool changed, string path)
+        {
+            try
+            {
+
+                var entries = Directory.EnumerateFileSystemEntries(path);
+                foreach (var d in Directory.EnumerateDirectories(path))
+                {
+                    DeleteEmptyFolders(ref changed, d);
+                }
+                if (!entries.Any())
+                {
+
+
+                    Directory.Delete(path);
+
+                    changed = true;
+
+                }
+            }
+            catch (UnauthorizedAccessException) { }
+            catch (DirectoryNotFoundException) { }
+
         }
 
     }

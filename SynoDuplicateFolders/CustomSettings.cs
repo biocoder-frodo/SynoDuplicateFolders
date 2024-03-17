@@ -124,9 +124,9 @@ namespace SynoDuplicateFolders.Properties
         }
         private IChartLegend Add(ChartLegend chartLegend)
         {
-            var presetPalettes = Profile.ChartLegends.Palettes.Split(';').Select(p => (ChartColorPalette)Enum.Parse(typeof(ChartColorPalette), p, true)).ToList();
             var presets = new List<string>();
-            foreach (var palette in presetPalettes)
+
+            foreach (var palette in Profile.ChartLegends.PresetPalettes)
             {
                 foreach (var preset in ChartLegend.PaletteMap[palette])
                 {
@@ -184,7 +184,7 @@ namespace SynoDuplicateFolders.Properties
                 {
                     foreach (var key in rgbDupes[v][dupe])
                     {
-                        newColor = presets.FirstOrDefault(p => rgbDupes[v].ContainsKey(p) == false && rgbMap[v].ContainsKey(p)==false);
+                        newColor = presets.FirstOrDefault(p => rgbDupes[v].ContainsKey(p) == false && rgbMap[v].ContainsKey(p) == false);
                         if (string.IsNullOrWhiteSpace(newColor) == false)
                         {
                             var wohoo = Profile.ChartLegends.Items.TryGet(key);
