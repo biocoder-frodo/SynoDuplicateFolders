@@ -1,7 +1,8 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
+using System;
+using static NUnit.Framework.Legacy.ClassicAssert;
 
 namespace SynoDuplicateFolders.Test
 {
@@ -32,8 +33,8 @@ namespace SynoDuplicateFolders.Test
                 NewReportPair(new SynoReportSharesValues(), null);
             }, "second");
 
-            Assert.NotNull(NewReportPair(new SynoReportVolumeUsageValues(), new SynoReportSharesValues()));
-            Assert.NotNull(NewReportPair(new SynoReportSharesValues(), new SynoReportVolumeUsageValues()));
+            NotNull(NewReportPair(new SynoReportVolumeUsageValues(), new SynoReportSharesValues()));
+            NotNull(NewReportPair(new SynoReportSharesValues(), new SynoReportVolumeUsageValues()));
 
             AssertException.ThrowsParamName<ArgumentException>
                 (() =>
@@ -68,7 +69,7 @@ namespace SynoDuplicateFolders.Test
         {
             T ex = Assert.Throws<T>(code, "The {0} exception was not raised.", typeof(T).Name);
             var prop = ex.GetType().GetProperty("ParamName");
-            Assert.NotNull(prop, "The {0} exception does not implement a ParamName property.", typeof(T).Name);
+            NotNull(prop, "The {0} exception does not implement a ParamName property.", typeof(T).Name);
             Assert.That(prop.GetMethod.Invoke(ex, null), Is.EqualTo(param), "An unexpected parameter name was returned.");
         }
 

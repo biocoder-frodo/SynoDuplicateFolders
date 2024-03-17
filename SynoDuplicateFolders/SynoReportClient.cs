@@ -1,20 +1,22 @@
-﻿using SynoDuplicateFolders.Controls;
+﻿using DiskStationManager.SecureShell;
+using SynoDuplicateFolders.Controls;
 using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Data.SecureShell;
-using SynoDuplicateFolders.Extensions;
 using SynoDuplicateFolders.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static SynoDuplicateFolders.Configuration.UserSectionHandler;
 using static SynoDuplicateFolders.Properties.CustomSettings;
 using static SynoDuplicateFolders.Properties.Settings;
+using static System.Configuration.UserSectionHandler;
 using static System.Environment;
+using System.Linq;
 
 namespace SynoDuplicateFolders
 {
@@ -28,7 +30,6 @@ namespace SynoDuplicateFolders
 
         private DSMHost selected;
         private DuplicateCandidatesExclusion<DSMHost> exclusion;
-        private bool _PassPhraseUpdate = false;
 
         public SynoReportClient()
         {
@@ -45,6 +46,24 @@ namespace SynoDuplicateFolders
             duplicateCandidatesView1.OnItemCompare += DuplicateCandidatesView1_OnItemCompare;
             duplicateCandidatesView1.OnItemStatusUpdate += DuplicateCandidatesView1_OnItemStatusUpdate;
             duplicateCandidatesView1.OnItemHide += DuplicateCandidatesView1_OnItemHide;
+            duplicateCandidatesView1.OnDeduplicationRequest += DuplicateCandidatesView1_OnDeduplicationRequest;
+
+        }
+
+        private void DuplicateCandidatesView1_OnDeduplicationRequest(object sender, ItemsComparedEventArgs e)
+        {
+            var folders = new List<string>(e.Items).Select(f => new DirectoryInfo(f)).ToList();
+            using (var form = new DeduplicationConfirmation(folders))
+            {
+                form.ShowDialog();                            
+            }
+            duplicateCandidatesView1.ClearDedupSelection();
+        }
+
+        private void Profile_LegendChanged(object sender, EventArgs e)
+        {
+            volumeHistoricChart1.Refresh();
+            chartGrid1.Refresh();
         }
 
         private void OnDispose(bool disposing)
@@ -147,8 +166,10 @@ namespace SynoDuplicateFolders
 
                 PopulateServerTree();
 
+                Profile.LegendChanged += Profile_LegendChanged;
                 volumeHistoricChart1.Configuration = Profile;
                 chartGrid1.Configuration = Profile;
+
 
                 duplicateCandidatesView1.MaximumComparable = Default.MaximumComparable;
 
@@ -208,21 +229,23 @@ namespace SynoDuplicateFolders
 
                 if (Default.UseProxy && selected.Proxy == null)
                 {
-                    connection = new SynoReportViaSSH(selected, GetPassPhrase, GetInteractiveMethod, new DefaultProxy());
+                    connection = new SynoReportViaSSH(selected, new DefaultProxy());
                 }
                 else
                 {
                     if (selected.Proxy != null)
                     {
-                        connection = new SynoReportViaSSH(selected, GetPassPhrase, GetInteractiveMethod, selected.Proxy);
+                        connection = new SynoReportViaSSH(selected, selected.Proxy);
                     }
                     else
                     {
-                        connection = new SynoReportViaSSH(selected, GetPassPhrase, GetInteractiveMethod);
+                        connection = new SynoReportViaSSH(selected);
                     }
                 }
+
                 connection.HostKeyChange += Connection_HostKeyChange;
-                connection.RmExecutionMode = Default.RmExecutionMode;
+                //connection.RmExecutionMode = Default.RmExecutionMode;
+
 
                 cache = connection;
 
@@ -265,11 +288,14 @@ namespace SynoDuplicateFolders
 
                 if (CacheUpdateCompleted != null)
                 {
-                    CacheUpdateCompleted.Invoke(string.Format("{0} ({1})", connection.Host, connection.Version));
-                    duplicateCandidatesView1.HostName = connection.Host;
+                    var session = connection.Session;
+                    var connectedHost = session.ConnectionInfo.Host;
+
+                    CacheUpdateCompleted.Invoke($"{connectedHost} ({session.Version})");
+                    duplicateCandidatesView1.HostName = connectedHost;
                 }
 
-                if (_PassPhraseUpdate)
+                if (selected.StorePassPhrases)
                 {
                     Profile.Save();
                 }
@@ -320,31 +346,7 @@ namespace SynoDuplicateFolders
             Profile.Save();
         }
 
-        private string GetPassPhrase(string fileName)
-        {
-            string result;
-            using (PassPhrase dialog = new PassPhrase(fileName))
-            {
-                dialog.ShowDialog();
-                _PassPhraseUpdate = Default.StorePassPhrases;
-                result = dialog.Password;
-            }
-            return result;
-        }
-        private string GetInteractiveMethod(DSMKeyboardInteractiveEventArgs e)
-        {
-            List<string> banner = new List<string>();
-            banner.AddRange(e.Banner.Split('\n'));
-            banner.AddRange(e.Instruction.Split('\n'));
 
-            string result;
-            using (PassPhrase dialog = new PassPhrase(e.Username, banner.ToArray(), e.Id + ": " + e.Request))
-            {
-                dialog.ShowDialog();
-                result = dialog.Password;
-            }
-            return result;
-        }
         private void Cache_StatusUpdate(object sender, SynoReportCacheDownloadEventArgs e)
         {
             Invoke(new Action<SynoReportCacheDownloadEventArgs>(ProgressUpdate), e);
@@ -529,7 +531,7 @@ namespace SynoDuplicateFolders
             this.Text = "SynoReport Client - " + version;
             KnownHosts.SelectedNode.ToolTipText = version;
 
-            volumeHistoricChart1.View = vhcViewMode.VolumeTotals;
+            volumeHistoricChart1.View = vhcViewMode.Shares;
             volumeHistoricChart1.DataSource = cache;
 
             timeStampTrackBar.DateRange = cache.DateRange;

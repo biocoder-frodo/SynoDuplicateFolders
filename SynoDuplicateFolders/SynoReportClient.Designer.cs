@@ -246,7 +246,7 @@
             this.volumeHistoricChart1.Name = "volumeHistoricChart1";
             this.volumeHistoricChart1.Size = new System.Drawing.Size(1234, 650);
             this.volumeHistoricChart1.TabIndex = 0;
-            this.volumeHistoricChart1.View = SynoDuplicateFolders.Controls.vhcViewMode.VolumeTotals;
+            this.volumeHistoricChart1.View = SynoDuplicateFolders.Controls.vhcViewMode.Shares;
             // 
             // tabPage2
             // 

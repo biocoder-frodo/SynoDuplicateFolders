@@ -86,9 +86,9 @@ namespace SynoDuplicateFolders.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("InteractiveSudo")]
-        public global::SynoDuplicateFolders.Data.SecureShell.ConsoleCommandMode RmExecutionMode {
+        public global::DiskStationManager.SecureShell.ConsoleCommandMode RmExecutionMode {
             get {
-                return ((global::SynoDuplicateFolders.Data.SecureShell.ConsoleCommandMode)(this["RmExecutionMode"]));
+                return ((global::DiskStationManager.SecureShell.ConsoleCommandMode)(this["RmExecutionMode"]));
             }
             set {
                 this["RmExecutionMode"] = value;

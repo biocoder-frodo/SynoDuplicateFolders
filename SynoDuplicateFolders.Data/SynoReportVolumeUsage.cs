@@ -24,7 +24,7 @@ namespace SynoDuplicateFolders.Data
 
             var data = component as SynoReportVolumeUsageValues;
 
-            foreach (string volume in data.Volumes)
+            foreach (string volume in data.Volumes.Keys)
             {
                 if (Volumes.ContainsKey(volume) == false)
                 {
@@ -76,9 +76,9 @@ namespace SynoDuplicateFolders.Data
                     {
                         string v = _volumes[i];
 
-                        if (data.Used.ContainsKey(v))
+                        if (data.ContainsKey(v))
                         {
-                            sw.Write("\t" + data.Used[v].ToString());
+                            sw.Write("\t" + data[v].Used.ToString());
                         }
                         else
                         {
@@ -90,9 +90,9 @@ namespace SynoDuplicateFolders.Data
                     {
                         string v = _volumes[i];
 
-                        if (data.Size.ContainsKey(v))
+                        if (data.ContainsKey(v))
                         {
-                            sw.Write("\t" + data.Size[v].ToString());
+                            sw.Write("\t" + data[v].Size.ToString());
                         }
                         else
                         {
@@ -104,9 +104,9 @@ namespace SynoDuplicateFolders.Data
                     {
                         string v = _volumes[i];
 
-                        if (data.DaysTillFull.ContainsKey(v))
+                        if (data.ContainsKey(v))
                         {
-                            sw.Write("\t" + data.DaysTillFull[v].ToString());
+                            sw.Write("\t" + data[v].DaysTillFull.ToString());
                         }
                         else
                         {
@@ -124,7 +124,7 @@ namespace SynoDuplicateFolders.Data
             get
             {
                 List<string> result = new List<string>();
-                result.AddRange(Volumes.Keys.ToList());
+                result.AddRange(Volumes.Keys);
                 result.AddRange(_absolute_totals);
                 return result;
             }
@@ -133,9 +133,9 @@ namespace SynoDuplicateFolders.Data
         public List<string> ActiveSeries
         {
             get
-            {                 
+            {
                 List<string> result = new List<string>();
-                result.AddRange((_list[_list.Keys.Max()] as SynoReportVolumeUsageValues).Volumes);
+                result.AddRange((_list[_list.Keys.Max()] as SynoReportVolumeUsageValues).Volumes.Keys);
                 result.AddRange(_absolute_totals);
                 return result;
             }
@@ -162,8 +162,8 @@ namespace SynoDuplicateFolders.Data
                         case "Total Size":
                             
                             foreach (string v in Volumes.Keys)
-                            {   if (data.Size.ContainsKey(v))
-                                size += data.Size[v];
+                            {   if (data.ContainsKey(v))
+                                size += data[v].Size;
                             }
                             yield return new TimeLineDataPoint<long>(ts, size);
                             break;
@@ -171,16 +171,16 @@ namespace SynoDuplicateFolders.Data
 
                             foreach (string v in Volumes.Keys)
                             {
-                                if (data.Size.ContainsKey(v))
-                                    size += Convert.ToInt64(data.Used[v]*Convert.ToDouble(data.Size[v])/100);
+                                if (data.ContainsKey(v))
+                                    size += Convert.ToInt64(data[v].Used*Convert.ToDouble(data[v].Size)/100);
                             }
                             yield return new TimeLineDataPoint<long>(ts, size);
                             break;
                         default:
 
-                            if (data.Used.ContainsKey(name))
+                            if (data.ContainsKey(name))
                             {
-                                yield return new TimeLineDataPoint<float>(ts, data.Used[name]);
+                                yield return new TimeLineDataPoint<float>(ts, data[name].Used);
                             }
                             break;
                     }

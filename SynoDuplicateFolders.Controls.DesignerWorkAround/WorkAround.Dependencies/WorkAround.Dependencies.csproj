@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{90EC0800-1302-467F-8458-C95C5BA1D9B5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WorkAround.Dependencies</RootNamespace>
+    <AssemblyName>WorkAround.Dependencies</AssemblyName>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DESIGNER_WORKAROUND</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Windows.Forms.DataVisualization.Design" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\SynoDuplicateFolders.Data.Core\IXYDataPoint.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data.Core\IVolumePieChart.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data.Core\ISynoChartData.cs" />
+    <Compile Include="..\..\..\DiskStationManager.SecureShell\source\Extensions\Extensions.cs" />
+    <Compile Include="..\..\..\DiskStationManager.SecureShell\source\Extensions\FileSizeFormatter.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\ChartControls.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\GridControls.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\IChartConfiguration.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\IChartLegend.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\LegendConfiguration.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\RectangleLayout.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\IRectangleLayout.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\ITaggedColor.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\PieChartDataPoint.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders\Properties\Resources.Designer.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\ISynoReportCache.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\ItemOpenedEventArgs.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\ItemsComparedEventArgs.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\ItemStatusUpdateEventArgs.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\ItemHiddenEventArgs.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\SynoReportDuplicateCandidates.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\IDuplicateExclusionSource.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\DuplicateFileInfo.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data.Core\ISynoReportDetail.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data.Core\IDuplicateFileInfoExclusion.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data.Core\ISynoCSVReport.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\SortOrderManager.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\BSynoCSVReport.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\DuplicatesFolder.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\DuplicatesFolders.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\DuplicatesAggregates.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\SynoReportCacheDownloadEventArgs.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\ComponentModel\SortableBindingList.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\NoDblClickTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\SynoReportDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\..\SynoDuplicateFolders.Data\ComponentModel\SortableListBindingSource.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="..\..\SynoDuplicateFolders.Controls\CurrentSortOrder.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data.Core\ColumnWidthAttribute.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\Extensions.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data\ICachedReportFile.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data.Core\ISynoCSVReportPair.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

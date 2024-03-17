@@ -9,7 +9,13 @@ namespace SynoDuplicateFolders.Controls
     public class ItemStatusUpdateEventArgs : EventArgs
     {
         public readonly string Status;
-        internal ItemStatusUpdateEventArgs(string status)
+
+#if DESIGNER_WORKAROUND
+        public
+#else
+    internal 
+#endif
+        ItemStatusUpdateEventArgs(string status)
         {
             Status = status;
         }

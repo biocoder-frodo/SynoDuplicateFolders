@@ -157,7 +157,7 @@
             this.radFolderDefault.Location = new System.Drawing.Point(7, 22);
             this.radFolderDefault.Name = "radFolderDefault";
             this.radFolderDefault.Size = new System.Drawing.Size(59, 17);
-            this.radFolderDefault.TabIndex = 19;
+            this.radFolderDefault.TabIndex = 5;
             this.radFolderDefault.TabStop = true;
             this.radFolderDefault.Text = "Default";
             this.radFolderDefault.UseVisualStyleBackColor = true;
@@ -171,7 +171,7 @@
             this.radFolderCustom.Location = new System.Drawing.Point(72, 22);
             this.radFolderCustom.Name = "radFolderCustom";
             this.radFolderCustom.Size = new System.Drawing.Size(77, 17);
-            this.radFolderCustom.TabIndex = 18;
+            this.radFolderCustom.TabIndex = 6;
             this.radFolderCustom.TabStop = true;
             this.radFolderCustom.Text = "This folder:";
             this.radFolderCustom.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -183,7 +183,7 @@
             this.txtSynoReportHome.Location = new System.Drawing.Point(155, 19);
             this.txtSynoReportHome.Name = "txtSynoReportHome";
             this.txtSynoReportHome.Size = new System.Drawing.Size(246, 20);
-            this.txtSynoReportHome.TabIndex = 6;
+            this.txtSynoReportHome.TabIndex = 7;
             this.txtSynoReportHome.Validating += new System.ComponentModel.CancelEventHandler(this.txtSynoReportHome_Validating);
             // 
             // grpUser
@@ -213,7 +213,7 @@
             this.radUserCustom.Location = new System.Drawing.Point(78, 19);
             this.radUserCustom.Name = "radUserCustom";
             this.radUserCustom.Size = new System.Drawing.Size(71, 17);
-            this.radUserCustom.TabIndex = 17;
+            this.radUserCustom.TabIndex = 3;
             this.radUserCustom.TabStop = true;
             this.radUserCustom.Text = "This user:";
             this.radUserCustom.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -225,7 +225,7 @@
             this.radUserDefault.Location = new System.Drawing.Point(7, 19);
             this.radUserDefault.Name = "radUserDefault";
             this.radUserDefault.Size = new System.Drawing.Size(59, 17);
-            this.radUserDefault.TabIndex = 16;
+            this.radUserDefault.TabIndex = 2;
             this.radUserDefault.TabStop = true;
             this.radUserDefault.Text = "Default";
             this.radUserDefault.UseVisualStyleBackColor = true;
@@ -239,7 +239,7 @@
             this.txtUser.Location = new System.Drawing.Point(155, 19);
             this.txtUser.Name = "txtUser";
             this.txtUser.Size = new System.Drawing.Size(164, 20);
-            this.txtUser.TabIndex = 3;
+            this.txtUser.TabIndex = 4;
             this.txtUser.TextChanged += new System.EventHandler(this.txtUser_TextChanged);
             this.txtUser.Validating += new System.ComponentModel.CancelEventHandler(this.txtUser_Validating);
             // 
@@ -285,7 +285,7 @@
             this.btnKeyFileRemove.Location = new System.Drawing.Point(324, 178);
             this.btnKeyFileRemove.Name = "btnKeyFileRemove";
             this.btnKeyFileRemove.Size = new System.Drawing.Size(75, 23);
-            this.btnKeyFileRemove.TabIndex = 12;
+            this.btnKeyFileRemove.TabIndex = 15;
             this.btnKeyFileRemove.Text = "Remove";
             this.btnKeyFileRemove.UseVisualStyleBackColor = true;
             this.btnKeyFileRemove.Click += new System.EventHandler(this.btnKeyFileRemove_Click);
@@ -296,7 +296,7 @@
             this.btnKeyFileAdd.Location = new System.Drawing.Point(324, 149);
             this.btnKeyFileAdd.Name = "btnKeyFileAdd";
             this.btnKeyFileAdd.Size = new System.Drawing.Size(75, 23);
-            this.btnKeyFileAdd.TabIndex = 11;
+            this.btnKeyFileAdd.TabIndex = 14;
             this.btnKeyFileAdd.Text = "Add";
             this.btnKeyFileAdd.UseVisualStyleBackColor = true;
             this.btnKeyFileAdd.Click += new System.EventHandler(this.btnKeyFileAdd_Click);
@@ -309,7 +309,7 @@
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(300, 100);
-            this.listView1.TabIndex = 20;
+            this.listView1.TabIndex = 13;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             // 
@@ -319,7 +319,7 @@
             this.chkKeyFiles.Location = new System.Drawing.Point(18, 126);
             this.chkKeyFiles.Name = "chkKeyFiles";
             this.chkKeyFiles.Size = new System.Drawing.Size(104, 17);
-            this.chkKeyFiles.TabIndex = 10;
+            this.chkKeyFiles.TabIndex = 12;
             this.chkKeyFiles.Text = "Private Key Files";
             this.chkKeyFiles.UseVisualStyleBackColor = true;
             this.chkKeyFiles.CheckedChanged += new System.EventHandler(this.chkKeyFiles_CheckedChanged);
@@ -330,7 +330,7 @@
             this.chkKeyBoardInteractive.Location = new System.Drawing.Point(18, 54);
             this.chkKeyBoardInteractive.Name = "chkKeyBoardInteractive";
             this.chkKeyBoardInteractive.Size = new System.Drawing.Size(123, 17);
-            this.chkKeyBoardInteractive.TabIndex = 7;
+            this.chkKeyBoardInteractive.TabIndex = 9;
             this.chkKeyBoardInteractive.Text = "Keyboard interactive";
             this.chkKeyBoardInteractive.UseVisualStyleBackColor = true;
             this.chkKeyBoardInteractive.CheckedChanged += new System.EventHandler(this.chkKeyBoardInteractive_CheckedChanged);
@@ -341,7 +341,7 @@
             this.chkPassword.Location = new System.Drawing.Point(18, 77);
             this.chkPassword.Name = "chkPassword";
             this.chkPassword.Size = new System.Drawing.Size(72, 17);
-            this.chkPassword.TabIndex = 8;
+            this.chkPassword.TabIndex = 10;
             this.chkPassword.Text = "Password";
             this.chkPassword.UseVisualStyleBackColor = true;
             this.chkPassword.CheckedChanged += new System.EventHandler(this.chkPassword_CheckedChanged);
@@ -353,7 +353,7 @@
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(263, 20);
-            this.txtPassword.TabIndex = 9;
+            this.txtPassword.TabIndex = 11;
             this.txtPassword.UseSystemPasswordChar = true;
             this.txtPassword.TextChanged += new System.EventHandler(this.txtPassword_TextChanged);
             // 
@@ -364,7 +364,7 @@
             this.chkAuthNone.Location = new System.Drawing.Point(18, 31);
             this.chkAuthNone.Name = "chkAuthNone";
             this.chkAuthNone.Size = new System.Drawing.Size(52, 17);
-            this.chkAuthNone.TabIndex = 6;
+            this.chkAuthNone.TabIndex = 8;
             this.chkAuthNone.Text = "None";
             this.chkAuthNone.UseVisualStyleBackColor = true;
             // 

@@ -1,13 +1,10 @@
-﻿using System;
-using SynoDuplicateFolders.Data.SecureShell;
-using SynoDuplicateFolders.Extensions;
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using static SynoDuplicateFolders.Properties.Settings;
-using SynoDuplicateFolders.Data.Core;
-using System.Linq;
-using System.Collections.Generic;
+﻿using DiskStationManager.SecureShell;
 using SynoDuplicateFolders.Controls;
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using static SynoDuplicateFolders.Properties.Settings;
 
 namespace SynoDuplicateFolders
 {
@@ -50,11 +47,11 @@ namespace SynoDuplicateFolders
             txtSynoReportHome.Enabled = IsDefaultFolderSet == false;
             txtUser.Enabled = IsDefaultUserNameSet == false;
 
-            chkKeep.Checked = Host.KeepDsmFilesCustom;
+            chkKeep.Checked = Host.Custom;
 
-            txtKeep.Text = Host.KeepDsmCount.ToString();
-            optAnalyzerDbKeep.Checked = Host.KeepAllDsmFiles;
-            optAnalyzerDbRemove.Checked = !Host.KeepAllDsmFiles;
+            txtKeep.Text = Host.KeepCount.ToString();
+            optAnalyzerDbKeep.Checked = Host.KeepAll;
+            optAnalyzerDbRemove.Checked = !Host.KeepAll;
             btnDupeRemoveAll.Enabled = false;
 
             if (exclusion != null)
@@ -161,9 +158,9 @@ namespace SynoDuplicateFolders
             }
 
 
-            Host.KeepDsmFilesCustom = chkKeep.Checked;
-            Host.KeepDsmCount = int.Parse(txtKeep.Text);
-            Host.KeepAllDsmFiles = optAnalyzerDbKeep.Checked;
+            Host.Custom = chkKeep.Checked;
+            Host.KeepCount = int.Parse(txtKeep.Text);
+            Host.KeepAll = optAnalyzerDbKeep.Checked;
 
             Host.Host = txtHost.Text;
             Host.Port = int.Parse(txtPort.Text);

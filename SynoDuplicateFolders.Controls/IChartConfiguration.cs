@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace SynoDuplicateFolders.Controls
@@ -11,9 +12,12 @@ namespace SynoDuplicateFolders.Controls
         }
 
         bool ContainsKey(string key);
-        IChartLegend Add(string key, Color k, bool forceKnownColor= false);
+        IChartLegend Add(string key, Color k, bool forceKnownColor = false);
         IChartLegend Add(string key, KnownColor k);
 
         List<ITaggedColor> List { get; }
+        void SaveLegendChanges();
+        event EventHandler LegendChanged;
+
     }
 }

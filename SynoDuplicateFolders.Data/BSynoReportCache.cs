@@ -1,10 +1,10 @@
-﻿using System;
+﻿using DiskStationManager.SecureShell;
+using SynoDuplicateFolders.Data.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-
-using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Data
 {

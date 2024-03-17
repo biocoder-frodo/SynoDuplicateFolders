@@ -1,57 +1,15 @@
-﻿using SynoDuplicateFolders.Configuration;
-using SynoDuplicateFolders.Data.Core;
+﻿using SynoDuplicateFolders.Data.Core;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 
-namespace SynoDuplicateFolders.Data.SecureShell
+namespace DiskStationManager.SecureShell
 {
-    public sealed class DSMHost : ConfigurationElement, IElementProvider, IHostSpecificSettings
+    public sealed partial class DSMHost : ConfigurationElement, IElementProvider, IHostSpecificSettings
     {
-        public byte[] FingerPrint
-        {
-            get
-            {
-                try
-                {
-                    return Convert.FromBase64String(Fp);
-                }
-                catch (FormatException)
-                {
-                    return new byte[] { };
-                }
-                catch (ArgumentNullException)
-                {
-                    return new byte[] { };
-                }
-            }
-            set
-            {
-                Fp = Convert.ToBase64String(value);
-            }
-        }
-
-        [ConfigurationProperty("fingerprint", IsRequired = false, DefaultValue = "")]
-        private string Fp
-        {
-            get
-            {
-                return this["fingerprint"] as string;
-            }
-            set
-            {
-                this["fingerprint"] = value;
-            }
-        }
-        public bool Custom => KeepDsmFilesCustom;
-
-        public int KeepCount => KeepDsmCount;
-
-        public bool KeepAll => KeepAllDsmFiles;
-
         [ConfigurationProperty("keepdsmfiles", IsRequired = false, DefaultValue = false)]
-        public bool KeepDsmFilesCustom
+        public bool Custom
         {
             get
             {
@@ -63,7 +21,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
             }
         }
         [ConfigurationProperty("keepallfiles", IsRequired = false, DefaultValue = true)]
-        public bool KeepAllDsmFiles
+        public bool KeepAll
         {
             get
             {
@@ -75,7 +33,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
             }
         }
         [ConfigurationProperty("keepdsmcount", IsRequired = false, DefaultValue = 1)]
-        public int KeepDsmCount
+        public int KeepCount
         {
             get
             {
@@ -84,52 +42,6 @@ namespace SynoDuplicateFolders.Data.SecureShell
             set
             {
                 this["keepdsmcount"] = value;
-            }
-        }
-        [ConfigurationProperty("host", IsRequired = true, IsKey = true)]
-        public string Host
-        {
-            get
-            {
-                return this["host"] as string;
-            }
-            set
-            {
-                this["host"] = value;
-            }
-        }
-
-        [ConfigurationProperty("port", IsRequired = false, DefaultValue = 22)]
-        public int Port
-        {
-            get
-            {
-                return (int)this["port"];
-            }
-            set
-            {
-                this["port"] = value;
-            }
-        }
-
-        [ConfigurationProperty("user", IsRequired = true)]
-        public string UserName
-        {
-            get
-            {
-                return this["user"] as string;
-            }
-            set
-            {
-                this["user"] = value;
-            }
-        }
-
-        public static string DefaultUserName
-        {
-            get
-            {
-                return "admin";
             }
         }
 
@@ -151,93 +63,14 @@ namespace SynoDuplicateFolders.Data.SecureShell
             }
         }
 
-        [ConfigurationProperty("AuthenticationMethods")]
-        public BasicConfigurationElementMap<DSMAuthentication> AuthenticationSection
-        {
-            get
-            {
-                return this["AuthenticationMethods"] as BasicConfigurationElementMap<DSMAuthentication>;
-            }
-        }
-        internal IEnumerable<DSMAuthentication> AuthenticationMethods
-        {
-            get
-            {
-                foreach (DSMAuthentication am in AuthenticationSection)
-                {
-                    yield return am;
-                }
-            }
-        }
-        public DSMAuthentication GetAuthenticationMethod(DSMAuthenticationMethod method)
-        {
-            return AuthenticationSection.TryGet(method);
-        }
+        //public IReadOnlyList<string> Paths
+        //{
+        //    get
+        //    {
+        //        return FilterDuplicates.Split('\t').ToList().Where(s => string.IsNullOrWhiteSpace(s) == false).ToList();
+        //    }
 
-        public DSMAuthentication GetOrAddAuthenticationMethod(DSMAuthenticationMethod method)
-        {
-            DSMAuthentication am = AuthenticationSection.TryGet(method);
-            if (am == null)
-            {
-                am = new DSMAuthentication(method);
-                AuthenticationSection.Add(am);
-            }
-            return am;
-        }
-        public DSMAuthentication UpdateAuthenticationMethod(DSMAuthenticationMethod method, bool add)
-        {
-            if (!add) RemoveAuthenticationMethod(method);
-            return add ? GetOrAddAuthenticationMethod(method) : null;
-        }
-        public void RemoveAuthenticationMethod(DSMAuthenticationMethod method)
-        {
-            DSMAuthentication am = AuthenticationSection.TryGet(method);
-            if (am != null)
-            {
-                AuthenticationSection.Remove(am);
-            }
-        }
-        public bool HasAuthenticationMethod(DSMAuthenticationMethod method)
-        {
-            return AuthenticationSection.ContainsKey(method);
-        }
-        public bool StorePassPhrases { get; set; }
-        public DSMProxy Proxy
-        {
-            get
-            {
-                if (ProxyBacking.Count == 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    return ProxyBacking[0];
-                }
-            }
-            set
-            {
-                ProxyBacking.Clear();
-                ProxyBacking.Add(value);
-            }
-        }
-        [ConfigurationProperty("Proxy")]
-        private BasicConfigurationElementMap<DSMProxy> ProxyBacking
-        {
-            get
-            {
-                return this["Proxy"] as BasicConfigurationElementMap<DSMProxy>;
-            }
-        }
-
-        public IReadOnlyList<string> Paths
-        {
-            get
-            {
-                return FilterDuplicates.Split('\t').ToList().Where(s => string.IsNullOrWhiteSpace(s) == false).ToList();
-            }
-
-        }
+        //}
         [ConfigurationProperty("dsmdupesfilter", IsRequired = false, DefaultValue = "")]
         public string FilterDuplicates
         {
@@ -251,15 +84,6 @@ namespace SynoDuplicateFolders.Data.SecureShell
                 System.Diagnostics.Debug.WriteLine($"SET dsmdupesfilter={value}");
                 this["dsmdupesfilter"] = value;
             }
-        }
-        object IElementProvider.GetElementKey()
-        {
-            return Host;
-        }
-
-        string IElementProvider.GetElementName()
-        {
-            return "DSMHost";
         }
     }
 }

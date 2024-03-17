@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabConfig = new System.Windows.Forms.TabControl();
             this.tabpageServers = new System.Windows.Forms.TabPage();
@@ -43,9 +42,6 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.tabCharting = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.keyDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colorDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.taggedColorBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabpageSecurity = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.optUseStoredPassPhrases = new System.Windows.Forms.RadioButton();
@@ -78,17 +74,20 @@
             this.txtDiffTool = new System.Windows.Forms.TextBox();
             this.btnApply = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.taggedColorBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.keyDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colorDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabConfig.SuspendLayout();
             this.tabpageServers.SuspendLayout();
             this.tabCharting.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).BeginInit();
             this.tabpageSecurity.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPageProxy.SuspendLayout();
             this.tabPageDiffTool.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -245,25 +244,6 @@
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             this.dataGridView1.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dataGridView1_RowPrePaint);
-            // 
-            // keyDataGridViewTextBoxColumn
-            // 
-            this.keyDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.keyDataGridViewTextBoxColumn.DataPropertyName = "Key";
-            this.keyDataGridViewTextBoxColumn.HeaderText = "Key";
-            this.keyDataGridViewTextBoxColumn.Name = "keyDataGridViewTextBoxColumn";
-            this.keyDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // colorDataGridViewTextBoxColumn
-            // 
-            this.colorDataGridViewTextBoxColumn.HeaderText = "Color";
-            this.colorDataGridViewTextBoxColumn.Name = "colorDataGridViewTextBoxColumn";
-            this.colorDataGridViewTextBoxColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            // 
-            // taggedColorBindingSource
-            // 
-            this.taggedColorBindingSource.AllowNew = true;
-            this.taggedColorBindingSource.DataSource = typeof(SynoDuplicateFolders.Controls.ITaggedColor);
             // 
             // tabpageSecurity
             // 
@@ -592,6 +572,26 @@
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
+            // taggedColorBindingSource
+            // 
+            this.taggedColorBindingSource.AllowNew = true;
+            this.taggedColorBindingSource.DataSource = typeof(SynoDuplicateFolders.Controls.ITaggedColor);
+            // 
+            // keyDataGridViewTextBoxColumn
+            // 
+            this.keyDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.keyDataGridViewTextBoxColumn.DataPropertyName = "Key";
+            this.keyDataGridViewTextBoxColumn.HeaderText = "Key";
+            this.keyDataGridViewTextBoxColumn.Name = "keyDataGridViewTextBoxColumn";
+            this.keyDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // colorDataGridViewTextBoxColumn
+            // 
+            this.colorDataGridViewTextBoxColumn.HeaderText = "Color";
+            this.colorDataGridViewTextBoxColumn.Name = "colorDataGridViewTextBoxColumn";
+            this.colorDataGridViewTextBoxColumn.ReadOnly = true;
+            this.colorDataGridViewTextBoxColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
             // Preferences
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -608,7 +608,6 @@
             this.tabpageServers.PerformLayout();
             this.tabCharting.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).EndInit();
             this.tabpageSecurity.ResumeLayout(false);
             this.tabpageSecurity.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -619,13 +618,13 @@
             this.tabPageProxy.PerformLayout();
             this.tabPageDiffTool.ResumeLayout(false);
             this.tabPageDiffTool.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
         private System.Windows.Forms.BindingSource taggedColorBindingSource;
-        private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TabControl tabConfig;
         private System.Windows.Forms.TabPage tabpageServers;
@@ -633,8 +632,6 @@
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.TabPage tabCharting;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn keyDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colorDataGridViewTextBoxColumn;
         private System.Windows.Forms.TabPage tabpageSecurity;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.TextBox txtKeep;
@@ -673,5 +670,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton optUseStoredPassPhrases;
         private System.Windows.Forms.RadioButton optPassPhraseInteractive;
+        private System.Windows.Forms.DataGridViewTextBoxColumn keyDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colorDataGridViewTextBoxColumn;
     }
 }

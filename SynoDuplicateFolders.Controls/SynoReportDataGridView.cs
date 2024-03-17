@@ -1,12 +1,11 @@
-﻿using System;
-using SynoDuplicateFolders.Data;
+﻿using Extensions;
+using SynoDuplicateFolders.Data.ComponentModel;
 using SynoDuplicateFolders.Data.Core;
-using SynoDuplicateFolders.Extensions;
+using System;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows.Forms;
 using static SynoDuplicateFolders.Controls.SortOrderManager;
-using SynoDuplicateFolders.Data.ComponentModel;
-using System.Reflection;
 
 namespace SynoDuplicateFolders.Controls
 {

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+
 namespace SynoDuplicateFolders.Controls
 {
     public class CurrentSortOrder
@@ -6,5 +7,4 @@ namespace SynoDuplicateFolders.Controls
         public string Column;
         public ListSortDirection Direction;
     }
- 
 }

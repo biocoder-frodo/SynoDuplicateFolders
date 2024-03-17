@@ -10,17 +10,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ChartControls.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ChartGrid.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ChartGrid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ChartGrid.Designer.cs">
       <DependentUpon>ChartGrid.cs</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)CurrentSortOrder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DuplicateCandidatesExclusion.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DuplicateCandidatesView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)DuplicateCandidatesView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DuplicateCandidatesView.Designer.cs">
       <DependentUpon>DuplicateCandidatesView.cs</DependentUpon>
     </Compile>
@@ -43,15 +39,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)SynoReportDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)TimeStampTrackBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)TimeStampTrackBar.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TimeStampTrackBar.Designer.cs">
       <DependentUpon>TimeStampTrackBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)VolumeHistoricChart.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)VolumeHistoricChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VolumeHistoricChart.Designer.cs">
       <DependentUpon>VolumeHistoricChart.cs</DependentUpon>
     </Compile>

@@ -1,11 +1,10 @@
-﻿using SynoDuplicateFolders.Data;
+﻿using Extensions;
+using SynoDuplicateFolders.Data;
+using SynoDuplicateFolders.Data.Core;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using SynoDuplicateFolders.Extensions;
-using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Controls
 {
@@ -25,18 +24,20 @@ namespace SynoDuplicateFolders.Controls
         }
         public IChartConfiguration Configuration
         {
-            get { return _legends; }
+            get => _legends;
             set
             {
                 if (value != null)
                 {
                     _legends = value;
+                    _legendConfiguration = new LegendConfiguration(_legends);
 
                     if (value.ContainsKey("Free") == false)
                     {
-                        value.Add("Free", KnownColor.AntiqueWhite);
+                        _legends.Add("Free", KnownColor.AntiqueWhite);
+                        _legends.SaveLegendChanges();
                     }
-                    _legendConfiguration = new LegendConfiguration(value);
+
                 }
             }
         }
@@ -53,49 +54,67 @@ namespace SynoDuplicateFolders.Controls
                 if (_src != null)
                 {
 
-                    if (_charts.Count != _src.Series.Count || _first == true)
-                    {
-                        _first = false;
-
-                        _legendConfiguration.ResetUnknownTraces();
-
-
-                        tableLayoutPanel1.Controls.Clear();
-                        //flowLayoutPanel1.Controls.Clear();
-
-                        _charts.Clear();
-                        for (int z = 0; z < _src.Series.Count; z++)
-                        {
-                            _charts.Add(NewChart());
-                        }
-                        var layout = DetermineLayout();
-
-                        tableLayoutPanel1.ColumnCount = layout.Columns;
-                        tableLayoutPanel1.RowCount = layout.Rows;
-                        int r = 0; int c = 0;
-                        for (int z = 0; z < _src.Series.Count; z++)
-                        {
-                            //flowLayoutPanel1.Controls.Add(_charts[r]);
-                            tableLayoutPanel1.Controls.Add(_charts[z], c++, r);
-                            if (c == layout.Columns)
-                            {
-                                c = 0;
-                                r++;
-                            }
-                        }
-                        tableLayoutPanel1_SizeChanged(null, null);
-                    }
-
-                    _src.PercentageFreeOnly = _percentage_free_only;
-                    for (int r = 0; r < _src.Series.Count; r++)
-                    {
-                        RenderData(r, _charts[r]);
-                    }
-                    _legendConfiguration.Invalidate();
+                    RefreshFromSource();
                 }
             }
         }
 
+        private void RefreshFromSource(bool force = false)
+        {
+            if (_src is null) return;
+            if (force || _charts.Count != _src.Series.Count || _first == true)
+            {
+                _first = false;
+                _legendConfiguration.Invalidate();
+
+                for (int ch = 0; ch < _charts.Count; ch++)
+                {
+                    _legendConfiguration.AddNewTraces(ch, _charts[ch], _src);
+                }
+
+                _legendConfiguration.ResetUnknownTraces();
+
+
+                tableLayoutPanel1.Controls.Clear();
+                //flowLayoutPanel1.Controls.Clear();
+
+                _charts.Clear();
+                for (int z = 0; z < _src.Series.Count; z++)
+                {
+                    _charts.Add(NewChart());
+                }
+                var layout = DetermineLayout();
+
+                tableLayoutPanel1.ColumnCount = layout.Columns;
+                tableLayoutPanel1.RowCount = layout.Rows;
+                int r = 0; int c = 0;
+                for (int z = 0; z < _src.Series.Count; z++)
+                {
+                    //flowLayoutPanel1.Controls.Add(_charts[r]);
+                    tableLayoutPanel1.Controls.Add(_charts[z], c++, r);
+                    if (c == layout.Columns)
+                    {
+                        c = 0;
+                        r++;
+                    }
+                }
+                tableLayoutPanel1_SizeChanged(null, null);
+            }
+
+            _src.PercentageFreeOnly = _percentage_free_only;
+            for (int r = 0; r < _src.Series.Count; r++)
+            {
+                RenderData(r, _charts[r]);
+            }
+            _legendConfiguration.Invalidate();
+
+        }
+
+        public override void Refresh()
+        {
+            RefreshFromSource(true);
+            base.Refresh();
+        }
         private void RenderData(int index, Chart target)
         {
             if (target.Series.Count.Equals(0))

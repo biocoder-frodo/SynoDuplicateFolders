@@ -1,112 +1,51 @@
-﻿using Renci.SshNet;
+﻿using DiskStationManager.SecureShell;
+using Renci.SshNet;
 using Renci.SshNet.Common;
 using System;
-using System.Net;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using SynoDuplicateFolders.Extensions;
 
 namespace SynoDuplicateFolders.Data.SecureShell
 {
     public sealed class SynoReportViaSSH : BSynoReportCache, IDisposable
     {
-        private readonly DSMHost _host;
-        private readonly ConnectionInfo _ci;
+        private readonly SynoReportSession _session;
 
-        private IDSMVersion _version = null;
-        private Func<DSMKeyboardInteractiveEventArgs, string> _interactiveMethod = null;
-        private AuthenticationBannerEventArgs _banner;
+        public ISecureShellSession Session => _session;
+
+        private bool disposedValue;
 
         public event EventHandler HostKeyChange;
-        public void OnHostKeyChange(object sender, EventArgs e)
+
+        public SynoReportViaSSH(DSMHost host, IProxySettings proxy = null)
+        {
+            _session = new SynoReportSession(host, session_HostKeyChange, proxy);
+        }
+
+        private void session_HostKeyChange(object sender, EventArgs e)
         {
             HostKeyChange?.Invoke(sender, e);
         }
-        public SynoReportViaSSH(DSMHost host, Func<string, string> getPassPhraseMethod, Func<DSMKeyboardInteractiveEventArgs, string> getInteractiveMethod, IProxySettings proxy = null)
-        {
-            bool canceled = false;
 
-            RmExecutionMode = ConsoleCommandMode.InteractiveSudo;
+        // public ConsoleCommandMode RmExecutionMode { get; set; }
 
-            _host = host ?? throw new ArgumentNullException(nameof(host));
-            if (getPassPhraseMethod == null) throw new ArgumentNullException(nameof(getPassPhraseMethod));
-            if (getInteractiveMethod == null) throw new ArgumentNullException(nameof(getInteractiveMethod));
-            _interactiveMethod = getInteractiveMethod;
 
-            int i = 0;
-            AuthenticationMethod[] methods = new AuthenticationMethod[host.AuthenticationSection.Count];
-            foreach (var m in host.AuthenticationMethods)
-            {
-                methods[i++] = m.getAuthenticationMethod(host.UserName, host.StorePassPhrases, getPassPhraseMethod, getInteractiveMethod, out canceled);
-            }
-            if (!canceled)
-            {
-                if (proxy != null)
-                {
-                    ProxyTypes proxypath;
-                    if (!Enum.TryParse(proxy.ProxyType, true, out proxypath))
-                    {
-                        proxypath = ProxyTypes.None;
-                    }
-                    _ci = new ConnectionInfo(host.Host, host.Port, host.UserName, proxypath, proxy.Host, proxy.Port, proxy.UserName, proxy.Password, methods);
-                }
-                else
-                {
-                    _ci = new ConnectionInfo(host.Host, host.Port, host.UserName, methods);
-                }
-
-                _ci.AuthenticationBanner += AuthorizationBannerAction;
-
-                foreach (var am in _ci.AuthenticationMethods)
-                {
-                    KeyboardInteractiveAuthenticationMethod kb = am as KeyboardInteractiveAuthenticationMethod;
-                    if (kb != null)
-                    {
-                        kb.AuthenticationPrompt += AuthenticationPromptAction;
-                    }
-                }
-            }
-        }
-
-        public ConsoleCommandMode RmExecutionMode { get; set; }
-
-        internal string Password
-        {
-            get
-            {
-                foreach (DSMAuthentication a in _host.AuthenticationMethods)
-                {
-                    if (a.Method == DSMAuthenticationMethod.Password)
-                    {
-                        return a.Password;
-                    }
-                }
-                return string.Empty;
-            }
-        }
         public string SynoReportHome
         {
             get
             {
-                string result = DSMHost.SynoReportHomeDefault(_host.UserName);
-                if (!string.IsNullOrWhiteSpace(_host.SynoReportHome))
+                var host = _session.Host;
+                string result = DSMHost.SynoReportHomeDefault(host.UserName);
+                if (!string.IsNullOrWhiteSpace(host.SynoReportHome))
                 {
-                    if (_host.SynoReportHome.StartsWith("/") && _host.SynoReportHome.EndsWith("/"))
+                    if (host.SynoReportHome.StartsWith("/") && host.SynoReportHome.EndsWith("/"))
                     {
-                        result = _host.SynoReportHome;
+                        result = host.SynoReportHome;
                     }
                 }
                 return result;
             }
         }
-        public string Host
-        {
-            get { return _ci.Host; }
-        }
-
-        internal ConnectionInfo ConnectionInfo { get { return _ci; } }
 
         private void RaiseDownloadEvent(CacheStatus status)
         {
@@ -121,154 +60,29 @@ namespace SynoDuplicateFolders.Data.SecureShell
             OnDownloadUpdate(this, new SynoReportCacheDownloadEventArgs(status, totalFiles, file));
         }
 
-        public string Version
+        private ISynoReportCommand GetConsole(SshClient client)
         {
-            get
-            {
-                if (_version == null)
-                {
-                    using (SshClient sc = new SshClient(_ci))
-                    {
-                        sc.HostKeyReceived += client_HostKeyReceived;
-                        GetConsole(sc);
-                        sc.HostKeyReceived -= client_HostKeyReceived;
-                    }
-                }
-                return _version.Version;
-            }
-        }
-
-        private string KeyFingerPrint(HostKeyEventArgs e)
-        {
-            return e.HostKeyName + " " + e.KeyLength + " " + e.FingerPrint.ToString(':').ToLower();
-        }
-        private string GetHostAddress(string nameOrAddress, out bool success)
-        {
-            success = false;
-            string address = string.Empty ;
-            try
-            {
-                var iplist = Dns.GetHostAddresses(nameOrAddress);
-                
-                foreach (var ip in iplist)
-                {
-                    if (string.IsNullOrEmpty(address))
-                    {
-                        address = ip.ToString();
-                    }
-                    else
-                    {
-                        address += ";" + ip.ToString();
-                    }
-                }
-                success = true;
-             
-            }
-            catch (Exception)
-            {
-                address = "0.0.0.0";
-            }
-            return address;
-        }
-        private void client_HostKeyReceived(object sender, HostKeyEventArgs e)
-        {
-            bool nslookup;
-            DialogResult trust = DialogResult.Yes; e.CanTrust = false; //we clicked yes if the fingerprint matches
-
-            if (_host.FingerPrint.Length.Equals(0) || !_host.FingerPrint.SequenceEqual(e.FingerPrint))
-            {
-
-                if (_host.FingerPrint.Length.Equals(0))
-                {
-                    trust = MessageBox.Show(
-                        string.Format("Do you trust the new connection with host {0}[{1}]\r\n\r\nKey fingerprint: {2}\r\n\r\nServer version: {3}",
-                        _ci.Host, GetHostAddress(_host.Host, out nslookup), KeyFingerPrint(e), _ci.ServerVersion)
-                        , "New host key for "+_host.Host, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-                }
-                else
-                {
-                    trust = MessageBox.Show(
-                        string.Format("Do you trust the changed connection with host {0}[{1}]\r\n\r\nKey fingerprint: {2}\r\n\r\nServer version: {3}",
-                        _ci.Host, GetHostAddress(_host.Host, out nslookup), KeyFingerPrint(e), _ci.ServerVersion)
-                        , "The host key has changed for " + _host.Host, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-
-                }
-                if (trust == DialogResult.Yes)
-                {
-                    _host.FingerPrint = e.FingerPrint;
-                    OnHostKeyChange(this, new EventArgs());
-                }
-            }
-            e.CanTrust = trust.Equals(DialogResult.Yes);
-        }
-
-        private IConsoleCommand GetConsole(SshClient client)
-        {
-            IConsoleCommand console;
-
-            bool briefly = client.IsConnected == false;
-
             RaiseDownloadEvent(CacheStatus.FetchingVersionInfo);
 
-            if (briefly) client.Connect();
+            var console = _session.GetConsole(client);
+            var info = console.GetVersionInfo();
 
-            console = BConsoleCommand.GetDSMConsole(client);
-
-            if (briefly) client.Disconnect();
-
-            _version = console.GetVersionInfo();
-
-            RaiseDownloadEvent(CacheStatus.FetchingVersionInfoCompleted, _version.Version);
+            RaiseDownloadEvent(CacheStatus.FetchingVersionInfoCompleted, info.Version);
 
             return console;
         }
-        private bool DownloadFile(ScpClient client, string source, FileInfo localfile)
-        {
-            try
-            {
-                if (localfile.Exists == false)
-                {
-                    client.Download(source, localfile);
-                }
-                else
-                {
 
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-
-        }
-        public void AuthorizationBannerAction(object sender, AuthenticationBannerEventArgs e)
-        {
-            _banner = e;
-        }
-        public void AuthenticationPromptAction(object sender, AuthenticationPromptEventArgs e)
-        {
-            Console.WriteLine("AuthenticationPromptAction");
-
-            foreach (var p in e.Prompts)
-            {
-                p.Response = _interactiveMethod(new DSMKeyboardInteractiveEventArgs(_banner, e, p));
-            }
-        }
         public override void DownloadCSVFiles()
         {
             try
             {
-                SortedDictionary<DateTime, List<ConsoleFileInfo>> dsm_databases = new SortedDictionary<DateTime, List<ConsoleFileInfo>>();
-                IConsoleCommand console = null;
+                var dsm_databases = new SortedDictionary<DateTime, List<ConsoleFileInfo>>();
+                ISynoReportCommand console = null;
 
                 _files.Clear();
 
-                using (SshClient sc = new SshClient(_ci))
+                _session.ClientExecute((sc) =>
                 {
-                    sc.HostKeyReceived += client_HostKeyReceived;
-
                     RaiseDownloadEvent(CacheStatus.FetchingDirectoryInfo);
 
                     sc.Connect();
@@ -305,18 +119,17 @@ namespace SynoDuplicateFolders.Data.SecureShell
                             }
                         }
                     }
-                    sc.HostKeyReceived -= client_HostKeyReceived;
-                }
-                using (ScpClient cp = new ScpClient(_ci))
+                });
+
+                _session.ClientExecute(cp =>
                 {
-                    cp.HostKeyReceived += client_HostKeyReceived;
                     cp.Connect();
 
                     RaiseDownloadEvent(CacheStatus.Downloading, _files.Count, 0);
                     int n = 0;
                     foreach (ICachedReportFile src in _files.Values)
                     {
-                        if (src.Type != SynoReportType.Unknown)
+                        if (src.Type != SynoReportType.Unknown && src.LocalFile.Exists == false)
                         {
                             int attempts = 0;
                             bool result = false;
@@ -324,7 +137,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                             while (result == false && attempts < 2)
                             {
                                 attempts++;
-                                result = DownloadFile(cp, SynoReportHome + src.Source, src.LocalFile);
+                                _session.DownloadFile(cp, SynoReportHome + src.Source, src.LocalFile, out result);
                             }
 
                             if (result == false)
@@ -338,11 +151,10 @@ namespace SynoDuplicateFolders.Data.SecureShell
                     }
 
                     cp.Disconnect();
-                    cp.HostKeyReceived -= client_HostKeyReceived;
-                }
+                });
 
 
-                List<ConsoleFileInfo> removal = new List<ConsoleFileInfo>();
+                var removal = new List<ConsoleFileInfo>();
                 if (KeepAnalyzerDbCount >= 0)
                 {
                     List<DateTime> remove = dsm_databases.Keys.Take(dsm_databases.Count - KeepAnalyzerDbCount).ToList();
@@ -351,7 +163,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                         removal.AddRange(dsm_databases[r]);
                     }
                     RaiseDownloadEvent(CacheStatus.Cleanup);
-                    console.RemoveFiles(this, removal);
+                    console.RemoveFiles(this.Session, this.SynoReportHome, removal);
                 }
 
             }
@@ -369,37 +181,26 @@ namespace SynoDuplicateFolders.Data.SecureShell
             }
         }
 
-        #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-
-        void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
-                    _ci.AuthenticationBanner -= AuthorizationBannerAction;
-
-                    foreach (var am in _ci.AuthenticationMethods)
-                    {
-                        KeyboardInteractiveAuthenticationMethod kb = am as KeyboardInteractiveAuthenticationMethod;
-                        if (kb != null)
-                        {
-                            kb.AuthenticationPrompt -= AuthenticationPromptAction;
-                        }
-                    }
+                    _session.Dispose();
                 }
 
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
                 disposedValue = true;
             }
         }
 
-
         public void Dispose()
         {
-            Dispose(true);
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
-        #endregion
     }
     [Serializable]
     public class SynoReportViaSSHException : Exception

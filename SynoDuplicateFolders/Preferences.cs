@@ -1,14 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using SynoDuplicateFolders.Properties;
+﻿using DiskStationManager.SecureShell;
 using SynoDuplicateFolders.Controls;
-using SynoDuplicateFolders.Extensions;
-using SynoDuplicateFolders.Data.SecureShell;
-using static System.Environment;
-using static SynoDuplicateFolders.Properties.Settings;
+using SynoDuplicateFolders.Properties;
+using System;
+using System.IO;
+using System.Windows.Forms;
 using static SynoDuplicateFolders.Properties.CustomSettings;
+using static SynoDuplicateFolders.Properties.Settings;
+using static System.Environment;
+
 namespace SynoDuplicateFolders
 {
     public partial class Preferences : Form
@@ -236,15 +235,18 @@ namespace SynoDuplicateFolders
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 1)
+            if (e.ColumnIndex == 1 && e.RowIndex > -1)
             {
                 var r = ((DataGridView)sender).Rows[e.RowIndex];
                 var d = r.DataBoundItem as ITaggedColor;
-                colorDialog1.AnyColor = false;
-                if (colorDialog1.ShowDialog() == DialogResult.OK)
+                using (var c = new ColorSelection(ChartLegend.PaletteMap, CustomSettings.Profile.ChartLegends, d.Color))
                 {
-                    d.Color = colorDialog1.Color;
-                    dirty_custom = true;
+                    c.ShowDialog();
+                    if (c.Canceled == false)
+                    {
+                        d.Color = c.Selection;
+                        dirty_custom = true;
+                    }
                 }
             }
         }

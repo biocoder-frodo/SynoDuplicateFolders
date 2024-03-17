@@ -1,15 +1,24 @@
-﻿using System.Configuration;
-using SynoDuplicateFolders.Configuration;
+﻿using Extensions;
 using SynoDuplicateFolders.Controls;
-using SynoDuplicateFolders.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Linq;
-using System;
+using System.Reflection;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace SynoDuplicateFolders.Properties
 {
     internal class ChartLegend : ConfigurationElement, IElementProvider, IChartLegend
     {
+        private static readonly Type utilclass = typeof(ChartColorPalette).Assembly.GetType("System.Windows.Forms.DataVisualization.Charting.Utilities.ChartPaletteColors", true);
+        private static readonly MethodInfo GetPaletteColors = utilclass.GetMethod(nameof(GetPaletteColors), BindingFlags.Public | BindingFlags.Static);
+        private static readonly ChartColorPalette[] palettes = ((ChartColorPalette[])typeof(ChartColorPalette).GetEnumValues()).Where(p => p != ChartColorPalette.None).ToArray();
+        private static readonly Dictionary<ChartColorPalette, IReadOnlyList<Color>> dvPaletteMap = palettes
+            .ToDictionary(k => k, v =>  (IReadOnlyList<Color>) new List<Color>((Color[])GetPaletteColors.Invoke(null, new object[] { v })));
+        public static readonly IReadOnlyDictionary<ChartColorPalette, IReadOnlyList<Color>> PaletteMap = dvPaletteMap;
+
         private static readonly string _defaultColorName = (string)typeof(ChartLegend).GetProperty("ColorName").CustomAttributes.First().NamedArguments.Single(a => a.MemberName.Equals("DefaultValue")).TypedValue.Value;
         private static readonly Color _defaultColor = Color.FromName(_defaultColorName);
         private string _dcn = null;
@@ -32,6 +41,10 @@ namespace SynoDuplicateFolders.Properties
         {
             Key = key;
             ColorName = forceKnownColor ? k.ToClosestKnownColor().ToString() : ColorTranslator.ToHtml(k);
+        }
+        public ChartLegend(ChartColorPalette palette, int index)
+        {
+            Color = dvPaletteMap[palette][index];
         }
 
         [ConfigurationProperty("Key", IsRequired = true, IsKey = true)]

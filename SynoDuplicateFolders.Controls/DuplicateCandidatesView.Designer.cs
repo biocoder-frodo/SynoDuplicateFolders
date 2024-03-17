@@ -45,6 +45,7 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new SynoDuplicateFolders.Controls.SynoReportDataGridView();
+            this.deduplicateFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -128,6 +129,7 @@
             this.Where.Size = new System.Drawing.Size(354, 277);
             this.Where.TabIndex = 1;
             this.Where.BeforeCheck += new System.Windows.Forms.TreeViewCancelEventHandler(this.Where_BeforeCheck);
+            this.Where.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.Where_AfterSelect);
             this.Where.Enter += new System.EventHandler(this.Where_Enter);
             this.Where.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Where_MouseUp);
             // 
@@ -139,43 +141,44 @@
             this.openFileLocationToolStripMenuItem,
             this.toolStripSeparator2,
             this.compareExternallyToolStripMenuItem,
-            this.hideToolStripMenuItem});
+            this.hideToolStripMenuItem,
+            this.deduplicateFoldersToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 104);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(189, 148);
             this.contextMenuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
             // 
             // openFileToolStripMenuItem
             // 
             this.openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
-            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.openFileToolStripMenuItem.Text = "Open";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(185, 6);
             // 
             // openFileLocationToolStripMenuItem
             // 
             this.openFileLocationToolStripMenuItem.Name = "openFileLocationToolStripMenuItem";
-            this.openFileLocationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openFileLocationToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.openFileLocationToolStripMenuItem.Text = "Open file location ...";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(185, 6);
             // 
             // compareExternallyToolStripMenuItem
             // 
             this.compareExternallyToolStripMenuItem.Name = "compareExternallyToolStripMenuItem";
-            this.compareExternallyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.compareExternallyToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.compareExternallyToolStripMenuItem.Text = "Compare ...";
             // 
             // hideToolStripMenuItem
             // 
             this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
-            this.hideToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
             this.hideToolStripMenuItem.Text = "Hide";
             // 
             // tabControl1
@@ -188,7 +191,6 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(550, 423);
             this.tabControl1.TabIndex = 2;
-            this.tabControl1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseUp);
             // 
             // tabPage1
             // 
@@ -224,6 +226,12 @@
             this.dataGridView1.CellContextMenuStripNeeded += new System.Windows.Forms.DataGridViewCellContextMenuStripNeededEventHandler(this.dataGridView1_CellContextMenuStripNeeded);
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
+            // 
+            // deduplicateFoldersToolStripMenuItem
+            // 
+            this.deduplicateFoldersToolStripMenuItem.Name = "deduplicateFoldersToolStripMenuItem";
+            this.deduplicateFoldersToolStripMenuItem.Size = new System.Drawing.Size(188, 22);
+            this.deduplicateFoldersToolStripMenuItem.Text = "Deduplicate folders ...";
             // 
             // DuplicateCandidatesView
             // 
@@ -267,5 +275,6 @@
         private System.Windows.Forms.TabPage tabPage2;
         private Controls.SynoReportDataGridView dataGridView1;
         private System.Windows.Forms.ToolStripMenuItem hideToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deduplicateFoldersToolStripMenuItem;
     }
 }
