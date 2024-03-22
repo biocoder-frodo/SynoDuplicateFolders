@@ -89,11 +89,12 @@ namespace SynoDuplicateFolders.Data.Core
         {
             long totalSize = 0;
 
-            var paths = directories.ToDictionary(k => k.FullName);
+            var paths = directories.Where(di => di.Exists).ToDictionary(k => k.FullName);
             var files = new Dictionary<string, Dictionary<string, RelativeFileInfo>>();
 
             if (paths.Count < 2 || scanned)
             {
+                logMessage?.Invoke("Nothing to do.");
                 return;
             }
 
@@ -127,24 +128,25 @@ namespace SynoDuplicateFolders.Data.Core
                     }
                 }
             }
-
-            folder = toBeScanned.Count;
-            if (raiseEvents)
+            if (toBeScanned.Any())
             {
-                OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs("Scanning files", toBeScanned.Count * 2, folder));
-            }
-
-            foreach (var scan in toBeScanned)
-            {
-                folder++;
-                if (CompareFiles(logMessage, scan.Key, scan.Value))
+                folder = toBeScanned.Count;
+                if (raiseEvents)
                 {
-                    totalSize += scan.Key.Length;
-                    toBeRemoved.Add(scan.Value);
+                    OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs("Scanning files", toBeScanned.Count * 2, folder));
                 }
-                if (raiseEvents) OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs(folder));
-            }
 
+                foreach (var scan in toBeScanned)
+                {
+                    folder++;
+                    if (CompareFiles(logMessage, scan.Key, scan.Value))
+                    {
+                        totalSize += scan.Key.Length;
+                        toBeRemoved.Add(scan.Value);
+                    }
+                    if (raiseEvents) OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs(folder));
+                }
+            }
             scanned = true;
 
             if (toBeRemoved.Count != 0)
@@ -165,7 +167,10 @@ namespace SynoDuplicateFolders.Data.Core
                     return;
                 }
             }
-
+            else
+            {
+                OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs("Nothing to do.", 100, 0));
+            }
             if (!raiseEvents) logMessage?.Invoke("Nothing to do.");
 
         }
@@ -174,8 +179,21 @@ namespace SynoDuplicateFolders.Data.Core
             var removeFolders = new Dictionary<string, DirectoryInfo>();
             toBeRemoved.ForEach((r) => { if (removeFolders.ContainsKey(r.Directory.FullName) == false) removeFolders.Add(r.Directory.FullName, r.Directory); });
 
+            int file = 1;
             logMessage?.Invoke("Removing files ...");
-            toBeRemoved.ForEach(r => r.Delete());
+            OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs("Removing files ...", toBeRemoved.Count));
+            foreach (var removeFile in toBeRemoved)
+            {
+                try
+                {
+                    removeFile.Delete();
+                }
+                catch (Exception ex)
+                {
+                    logMessage?.Invoke($"Removing '{removeFile.FullName}': {ex.Message}");
+                }
+                OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs(file++));
+            }
 
             int folder = 1;
             OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs("Removing folders ...", removeFolders.Count));
@@ -185,7 +203,10 @@ namespace SynoDuplicateFolders.Data.Core
                 {
                     DeleteEmptyFolders(removeFolder, true);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    logMessage?.Invoke($"Removing '{removeFolder.FullName}': {ex.Message}");
+                }
                 OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs(folder++));
             }
             OnDeduplicationRequestStatusUpdate?.Invoke(this, new DeduplicationRequestStatusEventArgs(string.Empty, 100, 0));

@@ -247,6 +247,7 @@
             this.volumeHistoricChart1.Size = new System.Drawing.Size(1234, 650);
             this.volumeHistoricChart1.TabIndex = 0;
             this.volumeHistoricChart1.View = SynoDuplicateFolders.Controls.vhcViewMode.Shares;
+           // this.volumeHistoricChart1.TimeRange = new System.TimeSpan(365, 6, 0, 0);
             // 
             // tabPage2
             // 

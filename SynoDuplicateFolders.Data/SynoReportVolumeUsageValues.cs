@@ -64,16 +64,16 @@ namespace SynoDuplicateFolders.Data
             }
             src.Close();
 
-            //if (volumes.Count > 1)
-            //{
-            //    var total = volumes.Sum(v => v.Value.Size);
-            //    var used = volumes.Select(v => Convert.ToInt64(((Convert.ToDecimal(v.Value.Used) / 100m) * Convert.ToDecimal(v.Value.Size)))).Sum(sum => sum);
-            //    var usage = Convert.ToSingle(100m*(Convert.ToDecimal(used) / Convert.ToDecimal(total)));
-            //    var daysTillFull = volumes.Min(v => v.Value.DaysTillFull);
-            //    var s = new SynoReportVolumeUsageValue("/volumes",total,usage,daysTillFull);
-            //    volumes.Add(s.Volume, s);
-            //    Volumes.Add(s.Volume);
-            //}
+            if (Volumes.Count > 1)
+            {
+                var total = Volumes.Sum(v => v.Value.Size);
+                var used = Volumes.Select(v => Convert.ToInt64(((Convert.ToDecimal(v.Value.Used) / 100m) * Convert.ToDecimal(v.Value.Size)))).Sum(sum => sum);
+                var usage = Convert.ToSingle(100m * (Convert.ToDecimal(used) / Convert.ToDecimal(total)));
+                var daysTillFull = Volumes.Min(v => v.Value.DaysTillFull);
+                var s = new SynoReportVolumeUsageValue("/volumes", total, usage, daysTillFull);
+                Volumes.Add(s);
+               
+            }
         }
     }
 }

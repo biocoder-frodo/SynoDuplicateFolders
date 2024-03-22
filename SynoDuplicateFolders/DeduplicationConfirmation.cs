@@ -66,10 +66,11 @@ namespace SynoDuplicateFolders
                 progressBar1.Maximum = int.MaxValue;
                 progressBar1.Value = int.MaxValue - 1;
             }
+    
             System.Diagnostics.Debug.WriteLine($"ProgressBar {progressBar1.Value}/{progressBar1.Maximum}");
-            if (e.StatusMessage is null) return;
-
+            if (e.StatusMessage is null) { } else
             lblProgress.Text = e.StatusMessage;
+            Application.DoEvents();
 
         }
 
