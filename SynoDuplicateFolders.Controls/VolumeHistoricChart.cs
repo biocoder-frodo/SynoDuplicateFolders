@@ -23,6 +23,9 @@ namespace SynoDuplicateFolders.Controls
 
         private FileSizeFormatSize shares_range = FileSizeFormatSize.PB;
 
+        public DateTime? EarliestTime { get; set; }
+        public TimeSpan? TimeRange { get; set; }
+        public bool ShowIndividualStoragePoolUsage { get; set; }
         public VolumeHistoricChart()
         {
             InitializeComponent();
@@ -102,10 +105,28 @@ namespace SynoDuplicateFolders.Controls
 
                         long peak = 0;
 
-                        _displaying_traces = data.ActiveSeries;
+
                         if (_viewtype == SynoReportType.VolumeUsage)
                         {
-                            _displaying_traces = _displaying_traces.Where(s => s.Contains("Total") == (_view == vhcViewMode.VolumeTotals)).ToList();
+                            switch (_view)
+                            {
+                                case vhcViewMode.VolumeTotals:
+                                    _displaying_traces = data.ActiveSeries.Where(s => s.Contains("Total")).ToList();
+                                    break;
+                                case vhcViewMode.Volume:
+                                    _displaying_traces = (ShowIndividualStoragePoolUsage
+                                        ? data.ActiveSeries.Where(s => s != "/volumes" && s.Contains("Total") == false)
+                                        : data.ActiveSeries.Where(s => s == "/volumes")
+                                        ).ToList();
+                                    break;
+                                default:
+                                    _displaying_traces = data.ActiveSeries;
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            _displaying_traces = data.ActiveSeries;
                         }
 
                         foreach (string s in _displaying_traces)
@@ -123,28 +144,31 @@ namespace SynoDuplicateFolders.Controls
 
                             chart1.Series.Add(series1);
 
-
+                            DateTime? timeLimit = null;
+                            if (EarliestTime.HasValue || TimeRange.HasValue)
+                            {
+                                timeLimit = TimeRange.HasValue ? DateTime.Now.Subtract(TimeRange.Value) : EarliestTime.Value;
+                            }
                             series1.Points.Clear();
-                            if (_viewtype == SynoReportType.ShareList)
+                            switch (_viewtype)
                             {
+                                case SynoReportType.ShareList:
+                                    AddPoints(series1, s, ref peak, timeLimit);
+                                    break;
 
-                                foreach (IXYDataPoint dp in data[s])
-                                {
-                                    if (peak < (long)dp.Y) peak = (long)dp.Y;
-                                    series1.Points.AddXY(dp.X, dp.Y);
-                                }
-                            }
-                            else
-                            {
-                                foreach (IXYDataPoint dp in data[s])
-                                {
-                                    if (_viewtype == SynoReportType.VolumeUsage && s.Contains("Total"))
+                                case SynoReportType.VolumeUsage:
+                                    if (s.Contains("Total"))
                                     {
-                                        if (peak < (long)dp.Y) peak = (long)dp.Y;
+                                        AddPoints(series1, s, ref peak, timeLimit);
                                     }
-                                    series1.Points.AddXY(dp.X, dp.Y);
-                                }
+                                    else
+                                        AddPoints(series1, s, timeLimit);
+                                    break;
+                                default:
+                                    AddPoints(series1, s, timeLimit);
+                                    break;
                             }
+
                         }
                         shares_range = peak.GetFileSizeRange();
 
@@ -156,17 +180,42 @@ namespace SynoDuplicateFolders.Controls
                 }
             }
         }
-
+        private void AddPoints(Series series, string trace, DateTime? minTs)
+        {
+            foreach (IXYDataPoint dp in data[trace])
+            {
+                if (minTs.HasValue == false || ((DateTime)dp.X) >= minTs.Value)
+                    series.Points.AddXY(dp.X, dp.Y);
+            }
+        }
+        private void AddPoints(Series series, string trace, ref long peak, DateTime? minTs)
+        {
+            foreach (IXYDataPoint dp in data[trace])
+            {
+                if (peak < (long)dp.Y) peak = (long)dp.Y;
+                if (minTs.HasValue == false || ((DateTime)dp.X) >= minTs.Value)
+                    series.Points.AddXY(dp.X, dp.Y);
+            }
+        }
         private void chart1_MouseClick(object sender, MouseEventArgs e)
         {
             HitTestResult h = chart1.HitTest(e.X, e.Y);
+
+            System.Diagnostics.Debug.WriteLine($"HitTestResult: {h.ChartElementType}");
+
             switch (h.ChartElementType)
             {
                 case ChartElementType.LegendItem:
 
                     LegendItem li = h.Object as LegendItem;
-                    Console.WriteLine(li.SeriesName);
+                    System.Diagnostics.Debug.WriteLine(li.SeriesName);
+                    if (_viewtype == SynoReportType.VolumeUsage && _view == vhcViewMode.Volume)
+                    {
+                        ShowIndividualStoragePoolUsage = !ShowIndividualStoragePoolUsage;
+                        DataSource = src;
+                    }
                     break;
+
                 case ChartElementType.Axis:
                     Axis a = h.Object as Axis;
                     switch (a.AxisName)
@@ -184,6 +233,14 @@ namespace SynoDuplicateFolders.Controls
                     int v = Enum.GetValues(typeof(vhcViewMode)).Length;
                     View = (vhcViewMode)(((int)_view + 1) % v);
                     break;
+
+                case ChartElementType.Nothing:
+                    if (e.Button == MouseButtons.Right)
+                    {
+                        contextMenuStrip1.Show(MousePosition);
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -231,6 +288,34 @@ namespace SynoDuplicateFolders.Controls
                 if (!e.Text.Equals(text)) e.Text = text;
 
             }
+        }
+
+        private void noTimeLimitsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EarliestTime = null;
+            TimeRange = null;
+            DataSource = src;
+        }
+
+        private void lastWeekToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EarliestTime = null;
+            TimeRange = new TimeSpan(7, 0, 0, 0);
+            DataSource = src;
+        }
+
+        private void lastMonthToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EarliestTime = null;
+            TimeRange = new TimeSpan(31, 0, 0, 0);
+            DataSource = src;
+        }
+
+        private void lastYearToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EarliestTime = null;
+            TimeRange = new TimeSpan(366, 0, 0, 0);
+            DataSource = src;
         }
     }
     public enum vhcViewMode

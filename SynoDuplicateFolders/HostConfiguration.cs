@@ -245,7 +245,7 @@ namespace SynoDuplicateFolders
             {
                 radUserDefault.Checked = true;
             }
-            Console.WriteLine((sender as TextBox).Name + " CancelEventArgs e.Cancel = " + e.Cancel);
+            System.Diagnostics.Debug.WriteLine((sender as TextBox).Name + " CancelEventArgs e.Cancel = " + e.Cancel);
         }
 
         private void txtSynoReportHome_Validating(object sender, System.ComponentModel.CancelEventArgs e)

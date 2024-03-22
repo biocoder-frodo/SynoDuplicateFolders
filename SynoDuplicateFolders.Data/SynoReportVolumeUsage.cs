@@ -114,7 +114,7 @@ namespace SynoDuplicateFolders.Data
                         }
                     }
                     sw.WriteLine();
-                }               
+                }
             }
 
         }
@@ -160,19 +160,20 @@ namespace SynoDuplicateFolders.Data
                     switch (name)
                     {
                         case "Total Size":
-                            
-                            foreach (string v in Volumes.Keys)
-                            {   if (data.ContainsKey(v))
-                                size += data[v].Size;
+
+                            foreach (string v in Volumes.Keys.Where(v => v != "/volumes"))
+                            {
+                                if (data.ContainsKey(v))
+                                    size += data[v].Size;
                             }
                             yield return new TimeLineDataPoint<long>(ts, size);
                             break;
                         case "Total Used":
 
-                            foreach (string v in Volumes.Keys)
+                            foreach (string v in Volumes.Keys.Where(v => v != "/volumes"))
                             {
                                 if (data.ContainsKey(v))
-                                    size += Convert.ToInt64(data[v].Used*Convert.ToDouble(data[v].Size)/100);
+                                    size += Convert.ToInt64(data[v].Used * Convert.ToDouble(data[v].Size) / 100);
                             }
                             yield return new TimeLineDataPoint<long>(ts, size);
                             break;
