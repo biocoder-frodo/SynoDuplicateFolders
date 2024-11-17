@@ -69,7 +69,8 @@
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(452, 60);
             this.trackBar1.TabIndex = 3;
-            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            //this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+            this.trackBar1.ValueChanged += TrackBar1_ValueChanged;
             // 
             // groupBox1
             // 
@@ -98,6 +99,8 @@
             this.ResumeLayout(false);
 
         }
+
+
 
         #endregion
 

@@ -30,6 +30,7 @@ namespace SynoDuplicateFolders
 
         private DSMHost selected;
         private DuplicateCandidatesExclusion<DSMHost> exclusion;
+        private DateTime? commonDateSelection;
 
         public SynoReportClient()
         {
@@ -365,33 +366,42 @@ namespace SynoDuplicateFolders
             }
         }
 
-        private void timeStampTrackBar_Scroll(object sender, EventArgs e)
+        private void timeStampTrackBar_ValueChanged(object sender, EventArgs e)
         {
-            chartGrid1.DataSource = cache.GetReport(timeStampTrackBar.Value, SynoReportType.VolumeUsage, SynoReportType.ShareList) as IVolumePieChart;
+            commonDateSelection = timeStampTrackBar.Value;
+            PopulateFromTimeline(commonDateSelection.Value);
         }
 
-        private void timeStampTrackBar1_Scroll(object sender, EventArgs e)
+        private void timeStampTrackBar1_ValueChanged(object sender, EventArgs e)
         {
+            commonDateSelection = timeStampTrackBar1.Value;
+            PopulateFromTimeline(commonDateSelection.Value);
+        }
+        private void PopulateFromTimeline(DateTime ts)
+        {
+            if (cache is null) return;
+            chartGrid1.DataSource = cache.GetReport(ts, SynoReportType.VolumeUsage, SynoReportType.ShareList) as IVolumePieChart;
+
             string value = cmbFileDetails.Text.ToLowerInvariant();
             switch (value)
             {
                 case "owners":
-                    setDataSource<ISynoReportOwnerDetail>(dataGridView1, timeStampTrackBar1.Value, SynoReportType.FileOwner);
+                    setDataSource<ISynoReportOwnerDetail>(dataGridView1, ts, SynoReportType.FileOwner);
                     break;
                 case "most modified":
-                    setDataSource<ISynoReportFileDetail>(dataGridView1, timeStampTrackBar1.Value, SynoReportType.MostModified);
+                    setDataSource<ISynoReportFileDetail>(dataGridView1, ts, SynoReportType.MostModified);
                     break;
                 case "least modified":
-                    setDataSource<ISynoReportFileDetail>(dataGridView1, timeStampTrackBar1.Value, SynoReportType.LeastModified);
+                    setDataSource<ISynoReportFileDetail>(dataGridView1, ts, SynoReportType.LeastModified);
                     break;
                 default:
-                    setDataSource<ISynoReportGroupDetail>(dataGridView1, timeStampTrackBar1.Value, SynoReportType.FileGroup);
+                    setDataSource<ISynoReportGroupDetail>(dataGridView1, ts, SynoReportType.FileGroup);
                     break;
             }
         }
         private void cmbFileDetails_SelectedIndexChanged(object sender, EventArgs e)
         {
-            timeStampTrackBar1_Scroll(sender, e);
+            timeStampTrackBar1_ValueChanged(sender, e);
         }
         private void setDataSource<T>(SynoReportDataGridView grid, DateTime ts, SynoReportType type) where T : class, ISynoReportDetail
         {
@@ -597,5 +607,25 @@ namespace SynoDuplicateFolders
             return r == DialogResult.OK;
         }
 
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+  
+            switch (((TabControl)sender).SelectedIndex)
+            {
+                case 2:
+                    if (commonDateSelection.HasValue)
+
+                    {
+                        timeStampTrackBar.Value = commonDateSelection.Value;
+                    } break;
+                case 3:
+                    {
+                        timeStampTrackBar1.Value = commonDateSelection.Value;
+                    }
+                    break;
+                default: break;
+       
+            }
+        }
     }
 }

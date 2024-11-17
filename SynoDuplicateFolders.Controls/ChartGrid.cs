@@ -5,6 +5,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Linq;
 
 namespace SynoDuplicateFolders.Controls
 {
@@ -62,7 +63,8 @@ namespace SynoDuplicateFolders.Controls
         private void RefreshFromSource(bool force = false)
         {
             if (_src is null) return;
-            if (force || _charts.Count != _src.Series.Count || _first == true)
+            var series = _src.Series.Where(s => s != "/volumes").ToList();
+            if (force || _charts.Count != series.Count || _first == true)
             {
                 _first = false;
                 _legendConfiguration.Invalidate();
@@ -79,7 +81,7 @@ namespace SynoDuplicateFolders.Controls
                 //flowLayoutPanel1.Controls.Clear();
 
                 _charts.Clear();
-                for (int z = 0; z < _src.Series.Count; z++)
+                for (int z = 0; z < series.Count; z++)
                 {
                     _charts.Add(NewChart());
                 }
@@ -88,7 +90,7 @@ namespace SynoDuplicateFolders.Controls
                 tableLayoutPanel1.ColumnCount = layout.Columns;
                 tableLayoutPanel1.RowCount = layout.Rows;
                 int r = 0; int c = 0;
-                for (int z = 0; z < _src.Series.Count; z++)
+                for (int z = 0; z < series.Count; z++)
                 {
                     //flowLayoutPanel1.Controls.Add(_charts[r]);
                     tableLayoutPanel1.Controls.Add(_charts[z], c++, r);
@@ -102,7 +104,7 @@ namespace SynoDuplicateFolders.Controls
             }
 
             _src.PercentageFreeOnly = _percentage_free_only;
-            for (int r = 0; r < _src.Series.Count; r++)
+            for (int r = 0; r < series.Count; r++)
             {
                 RenderData(r, _charts[r]);
             }
@@ -265,7 +267,8 @@ namespace SynoDuplicateFolders.Controls
                 //{
                 //    p = Width / Convert.ToDouble(_src.Series.Count);
                 //}
-                for (int z = 0; z < _src.Series.Count; z++)
+                var series = _src.Series.Where(s => s != "/volumes").ToList();
+                for (int z = 0; z < series.Count; z++)
                 {
                     _charts[z].Width = (int)(0.95 * Width / Convert.ToDouble(layout.Columns));
                     _charts[z].Height = (int)(0.95 * Height / Convert.ToDouble(layout.Rows));

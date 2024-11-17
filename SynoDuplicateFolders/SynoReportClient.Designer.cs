@@ -226,6 +226,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1248, 682);
             this.tabControl1.TabIndex = 0;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -242,12 +243,14 @@
             // 
             this.volumeHistoricChart1.Configuration = null;
             this.volumeHistoricChart1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.volumeHistoricChart1.EarliestTime = null;
             this.volumeHistoricChart1.Location = new System.Drawing.Point(3, 3);
             this.volumeHistoricChart1.Name = "volumeHistoricChart1";
+            this.volumeHistoricChart1.ShowIndividualStoragePoolUsage = false;
             this.volumeHistoricChart1.Size = new System.Drawing.Size(1234, 650);
             this.volumeHistoricChart1.TabIndex = 0;
+            this.volumeHistoricChart1.TimeRange = null;
             this.volumeHistoricChart1.View = SynoDuplicateFolders.Controls.vhcViewMode.Shares;
-           // this.volumeHistoricChart1.TimeRange = new System.TimeSpan(365, 6, 0, 0);
             // 
             // tabPage2
             // 
@@ -304,7 +307,7 @@
             this.timeStampTrackBar.Name = "timeStampTrackBar";
             this.timeStampTrackBar.Size = new System.Drawing.Size(1228, 80);
             this.timeStampTrackBar.TabIndex = 6;
-            this.timeStampTrackBar.Scroll += new System.EventHandler(this.timeStampTrackBar_Scroll);
+            this.timeStampTrackBar.ValueChanged += new System.EventHandler(this.timeStampTrackBar_ValueChanged);
             // 
             // chartGrid1
             // 
@@ -364,7 +367,7 @@
             this.timeStampTrackBar1.Name = "timeStampTrackBar1";
             this.timeStampTrackBar1.Size = new System.Drawing.Size(1228, 80);
             this.timeStampTrackBar1.TabIndex = 2;
-            this.timeStampTrackBar1.Scroll += new System.EventHandler(this.timeStampTrackBar1_Scroll);
+            this.timeStampTrackBar1.ValueChanged += new System.EventHandler(this.timeStampTrackBar1_ValueChanged);
             // 
             // cmbFileDetails
             // 
