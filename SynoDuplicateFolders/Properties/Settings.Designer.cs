@@ -214,5 +214,53 @@ namespace SynoDuplicateFolders.Properties {
                 this["DiffExe"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Total Size")]
+        public string TotalSize {
+            get {
+                return ((string)(this["TotalSize"]));
+            }
+            set {
+                this["TotalSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Total Used")]
+        public string TotalUsed {
+            get {
+                return ((string)(this["TotalUsed"]));
+            }
+            set {
+                this["TotalUsed"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Free")]
+        public string Free {
+            get {
+                return ((string)(this["Free"]));
+            }
+            set {
+                this["Free"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Used")]
+        public string Used {
+            get {
+                return ((string)(this["Used"]));
+            }
+            set {
+                this["Used"] = value;
+            }
+        }
     }
 }

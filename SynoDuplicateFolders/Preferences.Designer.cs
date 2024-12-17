@@ -42,6 +42,9 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.tabCharting = new System.Windows.Forms.TabPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.keyDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colorDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.taggedColorBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabpageSecurity = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.optUseStoredPassPhrases = new System.Windows.Forms.RadioButton();
@@ -74,34 +77,32 @@
             this.txtDiffTool = new System.Windows.Forms.TextBox();
             this.btnApply = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.taggedColorBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.keyDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colorDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabConfig.SuspendLayout();
             this.tabpageServers.SuspendLayout();
             this.tabCharting.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).BeginInit();
             this.tabpageSecurity.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPageProxy.SuspendLayout();
             this.tabPageDiffTool.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 96F));
             this.tableLayoutPanel1.Controls.Add(this.tabConfig, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.btnApply, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.btnApply, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(618, 411);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
@@ -112,10 +113,11 @@
             this.tabConfig.Controls.Add(this.tabpageSecurity);
             this.tabConfig.Controls.Add(this.tabPageProxy);
             this.tabConfig.Controls.Add(this.tabPageDiffTool);
+            this.tabConfig.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabConfig.Location = new System.Drawing.Point(3, 3);
             this.tabConfig.Name = "tabConfig";
             this.tabConfig.SelectedIndex = 0;
-            this.tabConfig.Size = new System.Drawing.Size(607, 356);
+            this.tabConfig.Size = new System.Drawing.Size(516, 357);
             this.tabConfig.TabIndex = 1;
             // 
             // tabpageServers
@@ -131,7 +133,7 @@
             this.tabpageServers.Location = new System.Drawing.Point(4, 22);
             this.tabpageServers.Name = "tabpageServers";
             this.tabpageServers.Padding = new System.Windows.Forms.Padding(3);
-            this.tabpageServers.Size = new System.Drawing.Size(599, 330);
+            this.tabpageServers.Size = new System.Drawing.Size(508, 331);
             this.tabpageServers.TabIndex = 0;
             this.tabpageServers.Text = "General";
             this.tabpageServers.UseVisualStyleBackColor = true;
@@ -224,26 +226,47 @@
             this.tabCharting.Location = new System.Drawing.Point(4, 22);
             this.tabCharting.Name = "tabCharting";
             this.tabCharting.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCharting.Size = new System.Drawing.Size(599, 330);
+            this.tabCharting.Size = new System.Drawing.Size(508, 331);
             this.tabCharting.TabIndex = 2;
             this.tabCharting.Text = "Charting";
             this.tabCharting.UseVisualStyleBackColor = true;
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.keyDataGridViewTextBoxColumn,
             this.colorDataGridViewTextBoxColumn});
             this.dataGridView1.DataSource = this.taggedColorBindingSource;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(3, 3);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(593, 327);
+            this.dataGridView1.Size = new System.Drawing.Size(502, 325);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             this.dataGridView1.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dataGridView1_RowPrePaint);
+            // 
+            // keyDataGridViewTextBoxColumn
+            // 
+            this.keyDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.keyDataGridViewTextBoxColumn.DataPropertyName = "Key";
+            this.keyDataGridViewTextBoxColumn.HeaderText = "Key";
+            this.keyDataGridViewTextBoxColumn.Name = "keyDataGridViewTextBoxColumn";
+            this.keyDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // colorDataGridViewTextBoxColumn
+            // 
+            this.colorDataGridViewTextBoxColumn.HeaderText = "Color";
+            this.colorDataGridViewTextBoxColumn.Name = "colorDataGridViewTextBoxColumn";
+            this.colorDataGridViewTextBoxColumn.ReadOnly = true;
+            this.colorDataGridViewTextBoxColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // taggedColorBindingSource
+            // 
+            this.taggedColorBindingSource.AllowNew = true;
+            this.taggedColorBindingSource.DataSource = typeof(SynoDuplicateFolders.Controls.ITaggedColor);
             // 
             // tabpageSecurity
             // 
@@ -254,7 +277,7 @@
             this.tabpageSecurity.Location = new System.Drawing.Point(4, 22);
             this.tabpageSecurity.Name = "tabpageSecurity";
             this.tabpageSecurity.Padding = new System.Windows.Forms.Padding(3);
-            this.tabpageSecurity.Size = new System.Drawing.Size(599, 330);
+            this.tabpageSecurity.Size = new System.Drawing.Size(508, 331);
             this.tabpageSecurity.TabIndex = 1;
             this.tabpageSecurity.Text = "Security";
             this.tabpageSecurity.UseVisualStyleBackColor = true;
@@ -265,7 +288,7 @@
             this.groupBox2.Controls.Add(this.optPassPhraseInteractive);
             this.groupBox2.Location = new System.Drawing.Point(6, 177);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(578, 72);
+            this.groupBox2.Size = new System.Drawing.Size(478, 72);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Keyfile pass phrases";
@@ -299,7 +322,7 @@
             this.groupBox1.Controls.Add(this.optLoginAsRoot);
             this.groupBox1.Location = new System.Drawing.Point(6, 40);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(578, 131);
+            this.groupBox1.Size = new System.Drawing.Size(478, 131);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Analyzer.db remove method";
@@ -370,7 +393,7 @@
             this.tabPageProxy.Location = new System.Drawing.Point(4, 22);
             this.tabPageProxy.Name = "tabPageProxy";
             this.tabPageProxy.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageProxy.Size = new System.Drawing.Size(599, 330);
+            this.tabPageProxy.Size = new System.Drawing.Size(508, 331);
             this.tabPageProxy.TabIndex = 3;
             this.tabPageProxy.Text = "Proxy";
             this.tabPageProxy.UseVisualStyleBackColor = true;
@@ -497,7 +520,7 @@
             this.tabPageDiffTool.Location = new System.Drawing.Point(4, 22);
             this.tabPageDiffTool.Name = "tabPageDiffTool";
             this.tabPageDiffTool.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDiffTool.Size = new System.Drawing.Size(599, 330);
+            this.tabPageDiffTool.Size = new System.Drawing.Size(508, 331);
             this.tabPageDiffTool.TabIndex = 4;
             this.tabPageDiffTool.Text = "Differences";
             this.tabPageDiffTool.UseVisualStyleBackColor = true;
@@ -563,34 +586,14 @@
             // 
             // btnApply
             // 
-            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.Location = new System.Drawing.Point(532, 380);
+            this.btnApply.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnApply.Location = new System.Drawing.Point(525, 380);
             this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(83, 28);
+            this.btnApply.Size = new System.Drawing.Size(90, 28);
             this.btnApply.TabIndex = 2;
             this.btnApply.Text = "Apply";
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
-            // taggedColorBindingSource
-            // 
-            this.taggedColorBindingSource.AllowNew = true;
-            this.taggedColorBindingSource.DataSource = typeof(SynoDuplicateFolders.Controls.ITaggedColor);
-            // 
-            // keyDataGridViewTextBoxColumn
-            // 
-            this.keyDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.keyDataGridViewTextBoxColumn.DataPropertyName = "Key";
-            this.keyDataGridViewTextBoxColumn.HeaderText = "Key";
-            this.keyDataGridViewTextBoxColumn.Name = "keyDataGridViewTextBoxColumn";
-            this.keyDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // colorDataGridViewTextBoxColumn
-            // 
-            this.colorDataGridViewTextBoxColumn.HeaderText = "Color";
-            this.colorDataGridViewTextBoxColumn.Name = "colorDataGridViewTextBoxColumn";
-            this.colorDataGridViewTextBoxColumn.ReadOnly = true;
-            this.colorDataGridViewTextBoxColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             // 
             // Preferences
             // 
@@ -598,16 +601,18 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(618, 411);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(634, 436);
             this.Name = "Preferences";
             this.Text = "Preferences";
+
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tabConfig.ResumeLayout(false);
             this.tabpageServers.ResumeLayout(false);
             this.tabpageServers.PerformLayout();
             this.tabCharting.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).EndInit();
             this.tabpageSecurity.ResumeLayout(false);
             this.tabpageSecurity.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -618,7 +623,6 @@
             this.tabPageProxy.PerformLayout();
             this.tabPageDiffTool.ResumeLayout(false);
             this.tabPageDiffTool.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.taggedColorBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }

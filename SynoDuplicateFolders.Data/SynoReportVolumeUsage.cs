@@ -8,7 +8,7 @@ namespace SynoDuplicateFolders.Data
 {
     public class SynoReportVolumeUsage : BSynoReportTimeLine, ISynoChartData
     {
-        private readonly List<string> _absolute_totals = new List<string>() { "Total Size", "Total Used" };
+        private readonly List<string> _absolute_totals = new List<string>() { TraceName.TotalSize, TraceName.TotalUsed };
         public readonly Dictionary<string, string> Volumes = new Dictionary<string, string>();
         private readonly Dictionary<int, string> _volumes = new Dictionary<int, string>();
 
@@ -157,34 +157,32 @@ namespace SynoDuplicateFolders.Data
                 {
                     var data = _list[ts] as SynoReportVolumeUsageValues;
                     long size = 0;
-                    switch (name)
+
+                    if (name == TraceName.TotalSize)
                     {
-                        case "Total Size":
-
-                            foreach (string v in Volumes.Keys.Where(v => v != "/volumes"))
-                            {
-                                if (data.ContainsKey(v))
-                                    size += data[v].Size;
-                            }
-                            yield return new TimeLineDataPoint<long>(ts, size);
-                            break;
-                        case "Total Used":
-
-                            foreach (string v in Volumes.Keys.Where(v => v != "/volumes"))
-                            {
-                                if (data.ContainsKey(v))
-                                    size += Convert.ToInt64(data[v].Used * Convert.ToDouble(data[v].Size) / 100);
-                            }
-                            yield return new TimeLineDataPoint<long>(ts, size);
-                            break;
-                        default:
-
-                            if (data.ContainsKey(name))
-                            {
-                                yield return new TimeLineDataPoint<float>(ts, data[name].Used);
-                            }
-                            break;
+                        foreach (string v in Volumes.Keys.Where(v => v != "/volumes"))
+                        {
+                            if (data.ContainsKey(v))
+                                size += data[v].Size;
+                        }
+                        yield return new TimeLineDataPoint<long>(ts, size);
                     }
+
+                    if (name == TraceName.TotalUsed)
+                    {
+                        foreach (string v in Volumes.Keys.Where(v => v != "/volumes"))
+                        {
+                            if (data.ContainsKey(v))
+                                size += Convert.ToInt64(data[v].Used * Convert.ToDouble(data[v].Size) / 100);
+                        }
+                        yield return new TimeLineDataPoint<long>(ts, size);                       
+                    }
+
+                    if (data.ContainsKey(name))
+                    {
+                        yield return new TimeLineDataPoint<float>(ts, data[name].Used);
+                    }
+
                 }
             }
         }

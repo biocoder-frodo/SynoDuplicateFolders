@@ -33,13 +33,24 @@ namespace SynoDuplicateFolders.Controls
                     _legends = value;
                     _legendConfiguration = new LegendConfiguration(_legends);
 
-                    if (value.ContainsKey("Free") == false)
-                    {
-                        _legends.Add("Free", KnownColor.AntiqueWhite);
-                        _legends.SaveLegendChanges();
-                    }
+                    bool change = false;
 
+                    InitializeDefaultTrace(TraceName.Free, KnownColor.AntiqueWhite, ref change);
+                    InitializeDefaultTrace(TraceName.Used, KnownColor.Blue, ref change);
+                    InitializeDefaultTrace(TraceName.TotalUsed, KnownColor.Blue, ref change);
+                    InitializeDefaultTrace(TraceName.TotalSize, KnownColor.Red, ref change);
+
+                    if (change) _legends.SaveLegendChanges();
                 }
+            }
+        }
+        private void InitializeDefaultTrace(string name, KnownColor color, ref bool change)
+        {
+            if (_legends.ContainsKey(name) == false)
+            {
+                _legends.Add(name, color);
+                _legends[name].ColorName= color.ToString() ;
+                change = true;
             }
         }
 
@@ -165,20 +176,10 @@ namespace SynoDuplicateFolders.Controls
                 {
                     double size = _src.TotalSize(hovered.Name) / 100.0;
 
-                    if (dp.LegendText.Equals("Free") || dp.LegendText.Equals("Used"))
-                    {
-                        text = string.Format("{0}: {2} ({1:0.0}%)",
-                            hovered.Name + " " + dp.LegendText,
-                            dp.YValues[0],
-                            ((long)(size * dp.YValues[0])).ToFileSizeString());
-                    }
-                    else
-                    {
-                        text = string.Format("{0}: {2} ({1:0.0}%)",
-                            hovered.Name + "/" + dp.LegendText,
-                            dp.YValues[0],
-                            ((long)(size * dp.YValues[0])).ToFileSizeString());
-                    }
+                    text = TraceName.IsUsage(dp.LegendText)
+                        ? $"{hovered.Name + " " + dp.LegendText}: {((long)(size * dp.YValues[0])).ToFileSizeString()} ({dp.YValues[0]:0.0}%)"
+                        : $"{hovered.Name + "/" + dp.LegendText}: {((long)(size * dp.YValues[0])).ToFileSizeString()} ({dp.YValues[0]:0.0}%)";
+
                 }
             }
             if (!e.Text.Equals(text)) e.Text = text;

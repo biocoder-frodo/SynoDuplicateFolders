@@ -34,6 +34,8 @@ namespace SynoDuplicateFolders
 
         public SynoReportClient()
         {
+            TraceName.Initialize(Default.Used, Default.Free, Default.TotalSize, Default.TotalUsed);
+
             InitializeComponent();
             this.components.Add(new Disposer(this.OnDispose));
 
@@ -420,7 +422,7 @@ namespace SynoDuplicateFolders
             }
             else if (e.ClickedItem == removeServerToolStripMenuItem)
             {
-                if (MessageBox.Show(string.Format("Are you sure you want to remove server '{0}' from the list of servers?", tag),
+                if (MessageBox.Show($"Are you sure you want to remove server '{tag}' from the list of servers?",
                     "Remove server",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question,
@@ -465,7 +467,7 @@ namespace SynoDuplicateFolders
                     }
                     else
                     {
-                        MessageBox.Show(string.Format("There is already a configuration present for the host named '{0}'", srv.Host.Host),
+                        MessageBox.Show($"There is already a configuration present for the host named '{srv.Host.Host}'",
                             "Duplicate host", MessageBoxButtons.OK,
                             MessageBoxIcon.Exclamation);
                     }
@@ -510,7 +512,7 @@ namespace SynoDuplicateFolders
                     break;
 
                 case CacheStatus.Downloading:
-                    toolStripStatusLabel1.Text = string.Format("Downloading files.. [{0} of {1}]", e.FilesFetched, e.TotalFiles);
+                    toolStripStatusLabel1.Text = $"Downloading files.. [{e.FilesFetched} of {e.TotalFiles}]";
                     toolStripProgressBar1.Minimum = 0;
                     toolStripProgressBar1.Maximum = e.TotalFiles;
                     toolStripProgressBar1.Value = e.FilesFetched;

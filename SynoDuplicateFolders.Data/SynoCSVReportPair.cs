@@ -72,10 +72,7 @@ namespace SynoDuplicateFolders.Data
                 else
                 {
                     string paramName = ((first as T1) == null && (first as T2) == null) == true ? "first" : "second";
-                    throw new ArgumentException(string.Format("Type mismatch while initializing object, argument should be of type {0} or type {1}.",
-                        new T1().GetType().Name,
-                        new T2().GetType().Name),
-                        paramName);
+                    throw new ArgumentException($"Type mismatch while initializing object, argument should be of type {new T1().GetType().Name} or type {new T2().GetType().Name}.", paramName);
                 }
             }
             else
