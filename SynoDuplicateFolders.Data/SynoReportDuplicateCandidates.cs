@@ -266,7 +266,7 @@ namespace SynoDuplicateFolders.Data
         private static string GetUNCPathUnchecked(string host, string path)
         {
             if (string.IsNullOrWhiteSpace(host)) throw new ArgumentException("The HostName property must be set, it cannot be empty.");
-            return string.Format("{0}{1}", Path.DirectorySeparatorChar, Path.DirectorySeparatorChar) + host + path.Replace('/', Path.DirectorySeparatorChar);
+            return $"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}" + host + path.Replace('/', Path.DirectorySeparatorChar);
         }
         public static FileInfo GetUNCPath(string host, string path, out bool location, out bool file, out bool isFile)
         {
@@ -292,7 +292,7 @@ namespace SynoDuplicateFolders.Data
             }
             catch (System.Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(string.Format("{0} {1}", System.DateTime.UtcNow.Ticks, ex.Message));
+                System.Diagnostics.Debug.WriteLine($"{System.DateTime.UtcNow.Ticks} {ex.Message}");
 
                 location = false;
                 file = false;
@@ -331,7 +331,7 @@ namespace SynoDuplicateFolders.Data
             }
             catch (System.Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(string.Format("{0} {1}", System.DateTime.UtcNow.Ticks, ex.Message));
+                System.Diagnostics.Debug.WriteLine($"{System.DateTime.UtcNow.Ticks} {ex.Message}");
             }
             return openFile || openFileLocation;
         }

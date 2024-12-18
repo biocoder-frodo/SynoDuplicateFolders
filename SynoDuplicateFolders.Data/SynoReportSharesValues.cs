@@ -40,7 +40,7 @@ namespace SynoDuplicateFolders.Data
             if (map.ContainsKey("shared folder")) map.Add("share", map["shared folder"]);
             if (map.ContainsKey("size (including recycle bins)(byte)")) map.Add("size", map["size (including recycle bins)(byte)"]);
 
-            Console.WriteLine("columns in {0} = {1}", fi.FullName, map.Count);
+            //Console.WriteLine("columns in {0} = {1}", fi.FullName, map.Count);
 
             while (src.EndOfStream == false)
             {

@@ -147,7 +147,7 @@ namespace SynoDuplicateFolders
                     if (Host.SynoReportHome.Equals(txtSynoReportHome.Text) == false && txtSynoReportHome.Text.EndsWith("/synoreport/"))
                     {
 
-                        if (MessageBox.Show(string.Format("Are you sure your Storage Analyzer reports can be found in '{0}'?", txtSynoReportHome.Text + "synoreport/"),
+                        if (MessageBox.Show($"Are you sure your Storage Analyzer reports can be found in '{txtSynoReportHome.Text + "synoreport/"}'?",
                             "Please confirm path",
                             MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                         {

@@ -47,7 +47,7 @@ namespace DiskStationManager.SecureShell
 
         public static string SynoReportHomeDefault(string userName)
         {
-            return string.Format("/volume1/homes/{0}/", string.IsNullOrEmpty(userName) ? DefaultUserName : userName);
+            return $"/volume1/homes/{(string.IsNullOrEmpty(userName) ? DefaultUserName : userName)}/";
         }
 
         [ConfigurationProperty("home", IsRequired = false)]

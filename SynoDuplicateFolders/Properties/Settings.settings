@@ -50,5 +50,17 @@
     <Setting Name="DiffExe" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Program Files\KDiff3\kdiff3.exe</Value>
     </Setting>
+    <Setting Name="TotalSize" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Total Size</Value>
+    </Setting>
+    <Setting Name="TotalUsed" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Total Used</Value>
+    </Setting>
+    <Setting Name="Free" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Free</Value>
+    </Setting>
+    <Setting Name="Used" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Used</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

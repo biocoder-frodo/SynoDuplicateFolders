@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BSynoReportTimeLine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CachedReportFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CachedReportFilesDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TraceName.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ComponentModel\SortableBindingList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ComponentModel\SortableListBindingSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DuplicateFileInfo.cs" />

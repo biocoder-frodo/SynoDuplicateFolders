@@ -50,13 +50,13 @@ namespace SynoDuplicateFolders.Data
 
                 if (_render_volume_only)
                 {
-                    yield return new PieChartDataPoint("Used", _volumes[index].Used);
-                    yield return new PieChartDataPoint("Free", unity - _volumes[index].Used);
+                    yield return new PieChartDataPoint(TraceName.Used, _volumes[index].Used);
+                    yield return new PieChartDataPoint(TraceName.Free, unity - _volumes[index].Used);
 
                 }
                 else
                 {
-                    yield return new PieChartDataPoint("Free", unity - _volumes[index].Used);
+                    yield return new PieChartDataPoint(TraceName.Free, unity - _volumes[index].Used);
 
                     foreach (string s in _shares.Shares)
                     {

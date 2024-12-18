@@ -15,7 +15,7 @@ namespace SynoDuplicateFolders.Controls
 #if DESIGNER_WORKAROUND
     public
 #else
-    internal 
+    internal
 #endif
      class LegendConfiguration
     {
@@ -31,14 +31,14 @@ namespace SynoDuplicateFolders.Controls
         {
             _unknownTraces.Clear();
         }
-
+        public bool LegendUpdateNeeded => _invalidated && _unknownTraces.Count > 0;
         public void AddNewTraces(int index, Chart chart, IVolumePieChart volumePie)
         {
-            if (_invalidated && _unknownTraces.Count > 0)
+            if (LegendUpdateNeeded)
             {
                 DataPointCollection dpc = chart.Series[0].Points;
-                
-                var legendMap = new Dictionary<string,DataPoint>();
+
+                var legendMap = new Dictionary<string, DataPoint>();
                 foreach (var dp in dpc)
                 {
                     if (legendMap.ContainsKey(dp.LegendText) == false)
@@ -49,20 +49,40 @@ namespace SynoDuplicateFolders.Controls
                 foreach (PieChartDataPoint dp in volumePie[index])
                 {
                     if (legendMap.ContainsKey(dp.SliceName))
-                    colorMap.Add(dp.SliceName, legendMap[dp.SliceName].Color);
+                        colorMap.Add(dp.SliceName, legendMap[dp.SliceName].Color);
                 }
 
-                AddNewTraces(colorMap.Count, (idx) => colorMap.Keys.ToList()[idx], (idx) => colorMap[colorMap.Keys.ToList()[idx]]);
+                AddNewTraces((idx) => colorMap.Keys.ToList()[idx], (idx) => colorMap[colorMap.Keys.ToList()[idx]], colorMap.Count);
             }
             _invalidated = false;
         }
-        public void AddNewTraces(int allTraceCount, Func<int, string> traceName, Func<int, Color> traceColor)
+        public void AddNewTraces(ISynoChartData data, SeriesCollection series)
         {
+            if (LegendUpdateNeeded)
+            {
             
-            if (_invalidated && _unknownTraces.Count > 0)
+                bool changed = false;
+                foreach (var unknown in _unknownTraces)
+                {
+                    if (_legends.ContainsKey(unknown) == false)
+                    {
+                        var traceColor = series[unknown].Color;
+                        _legends.Add(unknown, traceColor, false);
+                        changed = true;
+                    }
+                }
+                if (changed) _legends.SaveLegendChanges();
+            }
+            _invalidated = false;        
+        }
+            public void AddNewTraces(Func<int, string> traceName, Func<int, Color> traceColor, int allTraceCount)
+        {
+
+            if (LegendUpdateNeeded)
             {
                 int index = 0;
                 bool changed = false;
+
                 for (index = 0; index < allTraceCount; index++)
                 {
                     string trace = traceName(index);
@@ -71,8 +91,9 @@ namespace SynoDuplicateFolders.Controls
                         _legends.Add(trace, traceColor(index), false);
                         changed = true;
                     }
-                   
+
                 }
+
                 if (changed) _legends.SaveLegendChanges();
             }
             _invalidated = false;
@@ -83,20 +104,19 @@ namespace SynoDuplicateFolders.Controls
         }
         public bool TryPickColor(string traceName, DataPointCustomProperties dpcp)
         {
-            Console.Write("trace " + traceName + ": ");
+            // Console.Write("trace " + traceName + ": ");
             if (_legends.ContainsKey(traceName))
             {
-               
+
                 var legend = _legends[traceName];
-                Console.WriteLine("picking dictionary color");
+                //Console.WriteLine("picking dictionary color");
                 dpcp.Color = legend.Color;
                 return true;
             }
-            else
-            {
-                if (_unknownTraces.Contains(traceName)==false)_unknownTraces.Add(traceName);
-                Console.WriteLine("picking default color");
-            }
+
+            if (_unknownTraces.Contains(traceName) == false) _unknownTraces.Add(traceName);
+            //Console.WriteLine("picking default color");
+
             return false;
         }
     }

@@ -1,11 +1,11 @@
-﻿using System.Drawing;
-using System.Configuration;
-using System.Collections.Generic;
+﻿using DiskStationManager.SecureShell;
 using SynoDuplicateFolders.Controls;
-using DiskStationManager.SecureShell;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Drawing;
 using System.Linq;
-using System.Windows.Forms.DataVisualization.Charting;
+using SynoDuplicateFolders.Data;
 
 namespace SynoDuplicateFolders.Properties
 {
@@ -14,8 +14,8 @@ namespace SynoDuplicateFolders.Properties
         private readonly List<ITaggedColor> _list = new List<ITaggedColor>();
         private static CustomSettings _default_instance = null;
         private static Func<CustomSettings> _load_method = null;
-        private readonly static object _thread = new object();
 
+        private readonly static object _thread = new object();
         public event EventHandler LegendChanged;
 
         public static void Initialize(Func<CustomSettings> method)
@@ -24,6 +24,9 @@ namespace SynoDuplicateFolders.Properties
             {
                 _load_method = method;
                 _default_instance = _load_method();
+#if DEBUG
+                System.Diagnostics.Debug.WriteLine($"Loading from {_default_instance.CurrentConfiguration.FilePath}");
+#endif
             }
         }
         public static CustomSettings Profile => _default_instance;
@@ -68,19 +71,11 @@ namespace SynoDuplicateFolders.Properties
                 {
                     return Profile.ChartLegends.Items.TryGet(key) as IChartLegend;
                 }
+
             }
         }
-
         [ConfigurationProperty("ChartLegends")]
         public ChartLegends ChartLegends => this["ChartLegends"] as ChartLegends;
-
-        //public NamedBasicConfigurationElementMap<ChartLegend> ChartLegends
-        //{
-        //    get
-        //    {
-        //        return this["ChartLegends"] as NamedBasicConfigurationElementMap<ChartLegend>;
-        //    }
-        //}
 
         public List<ITaggedColor> List
         {
@@ -89,8 +84,7 @@ namespace SynoDuplicateFolders.Properties
                 lock (_thread)
                 {
                     _list.Clear();
-                    var chartLegends = Profile.ChartLegends;
-                    foreach (ITaggedColor l in chartLegends.Items)
+                    foreach (ITaggedColor l in Profile.ChartLegends.Items)
                     {
                         _list.Add(l);
                     }
@@ -199,6 +193,26 @@ namespace SynoDuplicateFolders.Properties
         }
         public void SaveLegendChanges()
         {
+            lock (_thread)
+            {
+                var ordered = new SortedDictionary<string, ITaggedColor>(List.ToDictionary(k => k.Key, v => v));
+
+                Profile.ChartLegends.Items.Clear();
+
+                var used = (ChartLegend)ordered[TraceName.Used]; ordered.Remove(TraceName.Used);
+                var free = (ChartLegend)ordered[TraceName.Free]; ordered.Remove(TraceName.Free);
+                var totalSize = (ChartLegend)ordered[TraceName.TotalSize]; ordered.Remove(TraceName.TotalSize);
+                var totalUsed = (ChartLegend)ordered[TraceName.TotalUsed]; ordered.Remove(TraceName.TotalUsed);
+
+                Profile.ChartLegends.Items.Add(free);
+                Profile.ChartLegends.Items.Add(used);
+                Profile.ChartLegends.Items.Add(totalUsed);
+                Profile.ChartLegends.Items.Add(totalSize);
+
+                foreach (ChartLegend legend in ordered.Values)
+                    Profile.ChartLegends.Items.Add(legend);
+            }
+
             Save();
 
             LegendChanged?.Invoke(this, new EventArgs());

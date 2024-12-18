@@ -5,6 +5,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Linq;
 
 namespace SynoDuplicateFolders.Controls
 {
@@ -32,13 +33,24 @@ namespace SynoDuplicateFolders.Controls
                     _legends = value;
                     _legendConfiguration = new LegendConfiguration(_legends);
 
-                    if (value.ContainsKey("Free") == false)
-                    {
-                        _legends.Add("Free", KnownColor.AntiqueWhite);
-                        _legends.SaveLegendChanges();
-                    }
+                    bool change = false;
 
+                    InitializeDefaultTrace(TraceName.Free, KnownColor.AntiqueWhite, ref change);
+                    InitializeDefaultTrace(TraceName.Used, KnownColor.Blue, ref change);
+                    InitializeDefaultTrace(TraceName.TotalUsed, KnownColor.Blue, ref change);
+                    InitializeDefaultTrace(TraceName.TotalSize, KnownColor.Red, ref change);
+
+                    if (change) _legends.SaveLegendChanges();
                 }
+            }
+        }
+        private void InitializeDefaultTrace(string name, KnownColor color, ref bool change)
+        {
+            if (_legends.ContainsKey(name) == false)
+            {
+                _legends.Add(name, color);
+                _legends[name].ColorName= color.ToString() ;
+                change = true;
             }
         }
 
@@ -62,7 +74,8 @@ namespace SynoDuplicateFolders.Controls
         private void RefreshFromSource(bool force = false)
         {
             if (_src is null) return;
-            if (force || _charts.Count != _src.Series.Count || _first == true)
+            var series = _src.Series.Where(s => s != "/volumes").ToList();
+            if (force || _charts.Count != series.Count || _first == true)
             {
                 _first = false;
                 _legendConfiguration.Invalidate();
@@ -79,7 +92,7 @@ namespace SynoDuplicateFolders.Controls
                 //flowLayoutPanel1.Controls.Clear();
 
                 _charts.Clear();
-                for (int z = 0; z < _src.Series.Count; z++)
+                for (int z = 0; z < series.Count; z++)
                 {
                     _charts.Add(NewChart());
                 }
@@ -88,7 +101,7 @@ namespace SynoDuplicateFolders.Controls
                 tableLayoutPanel1.ColumnCount = layout.Columns;
                 tableLayoutPanel1.RowCount = layout.Rows;
                 int r = 0; int c = 0;
-                for (int z = 0; z < _src.Series.Count; z++)
+                for (int z = 0; z < series.Count; z++)
                 {
                     //flowLayoutPanel1.Controls.Add(_charts[r]);
                     tableLayoutPanel1.Controls.Add(_charts[z], c++, r);
@@ -102,7 +115,7 @@ namespace SynoDuplicateFolders.Controls
             }
 
             _src.PercentageFreeOnly = _percentage_free_only;
-            for (int r = 0; r < _src.Series.Count; r++)
+            for (int r = 0; r < series.Count; r++)
             {
                 RenderData(r, _charts[r]);
             }
@@ -163,20 +176,10 @@ namespace SynoDuplicateFolders.Controls
                 {
                     double size = _src.TotalSize(hovered.Name) / 100.0;
 
-                    if (dp.LegendText.Equals("Free") || dp.LegendText.Equals("Used"))
-                    {
-                        text = string.Format("{0}: {2} ({1:0.0}%)",
-                            hovered.Name + " " + dp.LegendText,
-                            dp.YValues[0],
-                            ((long)(size * dp.YValues[0])).ToFileSizeString());
-                    }
-                    else
-                    {
-                        text = string.Format("{0}: {2} ({1:0.0}%)",
-                            hovered.Name + "/" + dp.LegendText,
-                            dp.YValues[0],
-                            ((long)(size * dp.YValues[0])).ToFileSizeString());
-                    }
+                    text = TraceName.IsUsage(dp.LegendText)
+                        ? $"{hovered.Name + " " + dp.LegendText}: {((long)(size * dp.YValues[0])).ToFileSizeString()} ({dp.YValues[0]:0.0}%)"
+                        : $"{hovered.Name + "/" + dp.LegendText}: {((long)(size * dp.YValues[0])).ToFileSizeString()} ({dp.YValues[0]:0.0}%)";
+
                 }
             }
             if (!e.Text.Equals(text)) e.Text = text;
@@ -265,7 +268,8 @@ namespace SynoDuplicateFolders.Controls
                 //{
                 //    p = Width / Convert.ToDouble(_src.Series.Count);
                 //}
-                for (int z = 0; z < _src.Series.Count; z++)
+                var series = _src.Series.Where(s => s != "/volumes").ToList();
+                for (int z = 0; z < series.Count; z++)
                 {
                     _charts[z].Width = (int)(0.95 * Width / Convert.ToDouble(layout.Columns));
                     _charts[z].Height = (int)(0.95 * Height / Convert.ToDouble(layout.Rows));

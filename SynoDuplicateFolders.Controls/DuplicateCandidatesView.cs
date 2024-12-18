@@ -140,7 +140,7 @@ namespace SynoDuplicateFolders.Controls
 
             }
 
-            OnItemStatusUpdate?.Invoke(this, new ItemStatusUpdateEventArgs(string.Format("{0} duplicate(s)", count)));
+            OnItemStatusUpdate?.Invoke(this, new ItemStatusUpdateEventArgs($"{count} duplicate(s)"));
 
             Files.Items.AddRange(folders.ToArray());
             Files.SelectedIndex = -1;

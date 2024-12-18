@@ -100,7 +100,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.cs" />
     <EmbeddedResource Include="DeduplicationConfirmation.resx">
       <DependentUpon>DeduplicationConfirmation.cs</DependentUpon>
     </EmbeddedResource>
@@ -141,6 +140,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Properties\Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SSH.NET">

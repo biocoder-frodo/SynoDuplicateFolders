@@ -105,17 +105,16 @@ namespace SynoDuplicateFolders.Controls
 
                         long peak = 0;
 
-
                         if (_viewtype == SynoReportType.VolumeUsage)
                         {
                             switch (_view)
                             {
                                 case vhcViewMode.VolumeTotals:
-                                    _displaying_traces = data.ActiveSeries.Where(s => s.Contains("Total")).ToList();
+                                    _displaying_traces = data.ActiveSeries.Where(s => TraceName.IsTotal(s)).ToList();
                                     break;
                                 case vhcViewMode.Volume:
                                     _displaying_traces = (ShowIndividualStoragePoolUsage
-                                        ? data.ActiveSeries.Where(s => s != "/volumes" && s.Contains("Total") == false)
+                                        ? data.ActiveSeries.Where(s => s != "/volumes" && TraceName.IsTotal(s) == false)
                                         : data.ActiveSeries.Where(s => s == "/volumes")
                                         ).ToList();
                                     break;
@@ -157,7 +156,7 @@ namespace SynoDuplicateFolders.Controls
                                     break;
 
                                 case SynoReportType.VolumeUsage:
-                                    if (s.Contains("Total"))
+                                    if (TraceName.IsTotal(s))
                                     {
                                         AddPoints(series1, s, ref peak, timeLimit);
                                     }
@@ -249,7 +248,17 @@ namespace SynoDuplicateFolders.Controls
 
         private void chart1_PostPaint(object sender, ChartPaintEventArgs e)
         {
-            _legendConfiguration.AddNewTraces(_displaying_traces.Count, (idx) => data.Series[idx], (idx) => chart1.Series[idx].Color);
+            if (_legendConfiguration.LegendUpdateNeeded)
+            {
+                if (_view == vhcViewMode.VolumeTotals)
+                {
+                    _legendConfiguration.AddNewTraces(data, chart1.Series);
+                }
+                else
+                {
+                    _legendConfiguration.AddNewTraces((idx) => data.Series[idx], (idx) => chart1.Series[idx].Color, _displaying_traces.Count);
+                }
+            }
         }
 
         private void chart1_GetToolTipText(object sender, ToolTipEventArgs e)
@@ -262,27 +271,18 @@ namespace SynoDuplicateFolders.Controls
                 DataPoint dp = h.Series.Points[h.PointIndex];
                 if (_viewtype == SynoReportType.ShareList)
                 {
-                    text = string.Format("{0}: {2} ({1})",
-                        h.Series.Name,
-                        DateTime.FromOADate(dp.XValue),
-                        ((long)dp.YValues[0]).ToFileSizeString());
+                    text = $"{h.Series.Name}: {((long)dp.YValues[0]).ToFileSizeString()} ({DateTime.FromOADate(dp.XValue)})";
                 }
                 else
                 {
-                    if (h.Series.Name.Contains("Total"))
+                    if (TraceName.IsTotal(h.Series.Name))
                     {
-                        text = string.Format("{0}: {2} ({1})",
-                            h.Series.Name,
-                            DateTime.FromOADate(dp.XValue),
-                            ((long)dp.YValues[0]).ToFileSizeString());
+                        text = $"{h.Series.Name}: {((long)dp.YValues[0]).ToFileSizeString()} ({DateTime.FromOADate(dp.XValue)})";
 
                     }
                     else
                     {
-                        text = string.Format("{0}: {2:0.0}%, ({1})",
-                            h.Series.Name,
-                            DateTime.FromOADate(dp.XValue),
-                            (float)dp.YValues[0]);
+                        text = $"{h.Series.Name}: {(float)dp.YValues[0]:0.0}%, ({DateTime.FromOADate(dp.XValue)})";
                     }
                 }
                 if (!e.Text.Equals(text)) e.Text = text;
