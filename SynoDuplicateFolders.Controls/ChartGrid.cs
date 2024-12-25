@@ -3,9 +3,9 @@ using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Linq;
 
 namespace SynoDuplicateFolders.Controls
 {
@@ -96,7 +96,7 @@ namespace SynoDuplicateFolders.Controls
                 {
                     _charts.Add(NewChart());
                 }
-                var layout = DetermineLayout();
+                var layout = DetermineLayout(series.Count);
 
                 tableLayoutPanel1.ColumnCount = layout.Columns;
                 tableLayoutPanel1.RowCount = layout.Rows;
@@ -203,14 +203,13 @@ namespace SynoDuplicateFolders.Controls
             DataSource = _src;
 
         }
-        private RectangleLayout DetermineLayout()
+        private RectangleLayout DetermineLayout(int count)
         {
             //  int onesquare = (int)Math.Ceiling(Math.Sqrt(count));
             // System.Diagnostics.Debug.WriteLine($"one square with {count}: {onesquare}x{onesquare}");
 
             var h = Convert.ToDouble(Height);
-            var w = Convert.ToDouble(Width);
-            int count = _src.Series.Count;
+            var w = Convert.ToDouble(Width);            
 
             double target_ratio = w / h;
 
@@ -241,7 +240,10 @@ namespace SynoDuplicateFolders.Controls
         {
             if (_src != null)
             {
-                var layout = DetermineLayout();
+
+                var series = _src.Series.Where(s => s != "/volumes").ToList();
+                
+                var layout = DetermineLayout(series.Count);
 
                 if (tableLayoutPanel1.ColumnCount != layout.Columns
                     || tableLayoutPanel1.RowCount != layout.Rows)
@@ -250,7 +252,7 @@ namespace SynoDuplicateFolders.Controls
                     tableLayoutPanel1.ColumnCount = layout.Columns;
                     tableLayoutPanel1.RowCount = layout.Rows;
                     int r = 0; int c = 0;
-                    for (int z = 0; z < _src.Series.Count; z++)
+                    for (int z = 0; z < series.Count; z++)
                     {
                         //flowLayoutPanel1.Controls.Add(_charts[r]);
                         tableLayoutPanel1.Controls.Add(_charts[z], c++, r);
@@ -268,7 +270,7 @@ namespace SynoDuplicateFolders.Controls
                 //{
                 //    p = Width / Convert.ToDouble(_src.Series.Count);
                 //}
-                var series = _src.Series.Where(s => s != "/volumes").ToList();
+                
                 for (int z = 0; z < series.Count; z++)
                 {
                     _charts[z].Width = (int)(0.95 * Width / Convert.ToDouble(layout.Columns));
