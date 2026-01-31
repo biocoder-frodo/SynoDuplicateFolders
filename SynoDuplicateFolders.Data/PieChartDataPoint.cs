@@ -2,7 +2,7 @@
 
 namespace SynoDuplicateFolders.Data
 {
-    public struct PieChartDataPoint : IXYDataPoint
+    public readonly struct PieChartDataPoint : IXYDataPoint
     {
         public readonly string SliceName;
         public readonly float Value;

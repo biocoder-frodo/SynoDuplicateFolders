@@ -7,10 +7,9 @@ namespace SynoDuplicateFolders.Data
 {
     public sealed class DuplicateFileInfo : IDuplicateFileInfo
     {
-        private const char tab = '\t';
         private const char pathsep = '/';
-        private static readonly char[] pathsepsplit = new char[1] { pathsep };
-        private static readonly char[] tabsplit = new char[1] { tab };
+
+        private static readonly char[] tabsplit = new char[1] { '\t' };
         private static readonly CultureInfo _ci = new CultureInfo("en-US");
 
         public readonly long Group;
@@ -18,7 +17,7 @@ namespace SynoDuplicateFolders.Data
         public readonly string FullPath;
         public readonly long Length;
 
-        private DateTime _ts;
+        private readonly DateTime _ts;
 
         private string _path;
         private string _fileName;
@@ -78,10 +77,10 @@ namespace SynoDuplicateFolders.Data
             string[] p = FullPath.Substring(1).Split(pathsep);
             FoldersInPath = p.Take(p.Count() - 1).ToArray();
 
-            int dot = p[p.Count()-1].LastIndexOf('.');
+            int dot = p[p.Count() - 1].LastIndexOf('.');
             if (dot > -1)
             {
-                _extension = p[p.Count()-1].Substring(dot);
+                _extension = p[p.Count() - 1].Substring(dot);
             }
 
         }
@@ -158,5 +157,6 @@ namespace SynoDuplicateFolders.Data
 
             }
         }
+        public override string ToString() => FullPath;
     }
 }

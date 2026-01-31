@@ -59,10 +59,10 @@ namespace System.Data.Linq
 
         internal class PropertyComparer : Comparer<T>
         {
-            private PropertyDescriptor prop;
-            private IComparer comparer;
-            private ListSortDirection direction;
-            private bool useToString;
+            private readonly PropertyDescriptor prop;
+            private readonly IComparer comparer;
+            private readonly ListSortDirection direction;
+            private readonly bool useToString;
 
             internal PropertyComparer(PropertyDescriptor prop, ListSortDirection direction)
             {
@@ -94,8 +94,8 @@ namespace System.Data.Linq
 
                 if (useToString)
                 {
-                    xValue = xValue != null ? xValue.ToString() : null;
-                    yValue = yValue != null ? yValue.ToString() : null;
+                    xValue = xValue?.ToString();
+                    yValue = yValue?.ToString();
                 }
 
                 if (direction == ListSortDirection.Ascending)

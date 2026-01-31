@@ -7,8 +7,8 @@ namespace SynoDuplicateFolders.Data
 {
     public class SynoReportVolumePieData : SynoCSVReportPair<SynoReportSharesValues, SynoReportVolumeUsageValues>, IVolumePieChart, ISynoChartData
     {
-        private SynoReportSharesValues _shares;
-        private SynoReportVolumeUsageValues _volumes;
+        private readonly SynoReportSharesValues _shares;
+        private readonly SynoReportVolumeUsageValues _volumes;
         private bool _render_volume_only;
 
 

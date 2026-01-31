@@ -13,12 +13,12 @@ namespace DedupFolder
         {
             var paths = new Dictionary<string, DirectoryInfo>();
             var parse = new Queue<string>(args);
-            DirectoryInfo folder = null;
             DirectoryInfo keepPath = null;
 
             while (parse.Count > 0)
             {
                 string path = parse.Dequeue();
+                DirectoryInfo folder;
                 if (File.Exists(path))
                 {
                     var f = new FileInfo(path);

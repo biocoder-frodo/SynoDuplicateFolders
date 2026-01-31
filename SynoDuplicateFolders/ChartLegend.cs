@@ -99,7 +99,7 @@ namespace SynoDuplicateFolders.Properties
         }
         public string DefaultColorName
         {
-            get { return _dcn == null ? _defaultColorName : _dcn; }
+            get { return _dcn ?? _defaultColorName; }
             set
             {
                 if (Enum.TryParse(value, out KnownColor k))

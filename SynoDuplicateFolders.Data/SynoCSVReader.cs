@@ -10,7 +10,7 @@ namespace SynoDuplicateFolders.Data
     {
         public static T LoadReport(FileInfo filename)
         {
-            T result = default(T);
+            T result = default;
 
             switch (filename.Extension.ToLowerInvariant())
             {

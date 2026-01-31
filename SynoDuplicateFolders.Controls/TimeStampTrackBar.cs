@@ -46,7 +46,7 @@ namespace SynoDuplicateFolders.Controls
                 }
                 else
                 {
-                    return default(DateTime);
+                    return default;
                 }
             }
             set

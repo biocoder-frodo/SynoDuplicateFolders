@@ -76,7 +76,7 @@ namespace SynoDuplicateFolders.Data
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-                    if (_files != null) _files.Dispose();
+                    _files?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
@@ -173,7 +173,7 @@ namespace SynoDuplicateFolders.Data
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-                    if (_files != null) _files.Dispose();
+                    _files?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
@@ -270,7 +270,7 @@ namespace SynoDuplicateFolders.Data
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-                    if (_files != null) _files.Dispose();
+                    _files?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

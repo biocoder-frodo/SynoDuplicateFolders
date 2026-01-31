@@ -9,8 +9,8 @@ namespace SynoDuplicateFolders
 {
     public partial class DeduplicationConfirmation : Form
     {
-        private List<DirectoryInfo> folders;
-        private Deduplication dedupJob = new Deduplication();
+        private readonly List<DirectoryInfo> folders;
+        private readonly Deduplication dedupJob = new Deduplication();
         public DeduplicationConfirmation(List<DirectoryInfo> folders)
         {
             InitializeComponent();

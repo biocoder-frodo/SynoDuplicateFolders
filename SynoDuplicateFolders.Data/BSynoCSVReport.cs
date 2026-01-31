@@ -7,7 +7,7 @@ namespace SynoDuplicateFolders.Data
     public abstract class BSynoCSVReport : ISynoCSVReport
     {
         private readonly SynoReportMode _mode;
-        internal DateTime _Timestamp = default(DateTime);
+        internal DateTime _Timestamp = default;
 
         internal BSynoCSVReport(SynoReportMode mode)
         {

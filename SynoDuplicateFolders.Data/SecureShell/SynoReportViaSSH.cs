@@ -106,8 +106,7 @@ namespace SynoDuplicateFolders.Data.SecureShell
                             {
                                 if (fi.FileName.EndsWith(".db") || fi.FileName.Equals("INFO"))
                                 {
-                                    DateTime folder;
-                                    if (ParseTimeStamp(fi, out folder))
+                                    if (ParseTimeStamp(fi, out DateTime folder))
                                     {
                                         if (dsm_databases.ContainsKey(folder) == false)
                                         {
