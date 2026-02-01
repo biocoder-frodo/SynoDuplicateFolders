@@ -256,6 +256,7 @@ namespace SynoDuplicateFolders.Data.Core
             }
             catch (Exception ex)
             {
+                logMessage($"The comparison of {file1.FullName} with {file0.FullName} failed: {ex.Message}");
                 return false;
             }
         }
