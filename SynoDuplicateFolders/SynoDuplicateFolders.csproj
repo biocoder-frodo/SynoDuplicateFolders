@@ -147,7 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SSH.NET">
-      <Version>2023.0.1</Version>
+      <Version>2025.1.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="..\SynoDuplicateFolders.Data\SynoDuplicateFolders.Data.projitems" Label="Shared" />
