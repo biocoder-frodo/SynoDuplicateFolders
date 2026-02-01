@@ -209,15 +209,7 @@ namespace SynoDuplicateFolders.Data
 
             var query = from y in (from x in _dupes.Values
                                    group x by x.First().Length - (x.First().Length % bucketsize) into x //
-                                   select new DuplicatesHistogramValue()
-                                   {
-                                       Minimum = x.Key,
-                                       Maximum = x.Key + bucketsize - 1,
-                                       Count = x.Count(),
-                                       UniqueSize = x.Sum(d => d.First().Length),
-                                       TotalSize = x.Sum(d => d.Sum(f => f.Length)),
-
-                                   } as IDuplicatesHistogramValue)
+                                   select new DuplicatesHistogramValue(x, bucketsize) as IDuplicatesHistogramValue)
                         orderby y.Minimum
                         select y;
 
@@ -337,40 +329,6 @@ namespace SynoDuplicateFolders.Data
         private static string RemoveVolumeFromPath(string path)
         {
             return path.Substring(path.IndexOf('/'));
-        }
-
-    }
-
-
-
-    internal class DuplicatesHistogramValue : IDuplicatesHistogramValue
-    {
-        public long Count
-        {
-            get; internal set;
-        }
-
-        public long Maximum
-        {
-            get; internal set;
-
-        }
-
-        public long Minimum
-        {
-            get; internal set;
-
-        }
-
-        public long UniqueSize
-        {
-            get; internal set;
-        }
-
-        public long TotalSize
-        {
-            get; internal set;
-
         }
     }
 }
