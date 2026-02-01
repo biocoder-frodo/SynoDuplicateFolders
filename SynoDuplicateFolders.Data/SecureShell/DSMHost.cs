@@ -81,8 +81,8 @@ namespace DiskStationManager.SecureShell
             }
             set
             {
-                System.Diagnostics.Debug.WriteLine($"SET dsmdupesfilter={value}");
                 this["dsmdupesfilter"] = value;
+                System.Diagnostics.Debug.WriteLine($"SET dsmdupesfilter={value}");
             }
         }
     }
