@@ -28,27 +28,21 @@ namespace SynoDuplicateFolders.Data
         private long _total = -1;
         private long _largest = 0;
 
-        public long UniqueSize { get { return _unique; } }
-        public long TotalSize { get { return _total; } }
+        public long UniqueSize => _unique;
+        public long TotalSize => _total;
 
         private SortableListBindingSource<IDuplicateFileInfo> _files = null;
         private SortableListBindingSource<IDuplicatesHistogramValue> _histogram = null;
 
-        public DuplicatesAggregate<long, DuplicateFileInfo> DuplicatesByGroup { get { return filtered ? _dupes_filtered : _dupes; } }
-        public DuplicatesAggregate<string, long> DuplicatesGroupByName { get { return filtered ? _byname_filtered : _byname; } }
-        public DuplicatesAggregate<string, long> DuplicatesGroupByPath { get { return filtered ? _bypath_filtered : _bypath; } }
+        public DuplicatesAggregate<long, DuplicateFileInfo> DuplicatesByGroup => filtered ? _dupes_filtered : _dupes;
+        public DuplicatesAggregate<string, long> DuplicatesGroupByName => filtered ? _byname_filtered : _byname;
+        public DuplicatesAggregate<string, long> DuplicatesGroupByPath => filtered ? _bypath_filtered : _bypath;
 
         public SynoReportDuplicateCandidates() : base(SynoReportMode.SingleFile)
         {
         }
+        public DuplicatesFolders Folders => filtered ? _tree_filtered.Folders : _tree.Folders;
 
-        public DuplicatesFolders Folders
-        {
-            get
-            {
-                return filtered ? _tree_filtered.Folders : _tree.Folders;
-            }
-        }
         public Func<IReadOnlyList<DuplicateFileInfo>, bool> Filter
         {
             set
@@ -226,8 +220,8 @@ namespace SynoDuplicateFolders.Data
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-                    if (_files != null) _files.Dispose();
-                    if (_histogram != null) _histogram.Dispose();
+                    _files?.Dispose();
+                    _histogram?.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
@@ -326,10 +320,7 @@ namespace SynoDuplicateFolders.Data
             return openFile || openFileLocation;
         }
 
-        private static string RemoveVolumeFromPath(string path)
-        {
-            return path.Substring(path.IndexOf('/'));
-        }
+        private static string RemoveVolumeFromPath(string path) => path.Substring(path.IndexOf('/'));
     }
 }
 
