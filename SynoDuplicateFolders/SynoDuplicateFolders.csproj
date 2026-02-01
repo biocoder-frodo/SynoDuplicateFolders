@@ -85,6 +85,9 @@
     <Compile Include="HostConfiguration.Designer.cs">
       <DependentUpon>HostConfiguration.cs</DependentUpon>
     </Compile>
+    <Compile Include="PaletteColor.cs" />
+    <Compile Include="PaletteColorPair.cs" />
+    <Compile Include="PaletteRow.cs" />
     <Compile Include="Preferences.cs">
       <SubType>Form</SubType>
     </Compile>
