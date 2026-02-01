@@ -200,7 +200,7 @@ namespace SynoDuplicateFolders.Test
             foreach (var report in TestHelper<SynoReportVolumeUsageValues>.LoadTests(SynoReportType.VolumeUsage, input))
             {
                 NotNull(report, "The report should not be a null reference.");
-                AreEqual(2, report.Volumes.Count, "The number of volumes does not match.");
+                AreEqual(3, report.Volumes.Count, "The number of volumes does not match.");
 
                 foreach (string volume in report.Volumes.Keys)
                 {
