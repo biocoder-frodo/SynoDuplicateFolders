@@ -328,8 +328,14 @@ namespace SynoDuplicateFolders
 
         private void Exclusion_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine($"Exclusion PropertyChanged {e.PropertyName}");
+            var modified = sender as DSMHost;
+            Debug.WriteLine($"Exclusion PropertyChanged {e.PropertyName}");
 
+            var host = Profile.DSMHosts.Items.TryGet(modified.Host);
+
+            Debug.WriteLine($"The TryGet method did {(host != modified ? "not " : string.Empty)}return the same DSMHost object.");
+
+            host.FilterDuplicates = modified.FilterDuplicates;
             Profile.Save();
             Profile.Reload();
 
@@ -340,6 +346,8 @@ namespace SynoDuplicateFolders
         {
             System.Diagnostics.Debug.WriteLine($"OnItemHide {e.Path}");
             exclusion.AddExclusion(e.Path);
+            duplicateCandidatesView1.DataSource = dupes;
+
         }
 
         private void Connection_HostKeyChange(object sender, EventArgs e)

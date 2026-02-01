@@ -81,13 +81,33 @@ namespace SynoDuplicateFolders.Controls
                 Debug.WriteLine("No duplicate exclusions.");
         }
 
+        bool IncludeInView(IReadOnlyList<DuplicateFileInfo> duplicates)
+        {
+            foreach (var duplicate in duplicates)
+            {
+                foreach (var path in exclusionSource.Paths)
+                {
+                    if (duplicate.FullPath.Substring(1).StartsWith(path)) return false;
+                }
+            }
+            return true;
+        }
         public SynoReportDuplicateCandidates DataSource
         {
             set
             {
-                Debug.WriteLine($" filtering ...");
                 src = value;
-                src.Filter = dfi => dfi.Any(f => exclusionSource.Paths.Any(p => p.StartsWith(f.FullPath.Substring(1)))) == false;
+
+                if (exclusionSource.Paths.Any())
+                {
+                    Debug.WriteLine($"filtering ...");
+                    src.Filter = IncludeInView;
+                }
+                else
+                {
+                    src.Filter = null;
+                }
+
                 Candidates.Nodes.Clear();
                 Files.Items.Clear();
                 Where.Nodes.Clear();
@@ -104,15 +124,11 @@ namespace SynoDuplicateFolders.Controls
 
             }
         }
-
-        private void Candidates_AfterSelect(object sender, TreeViewEventArgs e)
+        private int FindItems(TreeNode node, out List<string> folders)
         {
-            Files.Items.Clear();
-            Where.Nodes.Clear();
-            _checked.Clear();
-            List<string> folders = new List<string>();
-            long count = 0;
-            string selected = '/' + e.Node.FullPath;
+            folders = new List<string>();
+            int count = 0;
+            string selected = '/' + node.FullPath;
 
             if (src.DuplicatesGroupByPath.ContainsKey(selected))
             {
@@ -126,13 +142,28 @@ namespace SynoDuplicateFolders.Controls
                                 folders.Add(s.FileName);
                         }
                     }
+            }
+            return count;
+        }
+        private void Candidates_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            Files.Items.Clear();
+            Where.Nodes.Clear();
+            _checked.Clear();
 
+            long count = FindItems(e.Node, out List<string> folders);
+
+            if (count == 0)
+            {
+                if (e.Node.Nodes.Count == 1 && e.Node.FullPath.IndexOf('/') > -1) Candidates.SelectedNode = e.Node.Nodes[0];
+                if (e.Node.Nodes.Count > 1) e.Node.Expand();
+                return;
             }
 
             OnItemStatusUpdate?.Invoke(this, new ItemStatusUpdateEventArgs($"{count} duplicate(s)"));
 
             Files.Items.AddRange(folders.ToArray());
-            Files.SelectedIndex = -1;
+            Files.SelectedIndex = 0;
         }
         public void ClearDedupSelection()
         {
@@ -178,25 +209,32 @@ namespace SynoDuplicateFolders.Controls
         }
         private void treeView_MouseUp(TreeView sender, MouseEventArgs e)
         {
+
             if (e.Button == MouseButtons.Right)
             {
                 // Select the clicked node
                 _context_node = sender.GetNodeAt(e.X, e.Y);
 
-                if (_context_node != null && _context_node.FullPath.Contains("/"))
+                if (_context_node is null) return;
+                if (_context_node.FullPath.Contains("/"))
                 {
                     _context_file = GetUNCPath(_context_node, out bool location, out bool file, out bool isFile);
 
                     setContextMenuStripItems(location, file, isFile, _context_node);
-                    hideToolStripMenuItem.Enabled = sender == Where;
+                    hideToolStripMenuItem.Enabled = sender == Where || sender == Candidates;
                     contextMenuStrip1.Show(sender, e.Location);
 
+                }
+                else
+                {
+                    ;
                 }
             }
         }
         private void Where_BeforeCheck(object sender, TreeViewCancelEventArgs e)
         {
             bool expected = false;
+
 
             var path = GetUNCPath(e.Node, out _, out _, out bool isFile);
             Debug.WriteLine($"type of selection {_checked.Type}, {_checked.Count} item(s) in selection; tested {(path == null ? "ACCESS DENIED" : path.FullName)}");
@@ -454,3 +492,4 @@ namespace SynoDuplicateFolders.Controls
         }
     }
 }
+

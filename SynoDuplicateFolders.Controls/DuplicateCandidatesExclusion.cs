@@ -55,7 +55,7 @@ namespace SynoDuplicateFolders.Controls
             {
                 setter(instance, value);
                 cached = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Paths"));
+                PropertyChanged?.Invoke(instance, new PropertyChangedEventArgs("Paths"));
             }
         }
 

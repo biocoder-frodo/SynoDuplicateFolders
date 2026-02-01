@@ -103,6 +103,11 @@ namespace SynoDuplicateFolders
             Host = host;
             exclusion = candidatesExclusion;
             InitializeComponent(true);
+
+            if (exclusion.Paths.Count > 0)
+            {
+                tabControl1.SelectedIndex = 1;
+            }
         }
         public HostConfiguration()
         {
