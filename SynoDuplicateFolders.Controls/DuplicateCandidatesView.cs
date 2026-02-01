@@ -21,6 +21,8 @@ namespace SynoDuplicateFolders.Controls
         public delegate void DuplicateCandidatesItemDedupeHandler(object sender, ItemsComparedEventArgs e);
 
         private SynoReportDuplicateCandidates src = null;
+        private IDuplicateExclusionSource exclusionSource;
+
         private TreeNode _context_node = null;
 
         private FileInfo _context_file = null;
@@ -45,23 +47,10 @@ namespace SynoDuplicateFolders.Controls
 
         public int MaximumComparable
         {
-            set
-            {
-                if (value < 2)
-                {
-                    _maximum_comparable = 2;
-                }
-                else
-                {
-                    _maximum_comparable = value;
-                }
-            }
-            get
-            {
-                return _maximum_comparable;
-            }
+            get => _maximum_comparable;
+            set => _maximum_comparable = value < 2 ? 2 : value;
         }
-        private IDuplicateExclusionSource exclusionSource;
+
         public IDuplicateExclusionSource ExclusionSource
         {
             get
@@ -189,10 +178,6 @@ namespace SynoDuplicateFolders.Controls
         }
         private void treeView_MouseUp(TreeView sender, MouseEventArgs e)
         {
-            bool location;
-            bool file;
-            bool isFile;
-
             if (e.Button == MouseButtons.Right)
             {
                 // Select the clicked node
@@ -200,7 +185,7 @@ namespace SynoDuplicateFolders.Controls
 
                 if (_context_node != null && _context_node.FullPath.Contains("/"))
                 {
-                    _context_file = GetUNCPath(_context_node, out location, out file, out isFile);
+                    _context_file = GetUNCPath(_context_node, out bool location, out bool file, out bool isFile);
 
                     setContextMenuStripItems(location, file, isFile, _context_node);
                     hideToolStripMenuItem.Enabled = sender == Where;
@@ -211,11 +196,9 @@ namespace SynoDuplicateFolders.Controls
         }
         private void Where_BeforeCheck(object sender, TreeViewCancelEventArgs e)
         {
-            bool isFile;
             bool expected = false;
 
-
-            var path = GetUNCPath(e.Node, out _, out _, out isFile);
+            var path = GetUNCPath(e.Node, out _, out _, out bool isFile);
             Debug.WriteLine($"type of selection {_checked.Type}, {_checked.Count} item(s) in selection; tested {(path == null ? "ACCESS DENIED" : path.FullName)}");
 
             if (path != null)
@@ -294,16 +277,12 @@ namespace SynoDuplicateFolders.Controls
 
         private void dataGridView1_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
         {
-            bool location;
-            bool file;
-            bool isFile;
             if (e.RowIndex != -1)
             {
                 control_Enter(sender);
-                _context_file = GetUNCPath(e, out location, out file, out isFile);
+                _context_file = GetUNCPath(e, out bool location, out bool file, out bool isFile);
                 setContextMenuStripItems(location, file, isFile);
                 e.ContextMenuStrip = contextMenuStrip1;
-
             }
         }
 
@@ -390,15 +369,8 @@ namespace SynoDuplicateFolders.Controls
         }
 
         #region Treeview handlers
-        private void Candidates_MouseUp(object sender, MouseEventArgs e)
-        {
-            treeView_MouseUp(sender as TreeView, e);
-        }
-
-        private void Where_MouseUp(object sender, MouseEventArgs e)
-        {
-            treeView_MouseUp(sender as TreeView, e);
-        }
+        private void Candidates_MouseUp(object sender, MouseEventArgs e) => treeView_MouseUp(sender as TreeView, e);
+        private void Where_MouseUp(object sender, MouseEventArgs e) => treeView_MouseUp(sender as TreeView, e);
         private void Where_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (_checked.Type.HasValue && _checked.Type == FsType.fsFolder)
@@ -418,15 +390,8 @@ namespace SynoDuplicateFolders.Controls
 
             }
         }
-        private void Candidates_Enter(object sender, EventArgs e)
-        {
-            control_Enter(sender);
-        }
-
-        private void Where_Enter(object sender, EventArgs e)
-        {
-            control_Enter(sender);
-        }
+        private void Candidates_Enter(object sender, EventArgs e) => control_Enter(sender);
+        private void Where_Enter(object sender, EventArgs e) => control_Enter(sender);
         #endregion
 
         internal enum FsType
@@ -489,4 +454,3 @@ namespace SynoDuplicateFolders.Controls
         }
     }
 }
-

@@ -16,11 +16,13 @@ namespace SynoDuplicateFolders
         private static readonly Regex NAME_REGEX = new Regex(@"^[a-z][-a-z0-9]*");
 
         public readonly DSMHost Host;
-        private bool passwordDirty = false;
-        private bool initialization = true;
         public bool Canceled = false;
 
-        private DuplicateCandidatesExclusion<DSMHost> exclusion;
+        private bool passwordDirty = false;
+        private bool initialization = true;
+
+
+        private readonly DuplicateCandidatesExclusion<DSMHost> exclusion;
 
         private void InitializeComponent(bool existing)
         {
@@ -165,13 +167,12 @@ namespace SynoDuplicateFolders
             Host.Host = txtHost.Text;
             Host.Port = int.Parse(txtPort.Text);
             Host.UserName = txtUser.Text;
-            DSMAuthentication method = null;
-
             Host.SynoReportHome = radFolderCustom.Checked ? txtSynoReportHome.Text : string.Empty;
+
             if (Validate())
             {
-                method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.None, chkAuthNone.Checked);
-
+                DSMAuthentication method;
+                _ = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.None, chkAuthNone.Checked);
                 method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.KeyboardInteractive, chkKeyBoardInteractive.Checked);
 
                 if (passwordDirty)
@@ -287,8 +288,7 @@ namespace SynoDuplicateFolders
 
         private void btnKeyFileAdd_Click(object sender, EventArgs e)
         {
-            string filename;
-            if (OpenDialog("Open a key file", out filename))
+            if (OpenDialog("Open a key file", out string filename))
             {
                 listView1.Items.Add(filename);
             }
@@ -356,8 +356,7 @@ namespace SynoDuplicateFolders
 
         private void txtKeep_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            int value = 0;
-            int.TryParse(txtKeep.Text, out value);
+            int.TryParse(txtKeep.Text, out int value);
             e.Cancel = value < 1;
         }
 

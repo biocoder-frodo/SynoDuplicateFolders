@@ -97,7 +97,7 @@ namespace SynoDuplicateFolders.Data
         public ISynoCSVReport GetReport(ICachedReportFile file)
         {
             DownloadUpdate?.Invoke(this, new SynoReportCacheDownloadEventArgs(CacheStatus.Processing));
-            ISynoCSVReport report = null;
+            ISynoCSVReport report;
             switch (file.Type)
             {
                 case SynoReportType.DuplicateCandidates:
@@ -138,7 +138,7 @@ namespace SynoDuplicateFolders.Data
         public ISynoCSVReport GetReport(SynoReportType type)
         {
             DownloadUpdate?.Invoke(this, new SynoReportCacheDownloadEventArgs(CacheStatus.Processing));
-            ISynoCSVReport report = null;
+            ISynoCSVReport report;
             switch (type)
             {
                 case SynoReportType.DuplicateCandidates:
@@ -177,13 +177,11 @@ namespace SynoDuplicateFolders.Data
 
         internal bool ParseTimeStamp(ConsoleFileInfo file, out DateTime ts)
         {
-            string preTs;
-            string postTs;
-            return ParseTimeStamp(file.Path, false, out ts, out preTs, out postTs);
+            return ParseTimeStamp(file.Path, false, out ts, out string _, out string _);
         }
         private bool ParseTimeStamp(string fileName, bool localFile, out DateTime ts, out string preTs, out string postTs)
         {
-            ts = default(DateTime);
+            ts = default;
             preTs = string.Empty;
             postTs = string.Empty;
 
@@ -202,10 +200,6 @@ namespace SynoDuplicateFolders.Data
 
         internal void CSVToCategory(string filename)
         {
-            DateTime ts;
-            string preTs;
-            string postTs;
-
             foreach (string match in filenames_type.Keys)
             {
                 if (filename.Contains(match))
@@ -214,7 +208,7 @@ namespace SynoDuplicateFolders.Data
 
                     _files.Add(rf);
 
-                    if (ParseTimeStamp(filename, false, out ts, out preTs, out postTs))
+                    if (ParseTimeStamp(filename, false, out DateTime ts, out string _, out string _))
                     {
                         if (_allreports.ContainsKey(ts) == false) _allreports.Add(ts, new Dictionary<SynoReportType, ICachedReportFile>());
                         _allreports[ts].Add(filenames_type[match], rf);
@@ -226,14 +220,11 @@ namespace SynoDuplicateFolders.Data
         }
         internal void CSVToCategory(FileInfo local)
         {
-            DateTime ts;
-            string preTs;
-            string postTs;
             foreach (string match in filenames_type.Keys)
             {
                 if (local.FullName.Contains(match))
                 {
-                    if (ParseTimeStamp(local.FullName, true, out ts, out preTs, out postTs))
+                    if (ParseTimeStamp(local.FullName, true, out DateTime ts, out string preTs, out string postTs))
                     {
                         CachedReportFile rf = new CachedReportFile(local, filenames_type[match], Path, preTs, postTs, match, ts);
 

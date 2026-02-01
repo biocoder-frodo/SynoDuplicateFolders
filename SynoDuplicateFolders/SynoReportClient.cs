@@ -58,7 +58,7 @@ namespace SynoDuplicateFolders
             var folders = new List<string>(e.Items).Select(f => new DirectoryInfo(f)).ToList();
             using (var form = new DeduplicationConfirmation(folders))
             {
-                form.ShowDialog();                            
+                form.ShowDialog();
             }
             duplicateCandidatesView1.ClearDedupSelection();
         }
@@ -71,7 +71,7 @@ namespace SynoDuplicateFolders
 
         private void OnDispose(bool disposing)
         {
-            if (dupes != null) dupes.Dispose();
+            dupes?.Dispose();
         }
         private void DuplicateCandidatesView1_OnItemStatusUpdate(object sender, ItemStatusUpdateEventArgs e)
         {
@@ -308,10 +308,8 @@ namespace SynoDuplicateFolders
                     dupes = cache.GetReport(SynoReportType.DuplicateCandidates) as SynoReportDuplicateCandidates;
                 }
 
-                if (DuplicatesAnalysisCompleted != null)
-                {
-                    DuplicatesAnalysisCompleted.Invoke();
-                }
+                DuplicatesAnalysisCompleted?.Invoke();
+
             }
             catch (SynoReportViaSSHLoginFailure ex)
             {
@@ -611,22 +609,23 @@ namespace SynoDuplicateFolders
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-  
             switch (((TabControl)sender).SelectedIndex)
             {
                 case 2:
                     if (commonDateSelection.HasValue)
-
                     {
                         timeStampTrackBar.Value = commonDateSelection.Value;
-                    } break;
+                    }
+                    break;
+
                 case 3:
                     {
                         timeStampTrackBar1.Value = commonDateSelection.Value;
                     }
                     break;
-                default: break;
-       
+
+                default:
+                    break;
             }
         }
     }

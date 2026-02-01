@@ -78,8 +78,7 @@ namespace SynoDuplicateFolders.Data
                     foreach (var h in Histogram(102400))
                     {
                         _histogram.Add(h);
-                    };
-
+                    }
                 }
                 return _histogram;
             }
@@ -270,12 +269,11 @@ namespace SynoDuplicateFolders.Data
         }
         public static FileInfo GetUNCPath(string host, string path, out bool location, out bool file, out bool isFile)
         {
-            FileInfo result = null;
             try
             {
                 path = RemoveVolumeFromPath(path);
 
-                if (PathCanBeOpened(host, path, out location, out file, out isFile, out result) == false)
+                if (PathCanBeOpened(host, path, out location, out file, out isFile, out FileInfo result) == false)
                 {
                     string[] homes = path.Split('/');
                     if (homes.Length > 2)

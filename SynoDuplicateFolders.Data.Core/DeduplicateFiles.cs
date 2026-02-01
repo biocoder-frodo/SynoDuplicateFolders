@@ -58,8 +58,8 @@ namespace SynoDuplicateFolders.Data.Core
 
         private bool scanned = false;
         private readonly List<FileInfo> toBeRemoved = new List<FileInfo>();
-        private Action<string> logMessage = null;
-        private Func<string[], bool> acceptFunc = null;
+        private readonly Action<string> logMessage = null;
+        private readonly Func<string[], bool> acceptFunc = null;
 
         public Deduplication()
         {
