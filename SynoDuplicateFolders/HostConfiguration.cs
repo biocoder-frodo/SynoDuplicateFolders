@@ -18,9 +18,7 @@ namespace SynoDuplicateFolders
         public readonly DSMHost Host;
         public bool Canceled = false;
 
-        private bool passwordDirty = false;
         private bool initialization = true;
-
 
         private readonly DuplicateCandidatesExclusion<DSMHost> exclusion;
 
@@ -66,7 +64,6 @@ namespace SynoDuplicateFolders
 
             for (int i = 0; i < Host.AuthenticationSection.Count; i++)
             {
-
                 var am = Host.AuthenticationSection[i];
                 switch (am.Method)
                 {
@@ -87,7 +84,7 @@ namespace SynoDuplicateFolders
 
                     case DSMAuthenticationMethod.Password:
                         chkPassword.Checked = true;
-                        txtPassword.Text = "thisisnotyourpassword";
+
                         break;
                     // if you press Ok with a saved password, you have just reset your password to 'blank', unless you typed a new one.
                     default:
@@ -116,15 +113,10 @@ namespace SynoDuplicateFolders
             exclusion = null;
             InitializeComponent(false);
         }
-        private void HostConfiguration_Load(object sender, EventArgs e)
-        {
-            listView1.View = View.List;
-        }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Canceled = true;
-            //if (exclusion != null) exclusion.PropertyChanged -= Exclusion_PropertyChanged;
             Hide();
         }
 
@@ -164,30 +156,24 @@ namespace SynoDuplicateFolders
                 }
             }
 
-
-            Host.Custom = chkKeep.Checked;
-            Host.KeepCount = int.Parse(txtKeep.Text);
-            Host.KeepAll = optAnalyzerDbKeep.Checked;
-
-            Host.Host = txtHost.Text;
-            Host.Port = int.Parse(txtPort.Text);
-            Host.UserName = txtUser.Text;
-            Host.SynoReportHome = radFolderCustom.Checked ? txtSynoReportHome.Text : string.Empty;
-
             if (Validate())
             {
-                DSMAuthentication method;
-                _ = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.None, chkAuthNone.Checked);
-                method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.KeyboardInteractive, chkKeyBoardInteractive.Checked);
-
-                if (passwordDirty)
+                DSMAuthentication method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.Password, chkPassword.Checked);
+                if (method != null)
                 {
-                    method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.Password, chkPassword.Checked);
-                    if (method != null)
+                    using (var pw = new PassPhrase(txtUser.Text))
                     {
-                        method.Password = txtPassword.Text;
+                        pw.ShowDialog();
+                        if (pw.Canceled) return;
+
+                        method.Password = pw.Password;
                     }
+
                 }
+                _ = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.None, chkAuthNone.Checked);
+
+                _ = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.KeyboardInteractive, chkKeyBoardInteractive.Checked);
+
                 method = Host.UpdateAuthenticationMethod(DSMAuthenticationMethod.PrivateKeyFile, chkKeyFiles.Checked);
                 if (method != null)
                 {
@@ -202,19 +188,26 @@ namespace SynoDuplicateFolders
                         method.AuthenticationKeys.Items.Add(kf);
                     }
                 }
+
+                Host.Custom = chkKeep.Checked;
+                Host.KeepCount = int.Parse(txtKeep.Text);
+                Host.KeepAll = optAnalyzerDbKeep.Checked;
+
+                Host.Host = txtHost.Text;
+                Host.Port = int.Parse(txtPort.Text);
+                Host.UserName = txtUser.Text;
+                Host.SynoReportHome = radFolderCustom.Checked ? txtSynoReportHome.Text : string.Empty;
+
+                Hide();
             }
             else
             {
                 ;
             }
-
-            Hide();
-
         }
-
         private void chkKeyBoardInteractive_CheckedChanged(object sender, EventArgs e)
         {
-            ;
+            if (chkKeyBoardInteractive.Checked) chkPassword.Checked =false;
         }
         private void chkKeep_CheckedChanged(object sender, EventArgs e)
         {
@@ -275,12 +268,6 @@ namespace SynoDuplicateFolders
                 txtPort.Focus();
             }
             this.Text = string.IsNullOrWhiteSpace(txtHost.Text) ? "New host configuration" : $"Host configuration of {txtHost.Text}";
-        }
-
-        private void chkPassword_CheckedChanged(object sender, EventArgs e)
-        {
-            txtPassword.Enabled = ((CheckBox)sender).Checked;
-            passwordDirty = true;
         }
 
         private void chkKeyFiles_CheckedChanged(object sender, EventArgs e)
@@ -387,15 +374,6 @@ namespace SynoDuplicateFolders
             btnDupeRemove.Enabled = true;
         }
 
-        private void txtPassword_TextChanged(object sender, EventArgs e)
-        {
-
-            if (initialization == false)
-            {
-                passwordDirty = true;
-            }
-        }
-
         private void radioButtonDefault_MouseHover(object sender, EventArgs e)
         {
             var rb = sender as RadioButton;
@@ -463,6 +441,11 @@ namespace SynoDuplicateFolders
         private void txtUser_TextChanged(object sender, EventArgs e)
         {
             if (radFolderDefault.Checked) txtSynoReportHome.Text = DSMHost.SynoReportHomeDefault(txtUser.Text);
+        }
+        private void chkPassword_CheckedChanged(object sender, EventArgs e)
+        {
+            var control = sender as CheckBox;
+            txtPassword.Text = control.Checked ?  "thisisnotyourpassword" : string.Empty;
         }
     }
 }

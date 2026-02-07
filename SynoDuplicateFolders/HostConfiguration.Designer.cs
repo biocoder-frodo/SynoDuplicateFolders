@@ -311,7 +311,7 @@
             this.listView1.Size = new System.Drawing.Size(300, 100);
             this.listView1.TabIndex = 13;
             this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.View = System.Windows.Forms.View.List;
             // 
             // chkKeyFiles
             // 
@@ -355,7 +355,7 @@
             this.txtPassword.Size = new System.Drawing.Size(263, 20);
             this.txtPassword.TabIndex = 11;
             this.txtPassword.UseSystemPasswordChar = true;
-            this.txtPassword.TextChanged += new System.EventHandler(this.txtPassword_TextChanged);
+
             // 
             // chkAuthNone
             // 
@@ -545,7 +545,7 @@
             this.MinimizeBox = false;
             this.Name = "HostConfiguration";
             this.ShowInTaskbar = false;
-            this.Load += new System.EventHandler(this.HostConfiguration_Load);
+
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
