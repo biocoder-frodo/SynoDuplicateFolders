@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Drawing;
 using System.Linq;
 using SynoDuplicateFolders.Data;
+using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Properties
 {

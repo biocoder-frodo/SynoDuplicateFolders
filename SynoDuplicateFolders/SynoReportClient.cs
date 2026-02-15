@@ -34,7 +34,6 @@ namespace SynoDuplicateFolders
 
         public SynoReportClient()
         {
-            TraceName.Initialize(Default.Used, Default.Free, Default.TotalSize, Default.TotalUsed);
 
             InitializeComponent();
             this.components.Add(new Disposer(this.OnDispose));

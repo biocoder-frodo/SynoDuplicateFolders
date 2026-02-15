@@ -22,5 +22,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ISynoReportDetail.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IVolumePieChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IXYDataPoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TraceName.cs" />
   </ItemGroup>
 </Project>

@@ -15,14 +15,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)CachedReportFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CachedReportFilesDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DuplicatesHistogramValue.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TraceName.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ComponentModel\SortableBindingList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ComponentModel\SortableListBindingSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DuplicateFileInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DuplicatesAggregates.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DuplicatesFolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DuplicatesFolders.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeViewExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ICachedReportFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISynoReportCache.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PieChartDataPoint.cs" />
