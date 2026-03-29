@@ -11,7 +11,7 @@ namespace SynoDuplicateFolders.Data
     {
         public readonly Dictionary<string, string> Shares = new Dictionary<string, string>();
         private readonly Dictionary<int, string> _shares = new Dictionary<int, string>();
-
+        
         public SynoReportShares()
             : base()
         {
@@ -154,7 +154,6 @@ namespace SynoDuplicateFolders.Data
                         yield return new TimeLineDataPoint<long>(ts, data.Used[name]);
                     }
                 }
-
             }
         }       
     }
