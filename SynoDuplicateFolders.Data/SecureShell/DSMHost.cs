@@ -63,14 +63,6 @@ namespace DiskStationManager.SecureShell
             }
         }
 
-        //public IReadOnlyList<string> Paths
-        //{
-        //    get
-        //    {
-        //        return FilterDuplicates.Split('\t').ToList().Where(s => string.IsNullOrWhiteSpace(s) == false).ToList();
-        //    }
-
-        //}
         [ConfigurationProperty("dsmdupesfilter", IsRequired = false, DefaultValue = "")]
         public string FilterDuplicates
         {
