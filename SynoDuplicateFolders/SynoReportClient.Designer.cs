@@ -41,26 +41,27 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.MainPanel = new System.Windows.Forms.Panel();
+            this.MainSplitContainer = new System.Windows.Forms.SplitContainer();
             this.KnownHosts = new System.Windows.Forms.TreeView();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.HostInformationTabs = new System.Windows.Forms.TabControl();
+            this.tab1VolumeHistoricChart = new System.Windows.Forms.TabPage();
             this.volumeHistoricChart1 = new SynoDuplicateFolders.Controls.VolumeHistoricChart();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tab2DuplicateCandidates = new System.Windows.Forms.TabPage();
             this.duplicateCandidatesView1 = new SynoDuplicateFolders.Controls.DuplicateCandidatesView();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.timeStampTrackBar = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
-            this.chartGrid1 = new SynoDuplicateFolders.Controls.ChartGrid();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.tab3PieCharts = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanelPieCharts = new System.Windows.Forms.TableLayoutPanel();
+            this.timestampTrackBarPieCharts = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
+            this.volumePies = new SynoDuplicateFolders.Controls.ChartGrid();
+            this.tab4FileDetails = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanelFileDetails = new System.Windows.Forms.TableLayoutPanel();
             this.dataGridView1 = new SynoDuplicateFolders.Controls.SynoReportDataGridView();
-            this.timeStampTrackBar1 = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
+            this.timestampTrackBarFileDetails = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
             this.cmbFileDetails = new System.Windows.Forms.ComboBox();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.NoDataNotification = new System.Windows.Forms.Label();
+            this.contextMenuAddServer = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.contextMenuHost = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsStripMenuDividider = new System.Windows.Forms.ToolStripSeparator();
             this.removeServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,21 +70,21 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.tabPage4.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
+            this.MainPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).BeginInit();
+            this.MainSplitContainer.Panel1.SuspendLayout();
+            this.MainSplitContainer.Panel2.SuspendLayout();
+            this.MainSplitContainer.SuspendLayout();
+            this.HostInformationTabs.SuspendLayout();
+            this.tab1VolumeHistoricChart.SuspendLayout();
+            this.tab2DuplicateCandidates.SuspendLayout();
+            this.tab3PieCharts.SuspendLayout();
+            this.tableLayoutPanelPieCharts.SuspendLayout();
+            this.tab4FileDetails.SuspendLayout();
+            this.tableLayoutPanelFileDetails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            this.contextMenuStrip1.SuspendLayout();
-            this.contextMenuStrip2.SuspendLayout();
+            this.contextMenuAddServer.SuspendLayout();
+            this.contextMenuHost.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -94,7 +95,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1371, 24);
-            this.menuStrip1.TabIndex = 1;
+            this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // toolStripMenuItem2
@@ -112,7 +113,7 @@
             // 
             this.exportSharesReportToolStripMenuItem.Enabled = false;
             this.exportSharesReportToolStripMenuItem.Name = "exportSharesReportToolStripMenuItem";
-            this.exportSharesReportToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.exportSharesReportToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.exportSharesReportToolStripMenuItem.Text = "Export Shares Report ...";
             this.exportSharesReportToolStripMenuItem.Click += new System.EventHandler(this.exportSharesReportToolStripMenuItem_Click);
             // 
@@ -120,20 +121,20 @@
             // 
             this.exportVolumeReportToolStripMenuItem.Enabled = false;
             this.exportVolumeReportToolStripMenuItem.Name = "exportVolumeReportToolStripMenuItem";
-            this.exportVolumeReportToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.exportVolumeReportToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.exportVolumeReportToolStripMenuItem.Text = "Export Volume Report ...";
             this.exportVolumeReportToolStripMenuItem.Click += new System.EventHandler(this.exportVolumeReportToolStripMenuItem_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(197, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(198, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(200, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -142,7 +143,7 @@
             this.toolsStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.preferencesToolStripMenuItem});
             this.toolsStripMenuItem.Name = "toolsStripMenuItem";
-            this.toolsStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsStripMenuItem.Text = "Tools";
             // 
             // preferencesToolStripMenuItem
@@ -174,31 +175,32 @@
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
             // 
-            // panel1
+            // MainPanel
             // 
-            this.panel1.Controls.Add(this.splitContainer1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 24);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1371, 682);
-            this.panel1.TabIndex = 3;
+            this.MainPanel.Controls.Add(this.MainSplitContainer);
+            this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MainPanel.Location = new System.Drawing.Point(0, 24);
+            this.MainPanel.Name = "MainPanel";
+            this.MainPanel.Size = new System.Drawing.Size(1371, 682);
+            this.MainPanel.TabIndex = 3;
             // 
-            // splitContainer1
+            // MainSplitContainer
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
+            this.MainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MainSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.MainSplitContainer.Name = "MainSplitContainer";
             // 
-            // splitContainer1.Panel1
+            // MainSplitContainer.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.KnownHosts);
+            this.MainSplitContainer.Panel1.Controls.Add(this.KnownHosts);
             // 
-            // splitContainer1.Panel2
+            // MainSplitContainer.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer1.Size = new System.Drawing.Size(1371, 682);
-            this.splitContainer1.SplitterDistance = 119;
-            this.splitContainer1.TabIndex = 1;
+            this.MainSplitContainer.Panel2.Controls.Add(this.HostInformationTabs);
+            this.MainSplitContainer.Panel2.Controls.Add(this.NoDataNotification);
+            this.MainSplitContainer.Size = new System.Drawing.Size(1371, 682);
+            this.MainSplitContainer.SplitterDistance = 119;
+            this.MainSplitContainer.TabIndex = 1;
             // 
             // KnownHosts
             // 
@@ -213,31 +215,33 @@
             this.KnownHosts.Size = new System.Drawing.Size(119, 682);
             this.KnownHosts.TabIndex = 0;
             this.KnownHosts.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.KnownHosts_NodeMouseClick);
+            this.KnownHosts.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KnownHosts_KeyPress);
             // 
-            // tabControl1
+            // HostInformationTabs
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage4);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1248, 682);
-            this.tabControl1.TabIndex = 0;
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+            this.HostInformationTabs.Controls.Add(this.tab1VolumeHistoricChart);
+            this.HostInformationTabs.Controls.Add(this.tab2DuplicateCandidates);
+            this.HostInformationTabs.Controls.Add(this.tab3PieCharts);
+            this.HostInformationTabs.Controls.Add(this.tab4FileDetails);
+            this.HostInformationTabs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.HostInformationTabs.Location = new System.Drawing.Point(0, 0);
+            this.HostInformationTabs.Name = "HostInformationTabs";
+            this.HostInformationTabs.SelectedIndex = 0;
+            this.HostInformationTabs.Size = new System.Drawing.Size(1248, 682);
+            this.HostInformationTabs.TabIndex = 1;
+            this.HostInformationTabs.Visible = false;
+            this.HostInformationTabs.SelectedIndexChanged += new System.EventHandler(this.HostInformationTabs_SelectedIndexChanged);
             // 
-            // tabPage1
+            // tab1VolumeHistoricChart
             // 
-            this.tabPage1.Controls.Add(this.volumeHistoricChart1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1240, 656);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Volume Usage";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tab1VolumeHistoricChart.Controls.Add(this.volumeHistoricChart1);
+            this.tab1VolumeHistoricChart.Location = new System.Drawing.Point(4, 22);
+            this.tab1VolumeHistoricChart.Name = "tab1VolumeHistoricChart";
+            this.tab1VolumeHistoricChart.Padding = new System.Windows.Forms.Padding(3);
+            this.tab1VolumeHistoricChart.Size = new System.Drawing.Size(1240, 656);
+            this.tab1VolumeHistoricChart.TabIndex = 0;
+            this.tab1VolumeHistoricChart.Text = "Volume Usage";
+            this.tab1VolumeHistoricChart.UseVisualStyleBackColor = true;
             // 
             // volumeHistoricChart1
             // 
@@ -249,19 +253,20 @@
             this.volumeHistoricChart1.ShowIndividualStoragePoolUsage = false;
             this.volumeHistoricChart1.Size = new System.Drawing.Size(1234, 650);
             this.volumeHistoricChart1.TabIndex = 0;
+            this.volumeHistoricChart1.TabStop = false;
             this.volumeHistoricChart1.TimeRange = null;
             this.volumeHistoricChart1.View = SynoDuplicateFolders.Controls.vhcViewMode.Shares;
             // 
-            // tabPage2
+            // tab2DuplicateCandidates
             // 
-            this.tabPage2.Controls.Add(this.duplicateCandidatesView1);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1240, 656);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Duplicate Candidates";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tab2DuplicateCandidates.Controls.Add(this.duplicateCandidatesView1);
+            this.tab2DuplicateCandidates.Location = new System.Drawing.Point(4, 22);
+            this.tab2DuplicateCandidates.Name = "tab2DuplicateCandidates";
+            this.tab2DuplicateCandidates.Padding = new System.Windows.Forms.Padding(3);
+            this.tab2DuplicateCandidates.Size = new System.Drawing.Size(1240, 656);
+            this.tab2DuplicateCandidates.TabIndex = 1;
+            this.tab2DuplicateCandidates.Text = "Duplicate Candidates";
+            this.tab2DuplicateCandidates.UseVisualStyleBackColor = true;
             // 
             // duplicateCandidatesView1
             // 
@@ -274,78 +279,79 @@
             this.duplicateCandidatesView1.Size = new System.Drawing.Size(1234, 650);
             this.duplicateCandidatesView1.TabIndex = 0;
             // 
-            // tabPage3
+            // tab3PieCharts
             // 
-            this.tabPage3.Controls.Add(this.tableLayoutPanel1);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1240, 656);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "PieCharts";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tab3PieCharts.Controls.Add(this.tableLayoutPanelPieCharts);
+            this.tab3PieCharts.Location = new System.Drawing.Point(4, 22);
+            this.tab3PieCharts.Name = "tab3PieCharts";
+            this.tab3PieCharts.Padding = new System.Windows.Forms.Padding(3);
+            this.tab3PieCharts.Size = new System.Drawing.Size(1240, 656);
+            this.tab3PieCharts.TabIndex = 2;
+            this.tab3PieCharts.Text = "PieCharts";
+            this.tab3PieCharts.UseVisualStyleBackColor = true;
             // 
-            // tableLayoutPanel1
+            // tableLayoutPanelPieCharts
             // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.timeStampTrackBar, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.chartGrid1, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 86F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1234, 650);
-            this.tableLayoutPanel1.TabIndex = 4;
+            this.tableLayoutPanelPieCharts.ColumnCount = 1;
+            this.tableLayoutPanelPieCharts.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelPieCharts.Controls.Add(this.timestampTrackBarPieCharts, 0, 1);
+            this.tableLayoutPanelPieCharts.Controls.Add(this.volumePies, 0, 0);
+            this.tableLayoutPanelPieCharts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanelPieCharts.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanelPieCharts.Name = "tableLayoutPanelPieCharts";
+            this.tableLayoutPanelPieCharts.RowCount = 2;
+            this.tableLayoutPanelPieCharts.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelPieCharts.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 86F));
+            this.tableLayoutPanelPieCharts.Size = new System.Drawing.Size(1234, 650);
+            this.tableLayoutPanelPieCharts.TabIndex = 4;
             // 
-            // timeStampTrackBar
+            // timestampTrackBarPieCharts
             // 
-            this.timeStampTrackBar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.timeStampTrackBar.Location = new System.Drawing.Point(3, 567);
-            this.timeStampTrackBar.Name = "timeStampTrackBar";
-            this.timeStampTrackBar.Size = new System.Drawing.Size(1228, 80);
-            this.timeStampTrackBar.TabIndex = 6;
-            this.timeStampTrackBar.ValueChanged += new System.EventHandler(this.timeStampTrackBar_ValueChanged);
+            this.timestampTrackBarPieCharts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.timestampTrackBarPieCharts.Location = new System.Drawing.Point(3, 567);
+            this.timestampTrackBarPieCharts.Name = "timestampTrackBarPieCharts";
+            this.timestampTrackBarPieCharts.Size = new System.Drawing.Size(1228, 80);
+            this.timestampTrackBarPieCharts.TabIndex = 0;
+            this.timestampTrackBarPieCharts.Value = new System.DateTime(((long)(0)));
+            this.timestampTrackBarPieCharts.ValueChanged += new System.EventHandler(this.TimeStampTrackBar_ValueChanged);
             // 
-            // chartGrid1
+            // volumePies
             // 
-            this.chartGrid1.Configuration = null;
-            this.chartGrid1.DataSource = null;
-            this.chartGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chartGrid1.Location = new System.Drawing.Point(3, 3);
-            this.chartGrid1.Name = "chartGrid1";
-            this.chartGrid1.Size = new System.Drawing.Size(1228, 558);
-            this.chartGrid1.TabIndex = 0;
+            this.volumePies.Configuration = null;
+            this.volumePies.DataSource = null;
+            this.volumePies.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.volumePies.Location = new System.Drawing.Point(3, 3);
+            this.volumePies.Name = "volumePies";
+            this.volumePies.Size = new System.Drawing.Size(1228, 558);
+            this.volumePies.TabIndex = 0;
             // 
-            // tabPage4
+            // tab4FileDetails
             // 
-            this.tabPage4.Controls.Add(this.tableLayoutPanel2);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(1240, 656);
-            this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "File Details";
-            this.tabPage4.UseVisualStyleBackColor = true;
+            this.tab4FileDetails.Controls.Add(this.tableLayoutPanelFileDetails);
+            this.tab4FileDetails.Location = new System.Drawing.Point(4, 22);
+            this.tab4FileDetails.Name = "tab4FileDetails";
+            this.tab4FileDetails.Padding = new System.Windows.Forms.Padding(3);
+            this.tab4FileDetails.Size = new System.Drawing.Size(1240, 656);
+            this.tab4FileDetails.TabIndex = 3;
+            this.tab4FileDetails.Text = "File Details";
+            this.tab4FileDetails.UseVisualStyleBackColor = true;
             // 
-            // tableLayoutPanel2
+            // tableLayoutPanelFileDetails
             // 
-            this.tableLayoutPanel2.ColumnCount = 1;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.dataGridView1, 0, 1);
-            this.tableLayoutPanel2.Controls.Add(this.timeStampTrackBar1, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.cmbFileDetails, 0, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 3;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 72F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 86F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1234, 650);
-            this.tableLayoutPanel2.TabIndex = 1;
+            this.tableLayoutPanelFileDetails.ColumnCount = 1;
+            this.tableLayoutPanelFileDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelFileDetails.Controls.Add(this.dataGridView1, 0, 1);
+            this.tableLayoutPanelFileDetails.Controls.Add(this.timestampTrackBarFileDetails, 0, 2);
+            this.tableLayoutPanelFileDetails.Controls.Add(this.cmbFileDetails, 0, 0);
+            this.tableLayoutPanelFileDetails.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanelFileDetails.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanelFileDetails.Name = "tableLayoutPanelFileDetails";
+            this.tableLayoutPanelFileDetails.RowCount = 3;
+            this.tableLayoutPanelFileDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 72F));
+            this.tableLayoutPanelFileDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanelFileDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 86F));
+            this.tableLayoutPanelFileDetails.Size = new System.Drawing.Size(1234, 650);
+            this.tableLayoutPanelFileDetails.TabIndex = 0;
             // 
             // dataGridView1
             // 
@@ -358,16 +364,17 @@
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(1228, 486);
-            this.dataGridView1.TabIndex = 1;
+            this.dataGridView1.TabIndex = 2;
             // 
-            // timeStampTrackBar1
+            // timestampTrackBarFileDetails
             // 
-            this.timeStampTrackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.timeStampTrackBar1.Location = new System.Drawing.Point(3, 567);
-            this.timeStampTrackBar1.Name = "timeStampTrackBar1";
-            this.timeStampTrackBar1.Size = new System.Drawing.Size(1228, 80);
-            this.timeStampTrackBar1.TabIndex = 2;
-            this.timeStampTrackBar1.ValueChanged += new System.EventHandler(this.timeStampTrackBar1_ValueChanged);
+            this.timestampTrackBarFileDetails.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.timestampTrackBarFileDetails.Location = new System.Drawing.Point(3, 567);
+            this.timestampTrackBarFileDetails.Name = "timestampTrackBarFileDetails";
+            this.timestampTrackBarFileDetails.Size = new System.Drawing.Size(1228, 80);
+            this.timestampTrackBarFileDetails.TabIndex = 0;
+            this.timestampTrackBarFileDetails.Value = new System.DateTime(((long)(0)));
+            this.timestampTrackBarFileDetails.ValueChanged += new System.EventHandler(this.TimeStampTrackBar_ValueChanged);
             // 
             // cmbFileDetails
             // 
@@ -382,15 +389,25 @@
             this.cmbFileDetails.Location = new System.Drawing.Point(514, 25);
             this.cmbFileDetails.Name = "cmbFileDetails";
             this.cmbFileDetails.Size = new System.Drawing.Size(206, 21);
-            this.cmbFileDetails.TabIndex = 3;
+            this.cmbFileDetails.TabIndex = 1;
             this.cmbFileDetails.SelectedIndexChanged += new System.EventHandler(this.cmbFileDetails_SelectedIndexChanged);
             // 
-            // contextMenuStrip1
+            // NoDataNotification
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.NoDataNotification.AutoSize = true;
+            this.NoDataNotification.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.NoDataNotification.Location = new System.Drawing.Point(0, 0);
+            this.NoDataNotification.Name = "NoDataNotification";
+            this.NoDataNotification.Size = new System.Drawing.Size(238, 13);
+            this.NoDataNotification.TabIndex = 1;
+            this.NoDataNotification.Text = "Refresh the data from your NAS to fill this panel...";
+            // 
+            // contextMenuAddServer
+            // 
+            this.contextMenuAddServer.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addServerToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(143, 26);
+            this.contextMenuAddServer.Name = "contextMenuAddServer";
+            this.contextMenuAddServer.Size = new System.Drawing.Size(143, 26);
             // 
             // addServerToolStripMenuItem
             // 
@@ -399,17 +416,17 @@
             this.addServerToolStripMenuItem.Text = "Add server ...";
             this.addServerToolStripMenuItem.Click += new System.EventHandler(this.addServerToolStripMenuItem_Click);
             // 
-            // contextMenuStrip2
+            // contextMenuHost
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.contextMenuHost.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.refreshToolStripMenuItem,
             this.toolsStripMenuDividider,
             this.removeServerToolStripMenuItem,
             this.toolStripMenuItem1,
             this.propertiesToolStripMenuItem});
-            this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(152, 82);
-            this.contextMenuStrip2.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip2_ItemClicked);
+            this.contextMenuHost.Name = "contextMenuHost";
+            this.contextMenuHost.Size = new System.Drawing.Size(152, 82);
+            this.contextMenuHost.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuHost_ItemClicked);
             // 
             // refreshToolStripMenuItem
             // 
@@ -444,7 +461,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1371, 728);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.MainPanel);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Name = "SynoReportClient";
@@ -454,21 +471,22 @@
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tabPage4.ResumeLayout(false);
-            this.tableLayoutPanel2.ResumeLayout(false);
+            this.MainPanel.ResumeLayout(false);
+            this.MainSplitContainer.Panel1.ResumeLayout(false);
+            this.MainSplitContainer.Panel2.ResumeLayout(false);
+            this.MainSplitContainer.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MainSplitContainer)).EndInit();
+            this.MainSplitContainer.ResumeLayout(false);
+            this.HostInformationTabs.ResumeLayout(false);
+            this.tab1VolumeHistoricChart.ResumeLayout(false);
+            this.tab2DuplicateCandidates.ResumeLayout(false);
+            this.tab3PieCharts.ResumeLayout(false);
+            this.tableLayoutPanelPieCharts.ResumeLayout(false);
+            this.tab4FileDetails.ResumeLayout(false);
+            this.tableLayoutPanelFileDetails.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            this.contextMenuStrip1.ResumeLayout(false);
-            this.contextMenuStrip2.ResumeLayout(false);
+            this.contextMenuAddServer.ResumeLayout(false);
+            this.contextMenuHost.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -477,19 +495,19 @@
         #endregion
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel MainPanel;
         private System.Windows.Forms.ToolStripMenuItem toolsStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem;
-        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.SplitContainer MainSplitContainer;
         private System.Windows.Forms.TreeView KnownHosts;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabControl HostInformationTabs;
+        private System.Windows.Forms.TabPage tab1VolumeHistoricChart;
+        private System.Windows.Forms.TabPage tab2DuplicateCandidates;
+        private System.Windows.Forms.TabPage tab3PieCharts;
 
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuAddServer;
         private System.Windows.Forms.ToolStripMenuItem addServerToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ContextMenuStrip contextMenuHost;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
 
@@ -498,11 +516,12 @@
         private System.Windows.Forms.ToolStripMenuItem removeServerToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelPieCharts;
 
         private Controls.DuplicateCandidatesView duplicateCandidatesView1;
-        private Controls.TimeStampTrackBar timeStampTrackBar;
-        private Controls.ChartGrid chartGrid1;
+        private Controls.TimeStampTrackBar timestampTrackBarPieCharts;
+        private Controls.TimeStampTrackBar timestampTrackBarFileDetails;
+        private Controls.ChartGrid volumePies;
         private Controls.VolumeHistoricChart volumeHistoricChart1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem exportSharesReportToolStripMenuItem;
@@ -510,11 +529,11 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.TabPage tab4FileDetails;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanelFileDetails;
         private Controls.SynoReportDataGridView dataGridView1;
-        private Controls.TimeStampTrackBar timeStampTrackBar1;
         private System.Windows.Forms.ComboBox cmbFileDetails;
+        private System.Windows.Forms.Label NoDataNotification;
     }
 }
 

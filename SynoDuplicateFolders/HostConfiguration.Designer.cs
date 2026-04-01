@@ -32,6 +32,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.hostTextBox = new SynoDuplicateFolders.Controls.HostTextBox();
             this.grpReportsFolder = new System.Windows.Forms.GroupBox();
             this.lblReportFolderHint = new System.Windows.Forms.Label();
             this.radFolderDefault = new System.Windows.Forms.RadioButton();
@@ -42,8 +43,6 @@
             this.radUserCustom = new System.Windows.Forms.RadioButton();
             this.radUserDefault = new System.Windows.Forms.RadioButton();
             this.txtUser = new System.Windows.Forms.TextBox();
-            this.lblHost = new System.Windows.Forms.Label();
-            this.txtHost = new System.Windows.Forms.TextBox();
             this.grpMethods = new System.Windows.Forms.GroupBox();
             this.btnKeyFileRemove = new System.Windows.Forms.Button();
             this.btnKeyFileAdd = new System.Windows.Forms.Button();
@@ -53,8 +52,6 @@
             this.chkPassword = new System.Windows.Forms.CheckBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.chkAuthNone = new System.Windows.Forms.CheckBox();
-            this.lblPort = new System.Windows.Forms.Label();
-            this.txtPort = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnDupeRemoveAll = new System.Windows.Forms.Button();
@@ -115,13 +112,10 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.hostTextBox);
             this.tabPage1.Controls.Add(this.grpReportsFolder);
             this.tabPage1.Controls.Add(this.grpUser);
-            this.tabPage1.Controls.Add(this.lblHost);
-            this.tabPage1.Controls.Add(this.txtHost);
             this.tabPage1.Controls.Add(this.grpMethods);
-            this.tabPage1.Controls.Add(this.lblPort);
-            this.tabPage1.Controls.Add(this.txtPort);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -129,6 +123,14 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "SSH Configuration";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // hostTextBox1
+            // 
+            this.hostTextBox.Location = new System.Drawing.Point(9, 10);
+            this.hostTextBox.Name = "hostTextBox";
+            this.hostTextBox.Size = new System.Drawing.Size(323, 39);
+            this.hostTextBox.TabIndex = 0;
+            this.hostTextBox.HostNameChange += new System.EventHandler(this.hostTextBox_HostNameChange);
             // 
             // grpReportsFolder
             // 
@@ -139,7 +141,7 @@
             this.grpReportsFolder.Location = new System.Drawing.Point(9, 120);
             this.grpReportsFolder.Name = "grpReportsFolder";
             this.grpReportsFolder.Size = new System.Drawing.Size(462, 62);
-            this.grpReportsFolder.TabIndex = 18;
+            this.grpReportsFolder.TabIndex = 2;
             this.grpReportsFolder.TabStop = false;
             this.grpReportsFolder.Text = "Reports folder";
             // 
@@ -149,7 +151,7 @@
             this.lblReportFolderHint.Location = new System.Drawing.Point(155, 42);
             this.lblReportFolderHint.Name = "lblReportFolderHint";
             this.lblReportFolderHint.Size = new System.Drawing.Size(0, 13);
-            this.lblReportFolderHint.TabIndex = 20;
+            this.lblReportFolderHint.TabIndex = 3;
             // 
             // radFolderDefault
             // 
@@ -157,7 +159,7 @@
             this.radFolderDefault.Location = new System.Drawing.Point(7, 22);
             this.radFolderDefault.Name = "radFolderDefault";
             this.radFolderDefault.Size = new System.Drawing.Size(59, 17);
-            this.radFolderDefault.TabIndex = 5;
+            this.radFolderDefault.TabIndex = 0;
             this.radFolderDefault.TabStop = true;
             this.radFolderDefault.Text = "Default";
             this.radFolderDefault.UseVisualStyleBackColor = true;
@@ -171,7 +173,7 @@
             this.radFolderCustom.Location = new System.Drawing.Point(72, 22);
             this.radFolderCustom.Name = "radFolderCustom";
             this.radFolderCustom.Size = new System.Drawing.Size(77, 17);
-            this.radFolderCustom.TabIndex = 6;
+            this.radFolderCustom.TabIndex = 1;
             this.radFolderCustom.TabStop = true;
             this.radFolderCustom.Text = "This folder:";
             this.radFolderCustom.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -183,7 +185,7 @@
             this.txtSynoReportHome.Location = new System.Drawing.Point(155, 19);
             this.txtSynoReportHome.Name = "txtSynoReportHome";
             this.txtSynoReportHome.Size = new System.Drawing.Size(246, 20);
-            this.txtSynoReportHome.TabIndex = 7;
+            this.txtSynoReportHome.TabIndex = 2;
             this.txtSynoReportHome.Validating += new System.ComponentModel.CancelEventHandler(this.txtSynoReportHome_Validating);
             // 
             // grpUser
@@ -195,7 +197,7 @@
             this.grpUser.Location = new System.Drawing.Point(9, 55);
             this.grpUser.Name = "grpUser";
             this.grpUser.Size = new System.Drawing.Size(462, 59);
-            this.grpUser.TabIndex = 17;
+            this.grpUser.TabIndex = 1;
             this.grpUser.TabStop = false;
             this.grpUser.Text = "User";
             // 
@@ -205,7 +207,7 @@
             this.lblUserHint.Location = new System.Drawing.Point(155, 42);
             this.lblUserHint.Name = "lblUserHint";
             this.lblUserHint.Size = new System.Drawing.Size(0, 13);
-            this.lblUserHint.TabIndex = 21;
+            this.lblUserHint.TabIndex = 0;
             // 
             // radUserCustom
             // 
@@ -213,7 +215,7 @@
             this.radUserCustom.Location = new System.Drawing.Point(78, 19);
             this.radUserCustom.Name = "radUserCustom";
             this.radUserCustom.Size = new System.Drawing.Size(71, 17);
-            this.radUserCustom.TabIndex = 3;
+            this.radUserCustom.TabIndex = 2;
             this.radUserCustom.TabStop = true;
             this.radUserCustom.Text = "This user:";
             this.radUserCustom.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -225,7 +227,7 @@
             this.radUserDefault.Location = new System.Drawing.Point(7, 19);
             this.radUserDefault.Name = "radUserDefault";
             this.radUserDefault.Size = new System.Drawing.Size(59, 17);
-            this.radUserDefault.TabIndex = 2;
+            this.radUserDefault.TabIndex = 1;
             this.radUserDefault.TabStop = true;
             this.radUserDefault.Text = "Default";
             this.radUserDefault.UseVisualStyleBackColor = true;
@@ -239,28 +241,9 @@
             this.txtUser.Location = new System.Drawing.Point(155, 19);
             this.txtUser.Name = "txtUser";
             this.txtUser.Size = new System.Drawing.Size(164, 20);
-            this.txtUser.TabIndex = 4;
+            this.txtUser.TabIndex = 3;
             this.txtUser.TextChanged += new System.EventHandler(this.txtUser_TextChanged);
             this.txtUser.Validating += new System.ComponentModel.CancelEventHandler(this.txtUser_Validating);
-            // 
-            // lblHost
-            // 
-            this.lblHost.AutoSize = true;
-            this.lblHost.Location = new System.Drawing.Point(6, 12);
-            this.lblHost.Name = "lblHost";
-            this.lblHost.Size = new System.Drawing.Size(29, 13);
-            this.lblHost.TabIndex = 0;
-            this.lblHost.Text = "Host";
-            // 
-            // txtHost
-            // 
-            this.txtHost.Location = new System.Drawing.Point(9, 28);
-            this.txtHost.Name = "txtHost";
-            this.txtHost.Size = new System.Drawing.Size(263, 20);
-            this.txtHost.TabIndex = 0;
-            this.txtHost.TextChanged += new System.EventHandler(this.txtHost_TextChanged);
-            this.txtHost.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtHost_KeyDown);
-            this.txtHost.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtHost_KeyPress);
             // 
             // grpMethods
             // 
@@ -275,7 +258,7 @@
             this.grpMethods.Location = new System.Drawing.Point(9, 188);
             this.grpMethods.Name = "grpMethods";
             this.grpMethods.Size = new System.Drawing.Size(462, 261);
-            this.grpMethods.TabIndex = 15;
+            this.grpMethods.TabIndex = 3;
             this.grpMethods.TabStop = false;
             this.grpMethods.Text = "Authentication Methods";
             // 
@@ -285,7 +268,7 @@
             this.btnKeyFileRemove.Location = new System.Drawing.Point(324, 178);
             this.btnKeyFileRemove.Name = "btnKeyFileRemove";
             this.btnKeyFileRemove.Size = new System.Drawing.Size(75, 23);
-            this.btnKeyFileRemove.TabIndex = 15;
+            this.btnKeyFileRemove.TabIndex = 7;
             this.btnKeyFileRemove.Text = "Remove";
             this.btnKeyFileRemove.UseVisualStyleBackColor = true;
             this.btnKeyFileRemove.Click += new System.EventHandler(this.btnKeyFileRemove_Click);
@@ -296,7 +279,7 @@
             this.btnKeyFileAdd.Location = new System.Drawing.Point(324, 149);
             this.btnKeyFileAdd.Name = "btnKeyFileAdd";
             this.btnKeyFileAdd.Size = new System.Drawing.Size(75, 23);
-            this.btnKeyFileAdd.TabIndex = 14;
+            this.btnKeyFileAdd.TabIndex = 6;
             this.btnKeyFileAdd.Text = "Add";
             this.btnKeyFileAdd.UseVisualStyleBackColor = true;
             this.btnKeyFileAdd.Click += new System.EventHandler(this.btnKeyFileAdd_Click);
@@ -309,7 +292,7 @@
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(300, 100);
-            this.listView1.TabIndex = 13;
+            this.listView1.TabIndex = 5;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
             // 
@@ -319,7 +302,7 @@
             this.chkKeyFiles.Location = new System.Drawing.Point(18, 126);
             this.chkKeyFiles.Name = "chkKeyFiles";
             this.chkKeyFiles.Size = new System.Drawing.Size(104, 17);
-            this.chkKeyFiles.TabIndex = 12;
+            this.chkKeyFiles.TabIndex = 4;
             this.chkKeyFiles.Text = "Private Key Files";
             this.chkKeyFiles.UseVisualStyleBackColor = true;
             this.chkKeyFiles.CheckedChanged += new System.EventHandler(this.chkKeyFiles_CheckedChanged);
@@ -330,7 +313,7 @@
             this.chkKeyBoardInteractive.Location = new System.Drawing.Point(18, 54);
             this.chkKeyBoardInteractive.Name = "chkKeyBoardInteractive";
             this.chkKeyBoardInteractive.Size = new System.Drawing.Size(123, 17);
-            this.chkKeyBoardInteractive.TabIndex = 9;
+            this.chkKeyBoardInteractive.TabIndex = 1;
             this.chkKeyBoardInteractive.Text = "Keyboard interactive";
             this.chkKeyBoardInteractive.UseVisualStyleBackColor = true;
             this.chkKeyBoardInteractive.CheckedChanged += new System.EventHandler(this.chkKeyBoardInteractive_CheckedChanged);
@@ -341,7 +324,7 @@
             this.chkPassword.Location = new System.Drawing.Point(18, 77);
             this.chkPassword.Name = "chkPassword";
             this.chkPassword.Size = new System.Drawing.Size(72, 17);
-            this.chkPassword.TabIndex = 10;
+            this.chkPassword.TabIndex = 2;
             this.chkPassword.Text = "Password";
             this.chkPassword.UseVisualStyleBackColor = true;
             this.chkPassword.CheckedChanged += new System.EventHandler(this.chkPassword_CheckedChanged);
@@ -353,9 +336,8 @@
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(263, 20);
-            this.txtPassword.TabIndex = 11;
+            this.txtPassword.TabIndex = 3;
             this.txtPassword.UseSystemPasswordChar = true;
-
             // 
             // chkAuthNone
             // 
@@ -364,29 +346,9 @@
             this.chkAuthNone.Location = new System.Drawing.Point(18, 31);
             this.chkAuthNone.Name = "chkAuthNone";
             this.chkAuthNone.Size = new System.Drawing.Size(52, 17);
-            this.chkAuthNone.TabIndex = 8;
+            this.chkAuthNone.TabIndex = 0;
             this.chkAuthNone.Text = "None";
             this.chkAuthNone.UseVisualStyleBackColor = true;
-            // 
-            // lblPort
-            // 
-            this.lblPort.AutoSize = true;
-            this.lblPort.Location = new System.Drawing.Point(278, 12);
-            this.lblPort.Name = "lblPort";
-            this.lblPort.Size = new System.Drawing.Size(26, 13);
-            this.lblPort.TabIndex = 13;
-            this.lblPort.Text = "Port";
-            // 
-            // txtPort
-            // 
-            this.txtPort.Location = new System.Drawing.Point(278, 28);
-            this.txtPort.MaxLength = 12;
-            this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(72, 20);
-            this.txtPort.TabIndex = 1;
-            this.txtPort.TabStop = false;
-            this.txtPort.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPort_KeyDown);
-            this.txtPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPort_KeyPress);
             // 
             // tabPage2
             // 
@@ -518,7 +480,7 @@
             this.btnOk.Location = new System.Drawing.Point(356, 499);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(74, 36);
-            this.btnOk.TabIndex = 19;
+            this.btnOk.TabIndex = 0;
             this.btnOk.Text = "Ok";
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
@@ -529,7 +491,7 @@
             this.btnCancel.Location = new System.Drawing.Point(436, 499);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(74, 36);
-            this.btnCancel.TabIndex = 20;
+            this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -545,11 +507,9 @@
             this.MinimizeBox = false;
             this.Name = "HostConfiguration";
             this.ShowInTaskbar = false;
-
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
             this.grpReportsFolder.ResumeLayout(false);
             this.grpReportsFolder.PerformLayout();
             this.grpUser.ResumeLayout(false);
@@ -570,8 +530,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.Label lblHost;
-        private System.Windows.Forms.TextBox txtHost;
         private System.Windows.Forms.TextBox txtUser;
         private System.Windows.Forms.GroupBox grpMethods;
         private System.Windows.Forms.Button btnKeyFileRemove;
@@ -582,8 +540,6 @@
         private System.Windows.Forms.CheckBox chkPassword;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.CheckBox chkAuthNone;
-        private System.Windows.Forms.Label lblPort;
-        private System.Windows.Forms.TextBox txtPort;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnCancel;
@@ -606,5 +562,6 @@
         private System.Windows.Forms.RadioButton radUserDefault;
         private System.Windows.Forms.Label lblReportFolderHint;
         private System.Windows.Forms.Label lblUserHint;
+        private Controls.HostTextBox hostTextBox;
     }
 }
