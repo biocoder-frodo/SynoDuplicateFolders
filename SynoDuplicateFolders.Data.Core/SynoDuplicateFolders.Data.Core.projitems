@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)DeduplicateFiles.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RelativeFileInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ColumnWidthAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IDuplicateFileInfoExclusion.cs" />
@@ -22,6 +23,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ISynoReportDetail.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IVolumePieChart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IXYDataPoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StickyColumnAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TraceName.cs" />
   </ItemGroup>
 </Project>
