@@ -32,6 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
@@ -52,6 +53,7 @@
     <Compile Include="..\..\..\DiskStationManager.SecureShell\source\Extensions\Extensions.cs" />
     <Compile Include="..\..\..\DiskStationManager.SecureShell\source\Extensions\FileSizeFormatter.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Controls\ChartControls.cs" />
+	<Compile Include="..\..\SynoDuplicateFolders.Controls\ChartGridToolTipEventArgs.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Controls\GridControls.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Controls\IChartConfiguration.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Controls\IChartLegend.cs" />
@@ -60,7 +62,7 @@
     <Compile Include="..\..\SynoDuplicateFolders.Controls\IRectangleLayout.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Controls\ITaggedColor.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data\PieChartDataPoint.cs" />
-    <Compile Include="..\..\SynoDuplicateFolders\Properties\Resources.Designer.cs" />
+    <None Include="..\..\SynoDuplicateFolders\Properties\Resources.Designer.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data\ISynoReportCache.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Controls\ItemOpenedEventArgs.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Controls\ItemsComparedEventArgs.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="..\..\SynoDuplicateFolders.Controls\IDuplicateExclusionSource.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data\DuplicateFileInfo.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data.Core\ISynoReportDetail.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data.Core\Extensions.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data.Core\IDuplicateFileInfoExclusion.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data.Core\ISynoCSVReport.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Controls\SortOrderManager.cs" />

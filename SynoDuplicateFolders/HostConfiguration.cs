@@ -1,6 +1,8 @@
 ﻿using DiskStationManager.SecureShell;
 using SynoDuplicateFolders.Controls;
+using SynoDuplicateFolders.Data.Core;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -11,7 +13,6 @@ namespace SynoDuplicateFolders
 
     internal partial class HostConfiguration : Form
     {
-        private static readonly Regex portspec = new Regex("(.*/{0}):([0-9]+)$");
         private static readonly Regex pathspec = new Regex(@"^((\/volume[0-9]+\/homes\/[a-z0-9]+\/?)(synoreport\/?){0,1})|^(\/volume[0-9]+\/[\/a-z0-9]+)");
         private static readonly Regex NAME_REGEX = new Regex(@"^[a-z][-a-z0-9]*");
 
@@ -27,13 +28,13 @@ namespace SynoDuplicateFolders
             radUserCustom.Checked = true;
             radFolderCustom.Checked = true;
 
-            txtPort.Text = (existing ? Host.Port : Host.ElementInformation.Properties["port"].DefaultValue).ToString();
+            hostTextBox.Port = existing ? Host.Port : (int?)null;
 
             txtUser.Text = existing ? Host.UserName : DSMHost.DefaultUserName;
 
             if (existing)
             {
-                txtHost.Text = Host.Host;
+                hostTextBox.HostName = Host.Host;
                 radUserDefault.Checked = IsDefaultUserNameSet;
                 radFolderDefault.Checked = string.IsNullOrWhiteSpace(Host.SynoReportHome);
                 txtSynoReportHome.Text = radFolderDefault.Checked ? DSMHost.SynoReportHomeDefault(Host.UserName) : Host.SynoReportHome;
@@ -91,8 +92,14 @@ namespace SynoDuplicateFolders
                         break;
                 }
             }
+
+            SetDialogtTitle(hostTextBox.HostName);
+
             initialization = false;
         }
+        
+        private void hostTextBox_HostNameChange(object sender, EventArgs e) => SetDialogtTitle(hostTextBox.HostName);
+        private void SetDialogtTitle(string host) => this.Text = string.IsNullOrWhiteSpace(host) ? "New host configuration" : $"Host configuration of {host}";
 
         public HostConfiguration(DSMHost host, DuplicateCandidatesExclusion<DSMHost> candidatesExclusion)
         {
@@ -193,8 +200,9 @@ namespace SynoDuplicateFolders
                 Host.KeepCount = int.Parse(txtKeep.Text);
                 Host.KeepAll = optAnalyzerDbKeep.Checked;
 
-                Host.Host = txtHost.Text;
-                Host.Port = int.Parse(txtPort.Text);
+                Host.Host = hostTextBox.HostName;
+                Host.Port = hostTextBox.Port.HasValue ? hostTextBox.Port.Value : Host.GetDefaultValueAttribute<int>(nameof(Host.Port));
+
                 Host.UserName = txtUser.Text;
                 Host.SynoReportHome = radFolderCustom.Checked ? txtSynoReportHome.Text : string.Empty;
 
@@ -207,7 +215,7 @@ namespace SynoDuplicateFolders
         }
         private void chkKeyBoardInteractive_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkKeyBoardInteractive.Checked) chkPassword.Checked =false;
+            if (chkKeyBoardInteractive.Checked) chkPassword.Checked = false;
         }
         private void chkKeep_CheckedChanged(object sender, EventArgs e)
         {
@@ -256,20 +264,6 @@ namespace SynoDuplicateFolders
                     radFolderDefault.Checked = true;
             }
         }
-
-        private void txtHost_TextChanged(object sender, EventArgs e)
-        {
-            if (txtHost.Text.EndsWith(":", StringComparison.InvariantCulture) == false && portspec.IsMatch(txtHost.Text))
-            {
-                Match m = portspec.Match(txtHost.Text);
-                txtPort.Text = m.Groups[2].Value;
-                txtHost.Text = m.Groups[1].Value;
-                txtPort.SelectionStart = txtPort.Text.Length;
-                txtPort.Focus();
-            }
-            this.Text = string.IsNullOrWhiteSpace(txtHost.Text) ? "New host configuration" : $"Host configuration of {txtHost.Text}";
-        }
-
         private void chkKeyFiles_CheckedChanged(object sender, EventArgs e)
         {
             bool check = ((CheckBox)sender).Checked;
@@ -280,9 +274,9 @@ namespace SynoDuplicateFolders
 
         private void btnKeyFileAdd_Click(object sender, EventArgs e)
         {
-            if (OpenDialog("Open a key file", out string filename))
+            if (OpenDialog("Open a key file", out FileInfo filename))
             {
-                listView1.Items.Add(filename);
+                listView1.Items.Add(filename.FullName);
             }
         }
 
@@ -293,10 +287,10 @@ namespace SynoDuplicateFolders
                 listView1.Items.Remove(listView1.Items[i]);
             }
         }
-        private bool OpenDialog(string title, out string filename)
+        private bool OpenDialog(string title, out FileInfo filename)
         {
             DialogResult r;
-            filename = string.Empty;
+            filename = null;
 
             openFileDialog1.AddExtension = true;
             openFileDialog1.FileName = "";
@@ -308,42 +302,9 @@ namespace SynoDuplicateFolders
             r = openFileDialog1.ShowDialog();
             if (r == DialogResult.OK)
             {
-                filename = openFileDialog1.FileName;
+                filename = new FileInfo(openFileDialog1.FileName);
             }
             return r == DialogResult.OK;
-        }
-
-
-        private bool _allowedKeyPress;
-
-        private void txtHost_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            _allowedKeyPress = true;
-
-            if (e.KeyChar == '.' || e.KeyChar == ':')
-            {
-                _allowedKeyPress = false;
-                if (txtHost.Text.EndsWith(e.KeyChar.ToString()) == false)
-                    _allowedKeyPress = true;
-            }
-            if (!_allowedKeyPress)
-                e.Handled = true;
-        }
-
-        private void txtPort_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar >= '0' && e.KeyChar <= '9') _allowedKeyPress = true;
-            if (!_allowedKeyPress)
-                e.Handled = true;
-        }
-
-        private void txtHost_KeyDown(object sender, KeyEventArgs e)
-        {
-            _allowedKeyPress = e.KeyCode == Keys.Back;
-        }
-        private void txtPort_KeyDown(object sender, KeyEventArgs e)
-        {
-            _allowedKeyPress = e.KeyCode == Keys.Back;
         }
 
         private void txtKeep_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -445,7 +406,7 @@ namespace SynoDuplicateFolders
         private void chkPassword_CheckedChanged(object sender, EventArgs e)
         {
             var control = sender as CheckBox;
-            txtPassword.Text = control.Checked ?  "thisisnotyourpassword" : string.Empty;
+            txtPassword.Text = control.Checked ? "thisisnotyourpassword" : string.Empty;
         }
     }
 }

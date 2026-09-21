@@ -21,6 +21,10 @@
       <DependentUpon>DuplicateCandidatesView.cs</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GridControls.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HostTextBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HostTextBox.Designer.cs">
+      <DependentUpon>HostTextBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)IChartConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IChartLegend.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IDuplicateExclusionSource.cs" />
@@ -54,6 +58,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)DuplicateCandidatesView.resx">
       <DependentUpon>DuplicateCandidatesView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)HostTextBox.resx">
+      <DependentUpon>HostTextBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)TimeStampTrackBar.resx">
       <DependentUpon>TimeStampTrackBar.cs</DependentUpon>
