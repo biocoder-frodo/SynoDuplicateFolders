@@ -6,7 +6,9 @@ namespace SynoDuplicateFolders.Controls
     public class ColumnWidthAttribute : Attribute
     {
         public ColumnWidthAttribute(int width)
-        { Width = width; }
+        {
+            Width = width;
+        }
 
         public int Width { get; set; }
     }
