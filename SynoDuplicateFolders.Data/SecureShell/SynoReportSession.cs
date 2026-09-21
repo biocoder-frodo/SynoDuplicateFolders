@@ -11,17 +11,13 @@ namespace SynoDuplicateFolders.Data.SecureShell
         }
         internal new ISynoReportCommand GetConsole(SshClient client)
         {
-            ISynoReportCommand console;
+            ISynoReportCommand console = null;
 
-            bool briefly = client.IsConnected == false;
-
-            if (briefly) client.Connect();
-
-            console = BSynoReportCommand.GetDSMConsole(client);
-
-            if (briefly) client.Disconnect();
-
-            _version = console.GetVersionInfo();
+            EnsureConnection(client, ssh =>
+            {
+                console = BSynoReportCommand.GetDSMConsole(ssh);
+                _version = console.GetVersionInfo();
+            });
 
             return console;
         }
