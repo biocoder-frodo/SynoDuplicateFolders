@@ -7,21 +7,21 @@ namespace SynoDuplicateFolders.Controls
 #if DESIGNER_WORKAROUND
     public
 #else
-    internal 
+    internal
 #endif
         class ChartControls : GridControls<Chart>
     {
         private readonly EventHandler<ToolTipEventArgs> toolTipEvent;
         private readonly EventHandler<ChartPaintEventArgs> postPaintEvent;
-        public ChartControls(MouseEventHandler mouseEventHandler, EventHandler<ToolTipEventArgs> toolTipEventHandler, EventHandler<ChartPaintEventArgs> postPaintEventHandler)
-            :base(mouseEventHandler)
+        public ChartControls(MouseEventHandler mouseEventHandler, EventHandler<ChartPaintEventArgs> postPaintEventHandler, EventHandler<ToolTipEventArgs> toolTipEventHandler = null)
+            : base(mouseEventHandler)
         {
             toolTipEvent = toolTipEventHandler;
             postPaintEvent = postPaintEventHandler;
         }
         public new void Add(Chart chart)
-        {            
-            chart.GetToolTipText += toolTipEvent;
+        {
+            if (toolTipEvent != null) chart.GetToolTipText += toolTipEvent;
             chart.PostPaint += postPaintEvent;
             base.Add(chart);
         }
@@ -30,7 +30,7 @@ namespace SynoDuplicateFolders.Controls
             foreach (Chart c in this)
             {
                 c.MouseClick -= mouseEvent;
-                c.GetToolTipText -= toolTipEvent;
+                if (toolTipEvent != null) c.GetToolTipText -= toolTipEvent;
                 c.PostPaint -= postPaintEvent;
             }
             base.Clear();
