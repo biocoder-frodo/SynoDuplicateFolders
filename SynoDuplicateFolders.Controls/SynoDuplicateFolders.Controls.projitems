@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ChartGrid.Designer.cs">
       <DependentUpon>ChartGrid.cs</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ChartGridToolTipEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CurrentSortOrder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DuplicateCandidatesExclusion.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DuplicateCandidatesView.cs" />

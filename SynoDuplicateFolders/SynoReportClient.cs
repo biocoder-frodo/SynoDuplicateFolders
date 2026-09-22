@@ -1,6 +1,7 @@
 ﻿using DiskStationManager.SecureShell;
 using SynoDuplicateFolders.Controls;
 using SynoDuplicateFolders.Data;
+using SynoDuplicateFolders.Data.ComponentModel;
 using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Data.SecureShell;
 using SynoDuplicateFolders.Properties;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,7 +18,6 @@ using static SynoDuplicateFolders.Properties.CustomSettings;
 using static SynoDuplicateFolders.Properties.Settings;
 using static System.Configuration.UserSectionHandler;
 using static System.Environment;
-using System.Linq;
 
 namespace SynoDuplicateFolders
 {
@@ -31,7 +32,7 @@ namespace SynoDuplicateFolders
         private DSMHost selected;
         private DuplicateCandidatesExclusion<DSMHost> exclusion;
         private DateTime? commonDateSelection;
-
+        private ContentToolWindow contentTool;
         public SynoReportClient()
         {
 
@@ -50,7 +51,11 @@ namespace SynoDuplicateFolders
             duplicateCandidatesView1.OnItemHide += DuplicateCandidatesView1_OnItemHide;
             duplicateCandidatesView1.OnDeduplicationRequest += DuplicateCandidatesView1_OnDeduplicationRequest;
 
+            volumePies.ToolTipChanged += VolumePies_ToolTipChanged;
         }
+
+        private void VolumePies_ToolTipChanged(object sender, ChartGridToolTipEventArgs e) => contentTool?.Update(cache, commonDateSelection.Value, e);
+
 
         private void DuplicateCandidatesView1_OnDeduplicationRequest(object sender, ItemsComparedEventArgs e)
         {
@@ -65,17 +70,14 @@ namespace SynoDuplicateFolders
         private void Profile_LegendChanged(object sender, EventArgs e)
         {
             volumeHistoricChart1.Refresh();
-            chartGrid1.Refresh();
+            volumePies.Refresh();
         }
 
         private void OnDispose(bool disposing)
         {
             dupes?.Dispose();
         }
-        private void DuplicateCandidatesView1_OnItemStatusUpdate(object sender, ItemStatusUpdateEventArgs e)
-        {
-            toolStripStatusLabel1.Text = e.Status;
-        }
+        private void DuplicateCandidatesView1_OnItemStatusUpdate(object sender, ItemStatusUpdateEventArgs e) => toolStripStatusLabel1.Text = e.Status;
 
         private void DuplicateCandidatesView1_OnItemCompare(object sender, ItemsComparedEventArgs e)
         {
@@ -170,7 +172,7 @@ namespace SynoDuplicateFolders
 
                 Profile.LegendChanged += Profile_LegendChanged;
                 volumeHistoricChart1.Configuration = Profile;
-                chartGrid1.Configuration = Profile;
+                volumePies.Configuration = Profile;
 
 
                 duplicateCandidatesView1.MaximumComparable = Default.MaximumComparable;
@@ -180,7 +182,7 @@ namespace SynoDuplicateFolders
                     string tag = Default.AutoRefreshServer;
                     if (Profile.DSMHosts.Items.ContainsKey(tag))
                     {
-                        Task.Factory.StartNew(() => SynoReportClient_CacheUpdate(tag));
+                        RefreshDataForHost(tag);
                     }
                 }
             }
@@ -220,6 +222,7 @@ namespace SynoDuplicateFolders
         }
         private void SynoReportClient_CacheUpdate(string hostName)
         {
+
             try
             {
                 Invoke(new Action(ProgressUpdateProcessing));
@@ -372,43 +375,46 @@ namespace SynoDuplicateFolders
                 p.ShowDialog();
             }
         }
-
-        private void timeStampTrackBar_ValueChanged(object sender, EventArgs e)
+        private void cmbFileDetails_SelectedIndexChanged(object sender, EventArgs e) => TimeStampTrackBar_ValueChanged(timestampTrackBarFileDetails, e);
+        private void TimeStampTrackBar_ValueChanged(object sender, EventArgs e)
         {
-            commonDateSelection = timeStampTrackBar.Value;
-            PopulateFromTimeline(commonDateSelection.Value);
-        }
+            var control = sender as TimeStampTrackBar;
+            if (control is null) return;
 
-        private void timeStampTrackBar1_ValueChanged(object sender, EventArgs e)
-        {
-            commonDateSelection = timeStampTrackBar1.Value;
+            commonDateSelection = control.Value;
             PopulateFromTimeline(commonDateSelection.Value);
         }
         private void PopulateFromTimeline(DateTime ts)
         {
             if (cache is null) return;
-            chartGrid1.DataSource = cache.GetReport(ts, SynoReportType.VolumeUsage, SynoReportType.ShareList) as IVolumePieChart;
+
+            volumePies.DataSource = cache.GetReport(ts, SynoReportType.VolumeUsage, SynoReportType.ShareList) as IVolumePieChart;
 
             string value = cmbFileDetails.Text.ToLowerInvariant();
+            object current;
             switch (value)
             {
                 case "owners":
+                    current = dataGridView1.GetSelection<ISynoReportOwnerDetail>();
                     setDataSource<ISynoReportOwnerDetail>(dataGridView1, ts, SynoReportType.FileOwner);
+                    dataGridView1.TryReselection(current as IReadOnlyList<ISynoReportOwnerDetail>);
                     break;
                 case "most modified":
+                    current = dataGridView1.GetSelection<ISynoReportFileDetail>();
                     setDataSource<ISynoReportFileDetail>(dataGridView1, ts, SynoReportType.MostModified);
+                    dataGridView1.TryReselection(current as IReadOnlyList<ISynoReportFileDetail>);
                     break;
                 case "least modified":
+                    current = dataGridView1.GetSelection<ISynoReportFileDetail>();
                     setDataSource<ISynoReportFileDetail>(dataGridView1, ts, SynoReportType.LeastModified);
+                    dataGridView1.TryReselection(current as IReadOnlyList<ISynoReportFileDetail>);
                     break;
                 default:
+                    current = dataGridView1.GetSelection<ISynoReportGroupDetail>();
                     setDataSource<ISynoReportGroupDetail>(dataGridView1, ts, SynoReportType.FileGroup);
+                    dataGridView1.TryReselection(current as IReadOnlyList<ISynoReportGroupDetail>);
                     break;
             }
-        }
-        private void cmbFileDetails_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            timeStampTrackBar1_ValueChanged(sender, e);
         }
         private void setDataSource<T>(SynoReportDataGridView grid, DateTime ts, SynoReportType type) where T : class, ISynoReportDetail
         {
@@ -418,12 +424,19 @@ namespace SynoDuplicateFolders
             }
         }
 
-        private void contextMenuStrip2_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void RefreshDataForHost(string tag)
+        {
+            NoDataNotification.Visible = false;
+            HostInformationTabs.Visible = true;
+            Task.Factory.StartNew(() => SynoReportClient_CacheUpdate(tag));
+        }
+
+        private void contextMenuHost_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             string tag = (string)KnownHosts.SelectedNode.Tag;
             if (e.ClickedItem == refreshToolStripMenuItem)
             {
-                Task.Factory.StartNew(() => SynoReportClient_CacheUpdate(tag));
+                RefreshDataForHost(tag);
             }
             else if (e.ClickedItem == removeServerToolStripMenuItem)
             {
@@ -484,12 +497,12 @@ namespace SynoDuplicateFolders
         {
             KnownHosts.Nodes.Clear();
             KnownHosts.Nodes.Add("NAS");
-            KnownHosts.Nodes[0].ContextMenuStrip = contextMenuStrip1;
+            KnownHosts.Nodes[0].ContextMenuStrip = contextMenuAddServer;
 
             foreach (DSMHost h in Profile.DSMHosts.Items)
             {
                 var node = KnownHosts.Nodes[0].Nodes.Add(h.Host, h.Host);
-                node.ContextMenuStrip = contextMenuStrip2;
+                node.ContextMenuStrip = contextMenuHost;
                 node.Tag = h.Host;
             }
         }
@@ -551,8 +564,8 @@ namespace SynoDuplicateFolders
             volumeHistoricChart1.View = vhcViewMode.Shares;
             volumeHistoricChart1.DataSource = cache;
 
-            timeStampTrackBar.DateRange = cache.DateRange;
-            timeStampTrackBar1.DateRange = cache.DateRange;
+            timestampTrackBarPieCharts.DateRange = cache.DateRange;
+            timestampTrackBarFileDetails.DateRange = cache.DateRange;
 
             ProgressUpdate(new SynoReportCacheDownloadEventArgs(CacheStatus.Idle));
         }
@@ -572,7 +585,27 @@ namespace SynoDuplicateFolders
         {
             ((TreeView)sender).SelectedNode = e.Node;
         }
+        private void KnownHosts_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            var node = (sender as TreeView).SelectedNode;
 
+            if (node is null) return;
+
+            if (e.KeyChar == '\r')
+            {
+                e.Handled = true;
+
+                if (node.Tag is null)
+                {
+                    addServerToolStripMenuItem_Click(sender, e);
+                }
+                else
+                {
+                    RefreshDataForHost((string)node.Tag);
+                }
+            }
+
+        }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -614,25 +647,67 @@ namespace SynoDuplicateFolders
             return r == DialogResult.OK;
         }
 
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        private void HostInformationTabs_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (((TabControl)sender).SelectedIndex)
             {
                 case 2:
                     if (commonDateSelection.HasValue)
                     {
-                        timeStampTrackBar.Value = commonDateSelection.Value;
+                        timestampTrackBarPieCharts.Value = commonDateSelection.Value;
                     }
+                    ToggleContentToolWindow();
                     break;
 
                 case 3:
                     {
-                        timeStampTrackBar1.Value = commonDateSelection.Value;
+                        timestampTrackBarFileDetails.Value = commonDateSelection.Value;
+                        contentTool?.Hide();
                     }
                     break;
 
                 default:
+                    contentTool?.Hide();
                     break;
+
+            }
+        }
+
+        private void ContentWindow_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            contentTool = null;
+        }
+
+        private void volumePies_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+                contextMenuPiecharts.Show(MousePosition);
+        }
+
+        private void showFreeVsUsedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showFreeVsUsedToolStripMenuItem.Checked = !showFreeVsUsedToolStripMenuItem.Checked;
+            volumePies.PercentageFreeOnly = showFreeVsUsedToolStripMenuItem.Checked;
+        }
+
+        private void showContentTypesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showContentTypesToolStripMenuItem.Checked = !showContentTypesToolStripMenuItem.Checked;
+            ToggleContentToolWindow();
+        }
+        private void ToggleContentToolWindow()
+        {
+            if (showContentTypesToolStripMenuItem.Checked)
+            {
+                if (contentTool is null)
+                {
+                    contentTool = new ContentToolWindow(ContentWindow_FormClosed);
+                }
+                contentTool?.Show();
+            }
+            else
+            {
+                contentTool?.Hide();
             }
         }
     }

@@ -63,6 +63,12 @@
   <ItemGroup>
     <Compile Include="ChartLegend.cs" />
     <Compile Include="ChartLegends.cs" />
+    <Compile Include="ContentToolWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ContentToolWindow.Designer.cs">
+      <DependentUpon>ContentToolWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="CustomSettings.cs" />
     <Compile Include="DeduplicationConfirmation.cs">
       <SubType>Form</SubType>
@@ -103,6 +109,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ContentToolWindow.resx">
+      <DependentUpon>ContentToolWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DeduplicationConfirmation.resx">
       <DependentUpon>DeduplicationConfirmation.cs</DependentUpon>
     </EmbeddedResource>

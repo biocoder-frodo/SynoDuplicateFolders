@@ -46,17 +46,11 @@
             this.KnownHosts = new System.Windows.Forms.TreeView();
             this.HostInformationTabs = new System.Windows.Forms.TabControl();
             this.tab1VolumeHistoricChart = new System.Windows.Forms.TabPage();
-            this.volumeHistoricChart1 = new SynoDuplicateFolders.Controls.VolumeHistoricChart();
             this.tab2DuplicateCandidates = new System.Windows.Forms.TabPage();
-            this.duplicateCandidatesView1 = new SynoDuplicateFolders.Controls.DuplicateCandidatesView();
             this.tab3PieCharts = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelPieCharts = new System.Windows.Forms.TableLayoutPanel();
-            this.timestampTrackBarPieCharts = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
-            this.volumePies = new SynoDuplicateFolders.Controls.ChartGrid();
             this.tab4FileDetails = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelFileDetails = new System.Windows.Forms.TableLayoutPanel();
-            this.dataGridView1 = new SynoDuplicateFolders.Controls.SynoReportDataGridView();
-            this.timestampTrackBarFileDetails = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
             this.cmbFileDetails = new System.Windows.Forms.ComboBox();
             this.NoDataNotification = new System.Windows.Forms.Label();
             this.contextMenuAddServer = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -68,6 +62,15 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.propertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.contextMenuPiecharts = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showFreeVsUsedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showContentTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.volumeHistoricChart1 = new SynoDuplicateFolders.Controls.VolumeHistoricChart();
+            this.duplicateCandidatesView1 = new SynoDuplicateFolders.Controls.DuplicateCandidatesView();
+            this.timestampTrackBarPieCharts = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
+            this.volumePies = new SynoDuplicateFolders.Controls.ChartGrid();
+            this.dataGridView1 = new SynoDuplicateFolders.Controls.SynoReportDataGridView();
+            this.timestampTrackBarFileDetails = new SynoDuplicateFolders.Controls.TimeStampTrackBar();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.MainPanel.SuspendLayout();
@@ -82,9 +85,10 @@
             this.tableLayoutPanelPieCharts.SuspendLayout();
             this.tab4FileDetails.SuspendLayout();
             this.tableLayoutPanelFileDetails.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.contextMenuAddServer.SuspendLayout();
             this.contextMenuHost.SuspendLayout();
+            this.contextMenuPiecharts.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -243,20 +247,6 @@
             this.tab1VolumeHistoricChart.Text = "Volume Usage";
             this.tab1VolumeHistoricChart.UseVisualStyleBackColor = true;
             // 
-            // volumeHistoricChart1
-            // 
-            this.volumeHistoricChart1.Configuration = null;
-            this.volumeHistoricChart1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.volumeHistoricChart1.EarliestTime = null;
-            this.volumeHistoricChart1.Location = new System.Drawing.Point(3, 3);
-            this.volumeHistoricChart1.Name = "volumeHistoricChart1";
-            this.volumeHistoricChart1.ShowIndividualStoragePoolUsage = false;
-            this.volumeHistoricChart1.Size = new System.Drawing.Size(1234, 650);
-            this.volumeHistoricChart1.TabIndex = 0;
-            this.volumeHistoricChart1.TabStop = false;
-            this.volumeHistoricChart1.TimeRange = null;
-            this.volumeHistoricChart1.View = SynoDuplicateFolders.Controls.vhcViewMode.Shares;
-            // 
             // tab2DuplicateCandidates
             // 
             this.tab2DuplicateCandidates.Controls.Add(this.duplicateCandidatesView1);
@@ -267,17 +257,6 @@
             this.tab2DuplicateCandidates.TabIndex = 1;
             this.tab2DuplicateCandidates.Text = "Duplicate Candidates";
             this.tab2DuplicateCandidates.UseVisualStyleBackColor = true;
-            // 
-            // duplicateCandidatesView1
-            // 
-            this.duplicateCandidatesView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.duplicateCandidatesView1.ExclusionSource = null;
-            this.duplicateCandidatesView1.HostName = null;
-            this.duplicateCandidatesView1.Location = new System.Drawing.Point(3, 3);
-            this.duplicateCandidatesView1.MaximumComparable = 3;
-            this.duplicateCandidatesView1.Name = "duplicateCandidatesView1";
-            this.duplicateCandidatesView1.Size = new System.Drawing.Size(1234, 650);
-            this.duplicateCandidatesView1.TabIndex = 0;
             // 
             // tab3PieCharts
             // 
@@ -304,26 +283,6 @@
             this.tableLayoutPanelPieCharts.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 86F));
             this.tableLayoutPanelPieCharts.Size = new System.Drawing.Size(1234, 650);
             this.tableLayoutPanelPieCharts.TabIndex = 4;
-            // 
-            // timestampTrackBarPieCharts
-            // 
-            this.timestampTrackBarPieCharts.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.timestampTrackBarPieCharts.Location = new System.Drawing.Point(3, 567);
-            this.timestampTrackBarPieCharts.Name = "timestampTrackBarPieCharts";
-            this.timestampTrackBarPieCharts.Size = new System.Drawing.Size(1228, 80);
-            this.timestampTrackBarPieCharts.TabIndex = 0;
-            this.timestampTrackBarPieCharts.Value = new System.DateTime(((long)(0)));
-            this.timestampTrackBarPieCharts.ValueChanged += new System.EventHandler(this.TimeStampTrackBar_ValueChanged);
-            // 
-            // volumePies
-            // 
-            this.volumePies.Configuration = null;
-            this.volumePies.DataSource = null;
-            this.volumePies.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.volumePies.Location = new System.Drawing.Point(3, 3);
-            this.volumePies.Name = "volumePies";
-            this.volumePies.Size = new System.Drawing.Size(1228, 558);
-            this.volumePies.TabIndex = 0;
             // 
             // tab4FileDetails
             // 
@@ -352,29 +311,6 @@
             this.tableLayoutPanelFileDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 86F));
             this.tableLayoutPanelFileDetails.Size = new System.Drawing.Size(1234, 650);
             this.tableLayoutPanelFileDetails.TabIndex = 0;
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 75);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(1228, 486);
-            this.dataGridView1.TabIndex = 2;
-            // 
-            // timestampTrackBarFileDetails
-            // 
-            this.timestampTrackBarFileDetails.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.timestampTrackBarFileDetails.Location = new System.Drawing.Point(3, 567);
-            this.timestampTrackBarFileDetails.Name = "timestampTrackBarFileDetails";
-            this.timestampTrackBarFileDetails.Size = new System.Drawing.Size(1228, 80);
-            this.timestampTrackBarFileDetails.TabIndex = 0;
-            this.timestampTrackBarFileDetails.Value = new System.DateTime(((long)(0)));
-            this.timestampTrackBarFileDetails.ValueChanged += new System.EventHandler(this.TimeStampTrackBar_ValueChanged);
             // 
             // cmbFileDetails
             // 
@@ -456,6 +392,100 @@
             this.propertiesToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.propertiesToolStripMenuItem.Text = "Properties";
             // 
+            // contextMenuPiecharts
+            // 
+            this.contextMenuPiecharts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showFreeVsUsedToolStripMenuItem,
+            this.showContentTypesToolStripMenuItem});
+            this.contextMenuPiecharts.Name = "contextMenuPiecharts";
+            this.contextMenuPiecharts.Size = new System.Drawing.Size(182, 48);
+            // 
+            // showFreeVsUsedToolStripMenuItem
+            // 
+            this.showFreeVsUsedToolStripMenuItem.Name = "showFreeVsUsedToolStripMenuItem";
+            this.showFreeVsUsedToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.showFreeVsUsedToolStripMenuItem.Text = "Show Free vs Used";
+            this.showFreeVsUsedToolStripMenuItem.Click += new System.EventHandler(this.showFreeVsUsedToolStripMenuItem_Click);
+            // 
+            // showContentTypesToolStripMenuItem
+            // 
+            this.showContentTypesToolStripMenuItem.Name = "showContentTypesToolStripMenuItem";
+            this.showContentTypesToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.showContentTypesToolStripMenuItem.Text = "Show Content Types";
+            this.showContentTypesToolStripMenuItem.Click += new System.EventHandler(this.showContentTypesToolStripMenuItem_Click);
+            // 
+            // volumeHistoricChart1
+            // 
+            this.volumeHistoricChart1.Configuration = null;
+            this.volumeHistoricChart1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.volumeHistoricChart1.EarliestTime = null;
+            this.volumeHistoricChart1.Location = new System.Drawing.Point(3, 3);
+            this.volumeHistoricChart1.Name = "volumeHistoricChart1";
+            this.volumeHistoricChart1.ShowIndividualStoragePoolUsage = false;
+            this.volumeHistoricChart1.Size = new System.Drawing.Size(1234, 650);
+            this.volumeHistoricChart1.TabIndex = 0;
+            this.volumeHistoricChart1.TabStop = false;
+            this.volumeHistoricChart1.TimeRange = null;
+            this.volumeHistoricChart1.View = SynoDuplicateFolders.Controls.vhcViewMode.Shares;
+            // 
+            // duplicateCandidatesView1
+            // 
+            this.duplicateCandidatesView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.duplicateCandidatesView1.ExclusionSource = null;
+            this.duplicateCandidatesView1.HostName = null;
+            this.duplicateCandidatesView1.Location = new System.Drawing.Point(3, 3);
+            this.duplicateCandidatesView1.MaximumComparable = 3;
+            this.duplicateCandidatesView1.Name = "duplicateCandidatesView1";
+            this.duplicateCandidatesView1.Size = new System.Drawing.Size(1234, 650);
+            this.duplicateCandidatesView1.TabIndex = 0;
+            // 
+            // timestampTrackBarPieCharts
+            // 
+            this.timestampTrackBarPieCharts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.timestampTrackBarPieCharts.Location = new System.Drawing.Point(3, 567);
+            this.timestampTrackBarPieCharts.Name = "timestampTrackBarPieCharts";
+            this.timestampTrackBarPieCharts.Size = new System.Drawing.Size(1228, 80);
+            this.timestampTrackBarPieCharts.TabIndex = 0;
+            this.timestampTrackBarPieCharts.Value = new System.DateTime(((long)(0)));
+            this.timestampTrackBarPieCharts.ValueChanged += new System.EventHandler(this.TimeStampTrackBar_ValueChanged);
+            // 
+            // volumePies
+            // 
+            this.volumePies.Configuration = null;
+            this.volumePies.DataSource = null;
+            this.volumePies.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.volumePies.Location = new System.Drawing.Point(3, 3);
+            this.volumePies.Name = "volumePies";
+            this.volumePies.PercentageFreeOnly = false;
+            this.volumePies.Size = new System.Drawing.Size(1228, 558);
+            this.volumePies.TabIndex = 0;
+            this.volumePies.MouseClick += new System.Windows.Forms.MouseEventHandler(this.volumePies_MouseClick);
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AllowUserToResizeColumns = false;
+            this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 75);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView1.Size = new System.Drawing.Size(1228, 486);
+            this.dataGridView1.TabIndex = 2;
+            // 
+            // timestampTrackBarFileDetails
+            // 
+            this.timestampTrackBarFileDetails.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.timestampTrackBarFileDetails.Location = new System.Drawing.Point(3, 567);
+            this.timestampTrackBarFileDetails.Name = "timestampTrackBarFileDetails";
+            this.timestampTrackBarFileDetails.Size = new System.Drawing.Size(1228, 80);
+            this.timestampTrackBarFileDetails.TabIndex = 0;
+            this.timestampTrackBarFileDetails.Value = new System.DateTime(((long)(0)));
+            this.timestampTrackBarFileDetails.ValueChanged += new System.EventHandler(this.TimeStampTrackBar_ValueChanged);
+            // 
             // SynoReportClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -484,9 +514,10 @@
             this.tableLayoutPanelPieCharts.ResumeLayout(false);
             this.tab4FileDetails.ResumeLayout(false);
             this.tableLayoutPanelFileDetails.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.contextMenuAddServer.ResumeLayout(false);
             this.contextMenuHost.ResumeLayout(false);
+            this.contextMenuPiecharts.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -534,6 +565,9 @@
         private Controls.SynoReportDataGridView dataGridView1;
         private System.Windows.Forms.ComboBox cmbFileDetails;
         private System.Windows.Forms.Label NoDataNotification;
+        private System.Windows.Forms.ContextMenuStrip contextMenuPiecharts;
+        private System.Windows.Forms.ToolStripMenuItem showFreeVsUsedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showContentTypesToolStripMenuItem;
     }
 }
 

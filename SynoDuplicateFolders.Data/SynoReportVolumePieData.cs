@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SynoDuplicateFolders.Data.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using SynoDuplicateFolders.Data.Core;
 
 namespace SynoDuplicateFolders.Data
 {
@@ -18,6 +18,7 @@ namespace SynoDuplicateFolders.Data
             _shares = First;
             _volumes = Second;
             _render_volume_only = false;
+            ContextTime = Second.Timestamp;
         }
 
         public bool PercentageFreeOnly
@@ -42,6 +43,8 @@ namespace SynoDuplicateFolders.Data
             }
         }
 
+        public DateTime ContextTime { get; }
+
         public IEnumerable<IXYDataPoint> this[int index]
         {
             get
@@ -50,8 +53,8 @@ namespace SynoDuplicateFolders.Data
 
                 if (_render_volume_only)
                 {
-                    yield return new PieChartDataPoint(TraceName.Used, _volumes[index].Used);
                     yield return new PieChartDataPoint(TraceName.Free, unity - _volumes[index].Used);
+                    yield return new PieChartDataPoint(TraceName.Used, _volumes[index].Used);
 
                 }
                 else

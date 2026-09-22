@@ -72,6 +72,7 @@
     <Compile Include="..\..\SynoDuplicateFolders.Controls\IDuplicateExclusionSource.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data\DuplicateFileInfo.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data.Core\ISynoReportDetail.cs" />
+    <Compile Include="..\..\SynoDuplicateFolders.Data.Core\StickyColumnAttribute.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data.Core\Extensions.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data.Core\IDuplicateFileInfoExclusion.cs" />
     <Compile Include="..\..\SynoDuplicateFolders.Data.Core\ISynoCSVReport.cs" />

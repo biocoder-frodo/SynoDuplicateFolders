@@ -103,6 +103,12 @@ namespace SynoDuplicateFolders.Data
 
                         return ShowProcessing(() => new SynoReportVolumePieData(GetReport(ts, first), GetReport(ts, second)));
 
+                    case ((1 + (int)SynoReportType.ShareList) * (1 + (int)SynoReportType.FileGroup)):
+
+                        if (_allreports[ts].ContainsKey(SynoReportType.VolumeUsage)) 
+                        return ShowProcessing(() => new SynoReportCategoryPieData(GetReport(ts, first), GetReport(ts, second), GetReport(ts, SynoReportType.VolumeUsage)));
+                        
+                        break;
                     default:
                         break;
                 }

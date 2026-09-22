@@ -11,16 +11,39 @@ namespace SynoDuplicateFolders.Controls
 {
     public partial class ChartGrid : UserControl
     {
+        public delegate void ChartGridToolTipEventHandler(object sender, ChartGridToolTipEventArgs e);
+
+        public event ChartGridToolTipEventHandler ToolTipChanged;
+        //public event MouseEventHandler OnMouseClick;
+
         private IVolumePieChart _src = null;
         private bool _first = true;
         private readonly ChartControls _charts;
         private IChartConfiguration _legends = null;
         private LegendConfiguration _legendConfiguration = null;
         private bool _percentage_free_only = false;
-        public ChartGrid()
+        private string lastToolTipText;
+
+        public bool PercentageFreeOnly
+        {
+            get => _percentage_free_only;
+            set
+            {
+                if (_percentage_free_only != value)
+                {
+                    _percentage_free_only = value;
+                    DataSource = _src;
+                }
+            }
+        }
+        public ChartGrid() : this(true) { }
+        public ChartGrid(bool withToolTips)
         {
             InitializeComponent();
-            _charts = new ChartControls(chart_MouseClick, chart_GetToolTipText, chart_PostPaint);
+
+            _charts = withToolTips
+                ? new ChartControls(chart_MouseClick, chart_PostPaint, chart_GetToolTipText)
+                : new ChartControls(chart_MouseClick, chart_PostPaint);
 
         }
         public IChartConfiguration Configuration
@@ -49,7 +72,7 @@ namespace SynoDuplicateFolders.Controls
             if (_legends.ContainsKey(name) == false)
             {
                 _legends.Add(name, color);
-                _legends[name].ColorName= color.ToString() ;
+                _legends[name].ColorName = color.ToString();
                 change = true;
             }
         }
@@ -147,7 +170,7 @@ namespace SynoDuplicateFolders.Controls
             foreach (PieChartDataPoint dp in _src[index])
             {
                 dpc[dpc.AddXY(dp.SliceName, dp.Value)].LegendText = dp.SliceName;
-                _ = _legendConfiguration.TryPickColor(dp.SliceName, dpc[dpc.Count - 1]);
+                _legendConfiguration.TryPickColor(dp.SliceName, dpc[dpc.Count - 1]);
             }
 
         }
@@ -167,11 +190,14 @@ namespace SynoDuplicateFolders.Controls
         private void chart_GetToolTipText(object sender, ToolTipEventArgs e)
         {
             string text = string.Empty;
+
+            Series hovered = null;
+            DataPoint dp = null;
             if (e.HitTestResult.ChartElementType == ChartElementType.DataPoint)
             {
                 HitTestResult h = e.HitTestResult;
-                Series hovered = h.Series;
-                DataPoint dp = hovered.Points[h.PointIndex];
+                hovered = h.Series;
+                dp = hovered.Points[h.PointIndex];
                 if (_src != null)
                 {
                     double size = _src.TotalSize(hovered.Name) / 100.0;
@@ -182,7 +208,15 @@ namespace SynoDuplicateFolders.Controls
 
                 }
             }
-            if (!e.Text.Equals(text)) e.Text = text;
+            if (!e.Text.Equals(text))
+            {
+                e.Text = text;
+                if (dp != null && e.Text != lastToolTipText)
+                {
+                    lastToolTipText = e.Text;
+                    ToolTipChanged?.Invoke(this, new ChartGridToolTipEventArgs(DataSource.ContextTime, text, hovered.Name, dp.LegendText));
+                }
+            }
         }
         private void chart_PostPaint(object sender, ChartPaintEventArgs e)
         {
@@ -193,15 +227,14 @@ namespace SynoDuplicateFolders.Controls
                     if (sender == _charts[r])
                     {
                         _legendConfiguration.AddNewTraces(r, _charts[r], _src);
-                    };
+                    }
                 }
             }
         }
         private void chart_MouseClick(object sender, MouseEventArgs e)
         {
-            _percentage_free_only = !_percentage_free_only;
-            DataSource = _src;
-
+           
+                OnMouseClick(e);
         }
         private RectangleLayout DetermineLayout(int count)
         {
@@ -209,7 +242,7 @@ namespace SynoDuplicateFolders.Controls
             // System.Diagnostics.Debug.WriteLine($"one square with {count}: {onesquare}x{onesquare}");
 
             var h = Convert.ToDouble(Height);
-            var w = Convert.ToDouble(Width);            
+            var w = Convert.ToDouble(Width);
 
             double target_ratio = w / h;
 
@@ -242,7 +275,7 @@ namespace SynoDuplicateFolders.Controls
             {
 
                 var series = _src.Series.Where(s => s != "/volumes").ToList();
-                
+
                 var layout = DetermineLayout(series.Count);
 
                 if (tableLayoutPanel1.ColumnCount != layout.Columns
@@ -270,7 +303,7 @@ namespace SynoDuplicateFolders.Controls
                 //{
                 //    p = Width / Convert.ToDouble(_src.Series.Count);
                 //}
-                
+
                 for (int z = 0; z < series.Count; z++)
                 {
                     _charts[z].Width = (int)(0.95 * Width / Convert.ToDouble(layout.Columns));
