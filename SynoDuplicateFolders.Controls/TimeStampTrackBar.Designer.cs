@@ -31,9 +31,9 @@
             this.lblStart = new System.Windows.Forms.Label();
             this.lblValue = new System.Windows.Forms.Label();
             this.lblEnd = new System.Windows.Forms.Label();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.trackBar = new System.Windows.Forms.TrackBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,19 +64,19 @@
             // 
             // trackBar1
             // 
-            this.trackBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBar1.Location = new System.Drawing.Point(3, 16);
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(452, 60);
-            this.trackBar1.TabIndex = 3;
-            this.trackBar1.ValueChanged += TrackBar1_ValueChanged;
+            this.trackBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.trackBar.Location = new System.Drawing.Point(3, 16);
+            this.trackBar.Name = "trackBar";
+            this.trackBar.Size = new System.Drawing.Size(452, 60);
+            this.trackBar.TabIndex = 3;
+            this.trackBar.ValueChanged += TrackBar_ValueChanged;
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.lblEnd);
             this.groupBox1.Controls.Add(this.lblStart);
             this.groupBox1.Controls.Add(this.lblValue);
-            this.groupBox1.Controls.Add(this.trackBar1);
+            this.groupBox1.Controls.Add(this.trackBar);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
@@ -92,7 +92,7 @@
             this.Name = "TimeStampTrackBar";
             this.Size = new System.Drawing.Size(458, 79);
             this.Resize += new System.EventHandler(this.TimeStampTrackBar_Resize);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -106,7 +106,7 @@
         private System.Windows.Forms.Label lblStart;
         private System.Windows.Forms.Label lblValue;
         private System.Windows.Forms.Label lblEnd;
-        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.TrackBar trackBar;
         private System.Windows.Forms.GroupBox groupBox1;
     }
 }
