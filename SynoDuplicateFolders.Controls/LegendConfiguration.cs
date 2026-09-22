@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using SynoDuplicateFolders.Data;
+﻿using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
-using System.Windows.Forms.DataVisualization.Charting;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using System.ComponentModel;
-using System.Configuration;
-using SynoDuplicateFolders.Properties;
-using System.Reflection;
+using System.Windows.Forms.DataVisualization.Charting;
+
 namespace SynoDuplicateFolders.Controls
 {
 #if DESIGNER_WORKAROUND
@@ -45,7 +41,6 @@ namespace SynoDuplicateFolders.Controls
                         legendMap.Add(dp.LegendText, dp);
                 }
                 var colorMap = new Dictionary<string, Color>();
-                //int slice = 0;
                 foreach (PieChartDataPoint dp in volumePie[index])
                 {
                     if (legendMap.ContainsKey(dp.SliceName))
@@ -60,7 +55,7 @@ namespace SynoDuplicateFolders.Controls
         {
             if (LegendUpdateNeeded)
             {
-            
+
                 bool changed = false;
                 foreach (var unknown in _unknownTraces)
                 {
@@ -73,9 +68,9 @@ namespace SynoDuplicateFolders.Controls
                 }
                 if (changed) _legends.SaveLegendChanges();
             }
-            _invalidated = false;        
+            _invalidated = false;
         }
-            public void AddNewTraces(Func<int, string> traceName, Func<int, Color> traceColor, int allTraceCount)
+        public void AddNewTraces(Func<int, string> traceName, Func<int, Color> traceColor, int allTraceCount)
         {
 
             if (LegendUpdateNeeded)
@@ -102,22 +97,15 @@ namespace SynoDuplicateFolders.Controls
         {
             _invalidated = true;
         }
-        public bool TryPickColor(string traceName, DataPointCustomProperties dpcp)
+        public void TryPickColor(string traceName, DataPointCustomProperties dpcp)
         {
-            // Console.Write("trace " + traceName + ": ");
             if (_legends.ContainsKey(traceName))
             {
-
-                var legend = _legends[traceName];
-                //Console.WriteLine("picking dictionary color");
-                dpcp.Color = legend.Color;
-                return true;
+                dpcp.Color = _legends[traceName].Color;
+                return;
             }
-
             if (_unknownTraces.Contains(traceName) == false) _unknownTraces.Add(traceName);
-            //Console.WriteLine("picking default color");
 
-            return false;
         }
     }
 }
