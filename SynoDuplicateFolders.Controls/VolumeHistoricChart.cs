@@ -3,6 +3,7 @@ using SynoDuplicateFolders.Data;
 using SynoDuplicateFolders.Data.Core;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -26,26 +27,53 @@ namespace SynoDuplicateFolders.Controls
         public DateTime? EarliestTime { get; set; }
         public TimeSpan? TimeRange { get; set; }
         public bool ShowIndividualStoragePoolUsage { get; set; }
+
+        private readonly ReadOnlyDictionary<ToolStripMenuItem, Action> _timeRangeAction;
+
         public VolumeHistoricChart()
         {
             InitializeComponent();
-            chart1.Visible = false;
-            chart1.FormatNumber += Chart1_FormatNumber;
-        }
 
-        private void Chart1_FormatNumber(object sender, FormatNumberEventArgs e)
-        {
-            if (sender is Axis)
-            {
-                Axis a = sender as Axis;
-                if (a.AxisName == AxisName.Y)
+            _timeRangeAction = new ReadOnlyDictionary<ToolStripMenuItem, Action>
+                (
+                new Dictionary<ToolStripMenuItem, Action>()
                 {
-                    if (_view == vhcViewMode.Shares || _view == vhcViewMode.VolumeTotals)
                     {
-                        e.LocalizedValue = Convert.ToInt64(e.Value).ToFileSizeString(shares_range);
-                    }
-                }
-            }
+                        noTimeLimitsToolStripMenuItem, ()=>
+                        {
+                            EarliestTime = null;
+                            TimeRange = null;
+                            DataSource = src;
+                            }
+                    },
+                    {
+                        lastWeekToolStripMenuItem, ()=>
+                        {
+                            EarliestTime = null;
+                            TimeRange = new TimeSpan(7, 0, 0, 0);
+                            DataSource = src;
+                            }
+                    },
+                    {
+                        lastMonthToolStripMenuItem, ()=>
+                        {
+                            EarliestTime = null;
+                            TimeRange = new TimeSpan(31, 0, 0, 0);
+                            DataSource = src;
+                        }
+                    },
+                    {
+                        lastYearToolStripMenuItem, ()=>
+                        {
+                            EarliestTime = null;
+                            TimeRange = new TimeSpan(366, 0, 0, 0);
+                            DataSource = src;
+                            }
+                    },
+            });
+
+            volumeChart.Visible = false;
+            volumeChart.FormatNumber += VolumeChart_FormatNumber;
         }
 
         public IChartConfiguration Configuration
@@ -99,7 +127,7 @@ namespace SynoDuplicateFolders.Controls
                     }
                     if (data != null)
                     {
-                        chart1.Series.Clear();
+                        volumeChart.Series.Clear();
 
                         _legendConfiguration.ResetUnknownTraces();
 
@@ -139,9 +167,9 @@ namespace SynoDuplicateFolders.Controls
                                 ChartType = SeriesChartType.StepLine
                             };
 
-                            _ = _legendConfiguration.TryPickColor(s, series1);
+                            _legendConfiguration.TryPickColor(s, series1);
 
-                            chart1.Series.Add(series1);
+                            volumeChart.Series.Add(series1);
 
                             DateTime? timeLimit = null;
                             if (EarliestTime.HasValue || TimeRange.HasValue)
@@ -173,8 +201,8 @@ namespace SynoDuplicateFolders.Controls
 
                         _legendConfiguration.Invalidate();
 
-                        chart1.Invalidate();
-                        chart1.Visible = true;
+                        volumeChart.Invalidate();
+                        volumeChart.Visible = true;
                     }
                 }
             }
@@ -196,12 +224,16 @@ namespace SynoDuplicateFolders.Controls
                     series.Points.AddXY(dp.X, dp.Y);
             }
         }
-        private void chart1_MouseClick(object sender, MouseEventArgs e)
+        private void TimeRangeContextMenuStripItem_Click(object sender, EventArgs e)
         {
-            HitTestResult h = chart1.HitTest(e.X, e.Y);
+            _timeRangeAction[sender as ToolStripMenuItem]();
+        }
+        private void VolumeChart_MouseClick(object sender, MouseEventArgs e)
+        {
+            HitTestResult h = volumeChart.HitTest(e.X, e.Y);
 
             System.Diagnostics.Debug.WriteLine($"HitTestResult: {h.ChartElementType}");
-
+            Cursor = Cursors.WaitCursor;
             switch (h.ChartElementType)
             {
                 case ChartElementType.LegendItem:
@@ -220,7 +252,7 @@ namespace SynoDuplicateFolders.Controls
                     switch (a.AxisName)
                     {
                         case AxisName.Y:
-                            chart1.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+                            volumeChart.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
                             break;
                         case AxisName.Y2:
                             break;
@@ -236,32 +268,33 @@ namespace SynoDuplicateFolders.Controls
                 case ChartElementType.Nothing:
                     if (e.Button == MouseButtons.Right)
                     {
-                        contextMenuStrip1.Show(MousePosition);
+                        TimeRangeContextMenuStrip.Show(MousePosition);
                     }
                     break;
 
                 default:
                     break;
             }
+            Cursor = Cursors.Default;
 
         }
 
-        private void chart1_PostPaint(object sender, ChartPaintEventArgs e)
+        private void VolumeChart_FormatNumber(object sender, FormatNumberEventArgs e)
         {
-            if (_legendConfiguration.LegendUpdateNeeded)
+            if (sender is Axis)
             {
-                if (_view == vhcViewMode.VolumeTotals)
+                Axis a = sender as Axis;
+                if (a.AxisName == AxisName.Y)
                 {
-                    _legendConfiguration.AddNewTraces(data, chart1.Series);
-                }
-                else
-                {
-                    _legendConfiguration.AddNewTraces((idx) => data.Series[idx], (idx) => chart1.Series[idx].Color, _displaying_traces.Count);
+                    if (_view == vhcViewMode.Shares || _view == vhcViewMode.VolumeTotals)
+                    {
+                        e.LocalizedValue = Convert.ToInt64(e.Value).ToFileSizeString(shares_range);
+                    }
                 }
             }
         }
 
-        private void chart1_GetToolTipText(object sender, ToolTipEventArgs e)
+        private void VolumeChart_GetToolTipText(object sender, ToolTipEventArgs e)
         {
             string text = string.Empty;
             HitTestResult h = e.HitTestResult;
@@ -289,34 +322,21 @@ namespace SynoDuplicateFolders.Controls
 
             }
         }
-
-        private void noTimeLimitsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void VolumeChart_PostPaint(object sender, ChartPaintEventArgs e)
         {
-            EarliestTime = null;
-            TimeRange = null;
-            DataSource = src;
+            if (_legendConfiguration.LegendUpdateNeeded)
+            {
+                if (_view == vhcViewMode.VolumeTotals)
+                {
+                    _legendConfiguration.AddNewTraces(data, volumeChart.Series);
+                }
+                else
+                {
+                    _legendConfiguration.AddNewTraces((idx) => data.Series[idx], (idx) => volumeChart.Series[idx].Color, _displaying_traces.Count);
+                }
+            }
         }
 
-        private void lastWeekToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            EarliestTime = null;
-            TimeRange = new TimeSpan(7, 0, 0, 0);
-            DataSource = src;
-        }
-
-        private void lastMonthToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            EarliestTime = null;
-            TimeRange = new TimeSpan(31, 0, 0, 0);
-            DataSource = src;
-        }
-
-        private void lastYearToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            EarliestTime = null;
-            TimeRange = new TimeSpan(366, 0, 0, 0);
-            DataSource = src;
-        }
     }
     public enum vhcViewMode
     {
