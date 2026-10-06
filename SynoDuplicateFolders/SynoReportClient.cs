@@ -1,7 +1,6 @@
 ﻿using DiskStationManager.SecureShell;
 using SynoDuplicateFolders.Controls;
 using SynoDuplicateFolders.Data;
-using SynoDuplicateFolders.Data.ComponentModel;
 using SynoDuplicateFolders.Data.Core;
 using SynoDuplicateFolders.Data.SecureShell;
 using SynoDuplicateFolders.Properties;
@@ -39,7 +38,7 @@ namespace SynoDuplicateFolders
             InitializeComponent();
             this.components.Add(new Disposer(this.OnDispose));
 
-            dataGridView1.AutoGenerateColumns = true;
+            reportDataView.AutoGenerateColumns = true;
             cmbFileDetails.SelectedIndex = 0;
 
             CacheUpdateCompleted += SynoReportClient_CacheUpdateCompleted;
@@ -390,40 +389,22 @@ namespace SynoDuplicateFolders
 
             volumePies.DataSource = cache.GetReport(ts, SynoReportType.VolumeUsage, SynoReportType.ShareList) as IVolumePieChart;
 
-            string value = cmbFileDetails.Text.ToLowerInvariant();
-            object current;
-            switch (value)
+            switch (cmbFileDetails.Text.ToLowerInvariant())
             {
                 case "owners":
-                    current = dataGridView1.GetSelection<ISynoReportOwnerDetail>();
-                    setDataSource<ISynoReportOwnerDetail>(dataGridView1, ts, SynoReportType.FileOwner);
-                    dataGridView1.TryReselection(current as IReadOnlyList<ISynoReportOwnerDetail>);
+                    reportDataView.TryReselectionForNewDate<ISynoReportOwnerDetail>(cache, ts, SynoReportType.FileOwner);
                     break;
                 case "most modified":
-                    current = dataGridView1.GetSelection<ISynoReportFileDetail>();
-                    setDataSource<ISynoReportFileDetail>(dataGridView1, ts, SynoReportType.MostModified);
-                    dataGridView1.TryReselection(current as IReadOnlyList<ISynoReportFileDetail>);
+                    reportDataView.TryReselectionForNewDate<ISynoReportFileDetail>(cache, ts, SynoReportType.MostModified);
                     break;
                 case "least modified":
-                    current = dataGridView1.GetSelection<ISynoReportFileDetail>();
-                    setDataSource<ISynoReportFileDetail>(dataGridView1, ts, SynoReportType.LeastModified);
-                    dataGridView1.TryReselection(current as IReadOnlyList<ISynoReportFileDetail>);
+                    reportDataView.TryReselectionForNewDate<ISynoReportFileDetail>(cache, ts, SynoReportType.LeastModified);
                     break;
                 default:
-                    current = dataGridView1.GetSelection<ISynoReportGroupDetail>();
-                    setDataSource<ISynoReportGroupDetail>(dataGridView1, ts, SynoReportType.FileGroup);
-                    dataGridView1.TryReselection(current as IReadOnlyList<ISynoReportGroupDetail>);
+                    reportDataView.TryReselectionForNewDate<ISynoReportGroupDetail>(cache, ts, SynoReportType.FileGroup);
                     break;
             }
         }
-        private void setDataSource<T>(SynoReportDataGridView grid, DateTime ts, SynoReportType type) where T : class, ISynoReportDetail
-        {
-            if (cache != null)
-            {
-                grid.setDataSource<T>(cache.GetReport(ts, type));
-            }
-        }
-
         private void RefreshDataForHost(string tag)
         {
             NoDataNotification.Visible = false;
@@ -676,6 +657,7 @@ namespace SynoDuplicateFolders
         private void ContentWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
             contentTool = null;
+            showContentTypesToolStripMenuItem.Checked = false;
         }
 
         private void volumePies_MouseClick(object sender, MouseEventArgs e)

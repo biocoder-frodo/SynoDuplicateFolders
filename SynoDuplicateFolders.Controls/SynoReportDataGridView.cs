@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Linq;
 using static SynoDuplicateFolders.Controls.SortOrderManager;
+using SynoDuplicateFolders.Data;
 
 namespace SynoDuplicateFolders.Controls
 {
@@ -18,6 +19,7 @@ namespace SynoDuplicateFolders.Controls
         private Type detailsGridType = null;
         private readonly Dictionary<Type, List<ISynoReportDetail>> previousRowValues = new Dictionary<Type, List<ISynoReportDetail>>();
         private readonly Dictionary<Type, List<PropertyInfo>> stickyColumns = new Dictionary<Type, List<PropertyInfo>>();
+
         public SynoReportDataGridView()
         {
             base.AllowDrop = false;
@@ -26,7 +28,7 @@ namespace SynoDuplicateFolders.Controls
             base.AllowUserToResizeColumns = false;
             base.AllowUserToResizeRows = false;
             base.AllowUserToOrderColumns = false;
-            
+
             base.ColumnHeaderMouseClick += SynoReportDataGridView_ColumnHeaderMouseClick;
             base.ColumnHeaderMouseDoubleClick += SynoReportDataGridView_ColumnHeaderMouseDoubleClick;
             base.CellFormatting += SynoReportDataGridView_CellFormatting;
@@ -86,14 +88,23 @@ namespace SynoDuplicateFolders.Controls
             {
                 e.FormattingApplied = false;
             }
-
         }
-        public List<T> GetSelection<T>() where T : class, ISynoReportDetail
+
+        public void TryReselectionForNewDate<T>(ISynoReportCache cache, DateTime ts, SynoReportType type) where T : class, ISynoReportDetail
+        {
+            object current = GetSelection<T>();
+            if (cache != null)
+            {
+                setDataSource<T>(cache.GetReport(ts, type));
+            }
+            TryReselection(current as IReadOnlyList<T>);
+        }
+        private List<T> GetSelection<T>() where T : class, ISynoReportDetail
         {
             if (previousRowValues.ContainsKey(typeof(T)) == false) return new List<T>();
             return previousRowValues[typeof(T)].Select(s => (T)s).ToList();
         }
-        public void TryReselection<T>(IReadOnlyList<T> list) where T : class, ISynoReportDetail
+        private void TryReselection<T>(IReadOnlyList<T> list) where T : class, ISynoReportDetail
         {
             Type t = typeof(T);
             if (stickyColumns.ContainsKey(t) == false)
@@ -163,4 +174,3 @@ namespace SynoDuplicateFolders.Controls
         }
     }
 }
-
